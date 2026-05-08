@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rbac.Application\Rbac.Application.csproj" />
+    <ProjectReference Include="..\Rbac.Infrastructure.MySql\Rbac.Infrastructure.MySql.csproj" />
+    <ProjectReference Include="..\Rbac.Infrastructure.Redis\Rbac.Infrastructure.Redis.csproj" />
+    <ProjectReference Include="..\Rbac.Infrastructure.Elasticsearch\Rbac.Infrastructure.Elasticsearch.csproj" />
+    <ProjectReference Include="..\Rbac.Infrastructure.Casbin\Rbac.Infrastructure.Casbin.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.36" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+</Project>

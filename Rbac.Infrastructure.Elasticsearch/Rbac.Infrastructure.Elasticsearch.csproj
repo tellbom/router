@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rbac.Application\Rbac.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- NEST 7.17.x — must stay on 7.x, not upgrade to Elastic.Clients.Elasticsearch -->
+    <PackageReference Include="NEST" Version="7.17.5" />
+  </ItemGroup>
+
+</Project>
