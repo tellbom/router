@@ -82,7 +82,7 @@ public sealed class RbacAuthorizationAuditWriter : IRbacAuthorizationAuditWriter
         CurrentRbacContext ctx, string permissionCode, string action,
         string errorMessage, CancellationToken ct = default)
     {
-        _metrics.AuthorizationErrors.Add(1, new("project", ctx.Project));
+        _metrics.AuthorizationErrors.Add(1, new KeyValuePair<string, object?>("project", ctx.Project));
 
         return _emitter.EmitAsync(BuildEvent(ctx, permissionCode, action, "error", errorMessage));
     }

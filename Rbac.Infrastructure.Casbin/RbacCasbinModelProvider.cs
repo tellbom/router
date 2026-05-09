@@ -1,5 +1,5 @@
-using NetCasbin;
-using NetCasbin.Model;
+using Casbin;
+using Casbin.Model;
 using Microsoft.Extensions.Logging;
 
 namespace Rbac.Infrastructure.Casbin;
@@ -24,22 +24,22 @@ public sealed class RbacCasbinModelProvider
     /// RBAC with domains model.conf 内容。
     /// g = _, _, _ 表示三元组（用户/组, 组/角色, domain）。
     /// </summary>
-    private const string ModelConf = """
-        [request_definition]
-        r = sub, dom, obj, act
+    private const string ModelConf = @"
+[request_definition]
+r = sub, dom, obj, act
 
-        [policy_definition]
-        p = sub, dom, obj, act
+[policy_definition]
+p = sub, dom, obj, act
 
-        [role_definition]
-        g = _, _, _
+[role_definition]
+g = _, _, _
 
-        [policy_effect]
-        e = some(where (p.eft == allow))
+[policy_effect]
+e = some(where (p.eft == allow))
 
-        [matchers]
-        m = g(r.sub, p.sub, r.dom) && r.dom == p.dom && r.obj == p.obj && r.act == p.act
-        """;
+[matchers]
+m = g(r.sub, p.sub, r.dom) && r.dom == p.dom && r.obj == p.obj && r.act == p.act
+";
 
     public RbacCasbinModelProvider(ILogger<RbacCasbinModelProvider> logger)
     {
@@ -50,10 +50,10 @@ public sealed class RbacCasbinModelProvider
     /// 加载并返回 RBAC with domains Model 实例。
     /// 每次调用返回新实例，由 CasbinEnforcerFactory 组装 Enforcer。
     /// </summary>
-    public Model LoadModel()
+    public IModel LoadModel()
     {
         _logger.LogDebug("Loading Casbin RBAC with domains model.");
-        var model = Model.CreateDefaultFromText(ModelConf);
+        var model = DefaultModel.CreateFromText(ModelConf);
         return model;
     }
 

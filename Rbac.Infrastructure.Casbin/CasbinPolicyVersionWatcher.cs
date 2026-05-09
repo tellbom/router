@@ -1,8 +1,9 @@
-using NetCasbin;
+using Casbin;
 using StackExchange.Redis;
 using Microsoft.Extensions.Logging;
 using Rbac.Application.Repositories;
 using Rbac.Domain.ValueObjects;
+using Rbac.Infrastructure.Redis;
 
 namespace Rbac.Infrastructure.Casbin;
 

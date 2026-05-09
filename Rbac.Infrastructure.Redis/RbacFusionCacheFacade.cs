@@ -46,7 +46,7 @@ public sealed class RbacFusionCacheFacade : IMenuTreeCache
     }
 
     public Task EvictMenuTreeAsync(string project) =>
-        _cache.RemoveAsync(RbacRedisKeys.MenuTree(project));
+        _cache.RemoveAsync(RbacRedisKeys.MenuTree(project)).AsTask();
 
     // ── 快照 ─────────────────────────────────────────────────────
 
@@ -63,7 +63,7 @@ public sealed class RbacFusionCacheFacade : IMenuTreeCache
     }
 
     public Task EvictSnapshotAsync(string project, string userid) =>
-        _cache.RemoveAsync(RbacRedisKeys.Snapshot(project, userid));
+        _cache.RemoveAsync(RbacRedisKeys.Snapshot(project, userid)).AsTask();
 
     // ── API Map ───────────────────────────────────────────────────
 
@@ -80,7 +80,7 @@ public sealed class RbacFusionCacheFacade : IMenuTreeCache
     }
 
     public Task EvictApiMapAsync(string project) =>
-        _cache.RemoveAsync(RbacRedisKeys.ApiMap(project));
+        _cache.RemoveAsync(RbacRedisKeys.ApiMap(project)).AsTask();
 
     // ── User Projects ─────────────────────────────────────────────
 
@@ -97,7 +97,7 @@ public sealed class RbacFusionCacheFacade : IMenuTreeCache
     }
 
     public Task EvictUserProjectsAsync(string userid) =>
-        _cache.RemoveAsync(RbacRedisKeys.UserProjects(userid));
+        _cache.RemoveAsync(RbacRedisKeys.UserProjects(userid)).AsTask();
 
     // ── 私有 ──────────────────────────────────────────────────────
 

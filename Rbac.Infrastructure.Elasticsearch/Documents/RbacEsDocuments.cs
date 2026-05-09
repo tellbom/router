@@ -1,14 +1,11 @@
-using Nest;
+﻿using Nest;
 
 namespace Rbac.Infrastructure.Elasticsearch.Documents;
 
-// ── rbac_user_index ───────────────────────────────────────────────
+// 鈹€鈹€ rbac_user_index 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// ES 用户文档。对应 rbac_user_index。
-/// DxEId 必须为 keyword（string），不允许 long。
-/// allText copy_to 来源：userid, username, groupNames, projectCodes, groupCodes, status, DxEId。
-/// </summary>
+/// ES 鐢ㄦ埛鏂囨。銆傚搴?rbac_user_index銆?/// DxEId 蹇呴』涓?keyword锛坰tring锛夛紝涓嶅厑璁?long銆?/// allText copy_to 鏉ユ簮锛歶serid, username, groupNames, projectCodes, groupCodes, status, DxEId銆?/// </summary>
 [ElasticsearchType(RelationName = "rbac_user")]
 public sealed class UserDocument
 {
@@ -21,19 +18,19 @@ public sealed class UserDocument
     [Keyword(Name = "userid")]
     public string Userid { get; set; } = string.Empty;
 
-    [Text(Name = "username", CopyTo = new[] { "allText" })]
+    [Text(Name = "username")]
     public string Username { get; set; } = string.Empty;
 
-    [Keyword(Name = "projectCodes", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "projectCodes")]
     public IList<string> ProjectCodes { get; set; } = new List<string>();
 
-    [Keyword(Name = "groupCodes", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "groupCodes")]
     public IList<string> GroupCodes { get; set; } = new List<string>();
 
-    [Text(Name = "groupNames", CopyTo = new[] { "allText" })]
+    [Text(Name = "groupNames")]
     public IList<string> GroupNames { get; set; } = new List<string>();
 
-    [Keyword(Name = "status", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "status")]
     public string Status { get; set; } = string.Empty;
 
     [Keyword(Name = "superProjects")]
@@ -49,41 +46,39 @@ public sealed class UserDocument
     public string AllText { get; set; } = string.Empty;
 }
 
-// ── rbac_group_index ──────────────────────────────────────────────
+// 鈹€鈹€ rbac_group_index 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// ES 权限组文档。对应 rbac_group_index。
-/// allText copy_to 来源：groupCode, groupName, parentGroupCode, ruleCodes,
-///   permissionCodes, project, status, DxEId。
-/// </summary>
+/// ES 鏉冮檺缁勬枃妗ｃ€傚搴?rbac_group_index銆?/// allText copy_to 鏉ユ簮锛歡roupCode, groupName, parentGroupCode, ruleCodes,
+///   permissionCodes, project, status, DxEId銆?/// </summary>
 [ElasticsearchType(RelationName = "rbac_group")]
 public sealed class GroupDocument
 {
     [Keyword(Name = "id")]
     public string Id { get; set; } = string.Empty;
 
-    [Keyword(Name = "dxe_id", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "dxe_id")]
     public string DxEId { get; set; } = string.Empty;
 
-    [Keyword(Name = "project", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "project")]
     public string Project { get; set; } = string.Empty;
 
-    [Keyword(Name = "groupCode", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "groupCode")]
     public string GroupCode { get; set; } = string.Empty;
 
-    [Text(Name = "groupName", CopyTo = new[] { "allText" })]
+    [Text(Name = "groupName")]
     public string GroupName { get; set; } = string.Empty;
 
-    [Keyword(Name = "parentGroupCode", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "parentGroupCode")]
     public string? ParentGroupCode { get; set; }
 
-    [Keyword(Name = "ruleCodes", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "ruleCodes")]
     public IList<string> RuleCodes { get; set; } = new List<string>();
 
-    [Keyword(Name = "permissionCodes", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "permissionCodes")]
     public IList<string> PermissionCodes { get; set; } = new List<string>();
 
-    [Keyword(Name = "status", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "status")]
     public string Status { get; set; } = string.Empty;
 
     [Date(Name = "createdAt")]
@@ -96,53 +91,51 @@ public sealed class GroupDocument
     public string AllText { get; set; } = string.Empty;
 }
 
-// ── rbac_rule_index ───────────────────────────────────────────────
+// 鈹€鈹€ rbac_rule_index 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// ES 规则文档。对应 rbac_rule_index。
-/// allText copy_to 来源：ruleCode, permissionCode, parentRuleCode, title, name,
-///   path, type, menu_type, component, url, project, status, DxEId。
-/// </summary>
+/// ES 瑙勫垯鏂囨。銆傚搴?rbac_rule_index銆?/// allText copy_to 鏉ユ簮锛歳uleCode, permissionCode, parentRuleCode, title, name,
+///   path, type, menu_type, component, url, project, status, DxEId銆?/// </summary>
 [ElasticsearchType(RelationName = "rbac_rule")]
 public sealed class RuleDocument
 {
     [Keyword(Name = "id")]
     public string Id { get; set; } = string.Empty;
 
-    [Keyword(Name = "dxe_id", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "dxe_id")]
     public string DxEId { get; set; } = string.Empty;
 
-    [Keyword(Name = "project", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "project")]
     public string Project { get; set; } = string.Empty;
 
-    [Keyword(Name = "ruleCode", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "ruleCode")]
     public string RuleCode { get; set; } = string.Empty;
 
-    [Keyword(Name = "permissionCode", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "permissionCode")]
     public string PermissionCode { get; set; } = string.Empty;
 
-    [Keyword(Name = "parentRuleCode", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "parentRuleCode")]
     public string? ParentRuleCode { get; set; }
 
-    [Text(Name = "title", CopyTo = new[] { "allText" })]
+    [Text(Name = "title")]
     public string Title { get; set; } = string.Empty;
 
-    [Text(Name = "name", CopyTo = new[] { "allText" })]
+    [Text(Name = "name")]
     public string Name { get; set; } = string.Empty;
 
-    [Text(Name = "path", CopyTo = new[] { "allText" })]
+    [Text(Name = "path")]
     public string Path { get; set; } = string.Empty;
 
-    [Keyword(Name = "type", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "type")]
     public string Type { get; set; } = string.Empty;
 
-    [Keyword(Name = "menu_type", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "menu_type")]
     public string MenuType { get; set; } = string.Empty;
 
-    [Keyword(Name = "component", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "component")]
     public string? Component { get; set; }
 
-    [Keyword(Name = "url", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "url")]
     public string? Url { get; set; }
 
     [Keyword(Name = "extend")]
@@ -151,7 +144,7 @@ public sealed class RuleDocument
     [Keyword(Name = "keepalive")]
     public string Keepalive { get; set; } = "false";
 
-    [Keyword(Name = "status", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "status")]
     public string Status { get; set; } = string.Empty;
 
     [Number(NumberType.Integer, Name = "weigh")]
@@ -167,44 +160,42 @@ public sealed class RuleDocument
     public string AllText { get; set; } = string.Empty;
 }
 
-// ── rbac_permission_view_index ────────────────────────────────────
+// 鈹€鈹€ rbac_permission_view_index 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// ES 权限视图文档。对应 rbac_permission_view_index。
-/// allText copy_to 来源：permissionCode, ruleCode, action, resourceType,
-///   title, path, groupCodes, groupNames, project, status。
-/// </summary>
+/// ES 鏉冮檺瑙嗗浘鏂囨。銆傚搴?rbac_permission_view_index銆?/// allText copy_to 鏉ユ簮锛歱ermissionCode, ruleCode, action, resourceType,
+///   title, path, groupCodes, groupNames, project, status銆?/// </summary>
 [ElasticsearchType(RelationName = "rbac_permission_view")]
 public sealed class PermissionViewDocument
 {
-    [Keyword(Name = "project", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "project")]
     public string Project { get; set; } = string.Empty;
 
-    [Keyword(Name = "permissionCode", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "permissionCode")]
     public string PermissionCode { get; set; } = string.Empty;
 
-    [Keyword(Name = "ruleCode", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "ruleCode")]
     public string RuleCode { get; set; } = string.Empty;
 
-    [Keyword(Name = "action", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "action")]
     public string Action { get; set; } = string.Empty;
 
-    [Keyword(Name = "resourceType", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "resourceType")]
     public string ResourceType { get; set; } = string.Empty;
 
-    [Text(Name = "title", CopyTo = new[] { "allText" })]
+    [Text(Name = "title")]
     public string Title { get; set; } = string.Empty;
 
-    [Text(Name = "path", CopyTo = new[] { "allText" })]
+    [Text(Name = "path")]
     public string Path { get; set; } = string.Empty;
 
-    [Keyword(Name = "groupCodes", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "groupCodes")]
     public IList<string> GroupCodes { get; set; } = new List<string>();
 
-    [Text(Name = "groupNames", CopyTo = new[] { "allText" })]
+    [Text(Name = "groupNames")]
     public IList<string> GroupNames { get; set; } = new List<string>();
 
-    [Keyword(Name = "status", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "status")]
     public string Status { get; set; } = string.Empty;
 
     [Date(Name = "updatedAt")]
@@ -214,53 +205,51 @@ public sealed class PermissionViewDocument
     public string AllText { get; set; } = string.Empty;
 }
 
-// ── rbac_audit_log_index ──────────────────────────────────────────
+// 鈹€鈹€ rbac_audit_log_index 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// ES 审计日志文档。对应 rbac_audit_log_index。
-/// allText copy_to 来源：auditId, traceId, userid, project, requestedProject,
-///   permissionCode, action, result, reason, apiPath, httpMethod, clientIp, userAgent。
-/// </summary>
+/// ES 瀹¤鏃ュ織鏂囨。銆傚搴?rbac_audit_log_index銆?/// allText copy_to 鏉ユ簮锛歛uditId, traceId, userid, project, requestedProject,
+///   permissionCode, action, result, reason, apiPath, httpMethod, clientIp, userAgent銆?/// </summary>
 [ElasticsearchType(RelationName = "rbac_audit_log")]
 public sealed class AuditLogDocument
 {
-    [Keyword(Name = "auditId", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "auditId")]
     public string AuditId { get; set; } = string.Empty;
 
-    [Keyword(Name = "traceId", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "traceId")]
     public string TraceId { get; set; } = string.Empty;
 
-    [Keyword(Name = "userid", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "userid")]
     public string Userid { get; set; } = string.Empty;
 
-    [Keyword(Name = "project", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "project")]
     public string Project { get; set; } = string.Empty;
 
-    [Keyword(Name = "requestedProject", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "requestedProject")]
     public string RequestedProject { get; set; } = string.Empty;
 
-    [Keyword(Name = "permissionCode", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "permissionCode")]
     public string PermissionCode { get; set; } = string.Empty;
 
-    [Keyword(Name = "action", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "action")]
     public string Action { get; set; } = string.Empty;
 
-    [Keyword(Name = "result", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "result")]
     public string Result { get; set; } = string.Empty;
 
-    [Keyword(Name = "reason", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "reason")]
     public string Reason { get; set; } = string.Empty;
 
-    [Text(Name = "apiPath", CopyTo = new[] { "allText" })]
+    [Text(Name = "apiPath")]
     public string ApiPath { get; set; } = string.Empty;
 
-    [Keyword(Name = "httpMethod", CopyTo = new[] { "allText" })]
+    [Keyword(Name = "httpMethod")]
     public string HttpMethod { get; set; } = string.Empty;
 
-    [Ip(Name = "clientIp", CopyTo = new[] { "allText" })]
+    [Ip(Name = "clientIp")]
     public string ClientIp { get; set; } = string.Empty;
 
-    [Text(Name = "userAgent", CopyTo = new[] { "allText" })]
+    [Text(Name = "userAgent")]
     public string UserAgent { get; set; } = string.Empty;
 
     [Date(Name = "createdAt")]
@@ -269,3 +258,4 @@ public sealed class AuditLogDocument
     [Text(Name = "allText", Index = false)]
     public string AllText { get; set; } = string.Empty;
 }
+

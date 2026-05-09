@@ -27,24 +27,21 @@ public sealed class RbacAuthorizationAuditEmitter
     /// <summary>emit allowlist 放行事件（基础访问日志级别）。</summary>
     public void EmitAllowlistHit(HttpContext ctx, string path)
     {
-        var evt = BuildBase(ctx, path);
-        evt = evt with { Result = "allow", Reason = "Allowlist" };
+        var evt = BuildBase(ctx, path, result: "allow", reason: "Allowlist");
         FireAndForget(evt);
     }
 
     /// <summary>emit project 未授权拒绝事件（高风险）。</summary>
     public void EmitProjectUnauthorized(HttpContext ctx, string path, string reason)
     {
-        var evt = BuildBase(ctx, path);
-        evt = evt with { Result = "deny", Reason = reason };
+        var evt = BuildBase(ctx, path, result: "deny", reason: reason);
         FireAndForget(evt);
     }
 
     /// <summary>emit 路由无权限映射拒绝事件。</summary>
     public void EmitNoPermissionMapping(HttpContext ctx, string path)
     {
-        var evt = BuildBase(ctx, path);
-        evt = evt with { Result = "deny", Reason = "NoPermissionMapping" };
+        var evt = BuildBase(ctx, path, result: "deny", reason: "NoPermissionMapping");
         FireAndForget(evt);
     }
 
@@ -54,20 +51,19 @@ public sealed class RbacAuthorizationAuditEmitter
         string permissionCode, string action,
         string result, string? reason)
     {
-        var evt = BuildBase(ctx, path);
-        evt = evt with
-        {
-            PermissionCode = permissionCode,
-            Action = action,
-            Result = result,
-            Reason = reason ?? result,
-        };
+        var evt = BuildBase(ctx, path, result, reason ?? result, permissionCode, action);
         FireAndForget(evt);
     }
 
     // ── 私有辅助 ──────────────────────────────────────────────────
 
-    private static AuthorizationAuditEvent BuildBase(HttpContext ctx, string path)
+    private static AuthorizationAuditEvent BuildBase(
+        HttpContext ctx,
+        string path,
+        string result,
+        string reason,
+        string permissionCode = "",
+        string action = "")
     {
         var rbacCtx = ctx.RequestServices
             .GetService(typeof(ICurrentRbacContextAccessor)) as ICurrentRbacContextAccessor;
@@ -78,6 +74,10 @@ public sealed class RbacAuthorizationAuditEmitter
             Project = rbacCtx?.Context?.Project ?? string.Empty,
             RequestedProject = rbacCtx?.Context?.RequestedProject ?? string.Empty,
             TraceId = ctx.TraceIdentifier,
+            PermissionCode = permissionCode,
+            Action = action,
+            Result = result,
+            Reason = reason,
             ApiPath = path,
             HttpMethod = ctx.Request.Method,
             ClientIp = ctx.Connection.RemoteIpAddress?.ToString() ?? string.Empty,

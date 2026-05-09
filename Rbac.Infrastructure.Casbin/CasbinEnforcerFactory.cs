@@ -1,4 +1,4 @@
-using NetCasbin;
+using Casbin;
 using Microsoft.Extensions.Logging;
 using Rbac.Application.Policies;
 using Rbac.Domain.ValueObjects;
