@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
-    <PackageReference Include="ZiggyCreatures.FusionCache" Version="1.0.0" />
-    <PackageReference Include="ZiggyCreatures.FusionCache.Backplane.StackExchangeRedis" Version="1.0.0" />
+    <PackageReference Include="StackExchange.Redis" />
+    <PackageReference Include="ZiggyCreatures.FusionCache" />
+    <PackageReference Include="ZiggyCreatures.FusionCache.Backplane.StackExchangeRedis" />
   </ItemGroup>
 
 </Project>

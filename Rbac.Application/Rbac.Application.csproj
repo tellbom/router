@@ -11,8 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ZiggyCreatures.FusionCache" Version="1.0.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.10" />
+    <PackageReference Include="ZiggyCreatures.FusionCache" />
+    <PackageReference Include="System.Text.Json" />
+    <!-- AspNetCore abstractions: HttpContext for IProjectRequestReader -->
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
   </ItemGroup>
 
 </Project>
