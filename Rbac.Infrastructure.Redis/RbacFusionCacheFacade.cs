@@ -1,36 +1,25 @@
 using Microsoft.Extensions.Logging;
 using ZiggyCreatures.Caching.Fusion;
+using Rbac.Application.Cache;
+using Rbac.Application.Contracts.Menus;
 using Rbac.Application.Snapshots;
 
 namespace Rbac.Infrastructure.Redis;
 
 /// <summary>
-/// FusionCache 统一访问门面。
-///
-/// 负责封装以下中等粒度对象的 L1+L2 缓存读取：
-/// - 用户权限快照（snapshot）
-/// - 菜单树（menu-tree）
-/// - API 权限映射（api-map）
-/// - project 授权关系（user-projects）
-///
-/// 明确不包办的操作（直接走 StackExchange.Redis）：
-/// - permset SISMEMBER（由 RbacPermsetStore 负责）
-/// - version 原子递增（INCR）
-/// - 分布式锁（SET NX）
-/// - Pub/Sub PUBLISH / SUBSCRIBE
+/// FusionCache 統一訪問門面，同時實現 Application 層的 IMenuTreeCache。
+/// 使用 net6 兼容的 Func&lt;CancellationToken, Task&lt;T?&gt;&gt; factory 簽名。
 /// </summary>
-public sealed class RbacFusionCacheFacade
+public sealed class RbacFusionCacheFacade : IMenuTreeCache
 {
     private readonly IFusionCache _cache;
     private readonly ILogger<RbacFusionCacheFacade> _logger;
 
-    // L1 TTL 配置（短，降低 Redis 压力）
     private static readonly TimeSpan SnapshotL1Ttl = TimeSpan.FromSeconds(30);
     private static readonly TimeSpan MenuTreeL1Ttl = TimeSpan.FromSeconds(60);
     private static readonly TimeSpan ApiMapL1Ttl = TimeSpan.FromSeconds(120);
     private static readonly TimeSpan UserProjectsL1Ttl = TimeSpan.FromSeconds(60);
 
-    // L2 Redis TTL
     private static readonly TimeSpan SnapshotL2Ttl = TimeSpan.FromMinutes(45);
     private static readonly TimeSpan MenuTreeL2Ttl = TimeSpan.FromMinutes(60);
     private static readonly TimeSpan ApiMapL2Ttl = TimeSpan.FromMinutes(60);
@@ -42,84 +31,77 @@ public sealed class RbacFusionCacheFacade
         _logger = logger;
     }
 
-    // ── 用户权限快照 ──────────────────────────────────────────────
+    // ── IMenuTreeCache 實現 ───────────────────────────────────────
 
-    /// <summary>
-    /// 读取用户权限快照。L1 miss → L2 Redis → factory（MySQL 重建）。
-    /// factory 为 null 时，未命中返回 null（由调用方决定是否触发重建）。
-    /// </summary>
-    public async Task<UserPermissionSnapshot?> GetSnapshotAsync(
-        string project, string userid,
-        Func<FusionCacheFactoryExecutionContext<UserPermissionSnapshot?>, CancellationToken, Task<UserPermissionSnapshot?>>? factory = null,
+    public async Task<IReadOnlyList<MenuNodeDto>?> GetMenuTreeAsync(
+        string project,
+        Func<CancellationToken, Task<IReadOnlyList<MenuNodeDto>?>> factory,
         CancellationToken ct = default)
     {
-        var key = RbacRedisKeys.Snapshot(project, userid);
+        return await _cache.GetOrSetAsync<IReadOnlyList<MenuNodeDto>?>(
+            RbacRedisKeys.MenuTree(project),
+            factory,
+            BuildOptions(MenuTreeL1Ttl, MenuTreeL2Ttl, failSafe: true),
+            ct);
+    }
+
+    public Task EvictMenuTreeAsync(string project) =>
+        _cache.RemoveAsync(RbacRedisKeys.MenuTree(project));
+
+    // ── 快照 ─────────────────────────────────────────────────────
+
+    public async Task<UserPermissionSnapshot?> GetSnapshotAsync(
+        string project, string userid,
+        Func<CancellationToken, Task<UserPermissionSnapshot?>>? factory = null,
+        CancellationToken ct = default)
+    {
         return await _cache.GetOrSetAsync<UserPermissionSnapshot?>(
-            key,
-            factory ?? ((_, _) => Task.FromResult<UserPermissionSnapshot?>(null)),
+            RbacRedisKeys.Snapshot(project, userid),
+            factory ?? ((_) => Task.FromResult<UserPermissionSnapshot?>(null)),
             BuildOptions(SnapshotL1Ttl, SnapshotL2Ttl, failSafe: true),
             ct);
     }
 
-    /// <summary>驱逐用户快照 L1 缓存（收到 Pub/Sub 失效事件时调用）。</summary>
     public Task EvictSnapshotAsync(string project, string userid) =>
         _cache.RemoveAsync(RbacRedisKeys.Snapshot(project, userid));
 
-    // ── 菜单树 ────────────────────────────────────────────────────
+    // ── API Map ───────────────────────────────────────────────────
 
-    /// <summary>读取 project 全量启用菜单树。</summary>
-    public async Task<T?> GetMenuTreeAsync<T>(
-        string project,
-        Func<FusionCacheFactoryExecutionContext<T?>, CancellationToken, Task<T?>> factory,
-        CancellationToken ct = default) where T : class
-    {
-        var key = RbacRedisKeys.MenuTree(project);
-        return await _cache.GetOrSetAsync<T?>(key, factory,
-            BuildOptions(MenuTreeL1Ttl, MenuTreeL2Ttl, failSafe: true), ct);
-    }
-
-    /// <summary>驱逐菜单树 L1 缓存。</summary>
-    public Task EvictMenuTreeAsync(string project) =>
-        _cache.RemoveAsync(RbacRedisKeys.MenuTree(project));
-
-    // ── API 权限映射 ──────────────────────────────────────────────
-
-    /// <summary>读取 project 下 API 权限映射表。</summary>
     public async Task<T?> GetApiMapAsync<T>(
         string project,
-        Func<FusionCacheFactoryExecutionContext<T?>, CancellationToken, Task<T?>> factory,
+        Func<CancellationToken, Task<T?>> factory,
         CancellationToken ct = default) where T : class
     {
-        var key = RbacRedisKeys.ApiMap(project);
-        return await _cache.GetOrSetAsync<T?>(key, factory,
-            BuildOptions(ApiMapL1Ttl, ApiMapL2Ttl, failSafe: true), ct);
+        return await _cache.GetOrSetAsync<T?>(
+            RbacRedisKeys.ApiMap(project),
+            factory,
+            BuildOptions(ApiMapL1Ttl, ApiMapL2Ttl, failSafe: true),
+            ct);
     }
 
-    /// <summary>驱逐 API 映射 L1 缓存。</summary>
     public Task EvictApiMapAsync(string project) =>
         _cache.RemoveAsync(RbacRedisKeys.ApiMap(project));
 
-    // ── 用户 project 授权关系 ─────────────────────────────────────
+    // ── User Projects ─────────────────────────────────────────────
 
-    /// <summary>读取用户可访问的 project 授权关系。</summary>
     public async Task<T?> GetUserProjectsAsync<T>(
         string userid,
-        Func<FusionCacheFactoryExecutionContext<T?>, CancellationToken, Task<T?>> factory,
+        Func<CancellationToken, Task<T?>> factory,
         CancellationToken ct = default) where T : class
     {
-        var key = RbacRedisKeys.UserProjects(userid);
-        return await _cache.GetOrSetAsync<T?>(key, factory,
-            BuildOptions(UserProjectsL1Ttl, UserProjectsL2Ttl, failSafe: false), ct);
+        return await _cache.GetOrSetAsync<T?>(
+            RbacRedisKeys.UserProjects(userid),
+            factory,
+            BuildOptions(UserProjectsL1Ttl, UserProjectsL2Ttl, failSafe: false),
+            ct);
     }
 
-    /// <summary>驱逐用户 project 授权 L1 缓存。</summary>
     public Task EvictUserProjectsAsync(string userid) =>
         _cache.RemoveAsync(RbacRedisKeys.UserProjects(userid));
 
-    // ── 私有辅助 ──────────────────────────────────────────────────
+    // ── 私有 ──────────────────────────────────────────────────────
 
-    private static FusionCacheEntryOptions BuildOptions(
-        TimeSpan l1Ttl, TimeSpan l2Ttl, bool failSafe) =>
+    private static FusionCacheEntryOptions BuildOptions(TimeSpan l1Ttl, TimeSpan l2Ttl, bool failSafe) =>
         new()
         {
             Duration = l1Ttl,

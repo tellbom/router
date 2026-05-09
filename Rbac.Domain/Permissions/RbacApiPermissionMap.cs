@@ -27,28 +27,28 @@ public sealed class RbacApiPermissionMap
     public Guid Id { get; private set; }
 
     /// <summary>所属项目。</summary>
-    public ProjectCode Project { get; private set; }
+    public ProjectCode Project { get; private set; } = new ProjectCode("_");
 
     /// <summary>HTTP 方法（大写）：GET / POST / PUT / DELETE / PATCH。</summary>
-    public string HttpMethod { get; private set; }
+    public string HttpMethod { get; private set; } = string.Empty;
 
     /// <summary>
     /// 规范化路由模板。使用 ASP.NET Core route template 语法。
     /// 示例：/api/users/{id}、/api/{project}/menus。
     /// </summary>
-    public string RoutePattern { get; private set; }
+    public string RoutePattern { get; private set; } = string.Empty;
 
     /// <summary>
     /// 对应的权限码。服务端鉴权的判断依据。
     /// 示例：api:system.user.create。
     /// </summary>
-    public PermissionCode PermissionCode { get; private set; }
+    public PermissionCode PermissionCode { get; private set; } = new PermissionCode("_:_");
 
     /// <summary>
     /// 对应的操作类型。
     /// 允许值：read / create / update / delete / execute / access。
     /// </summary>
-    public string Action { get; private set; }
+    public string Action { get; private set; } = string.Empty;
 
     /// <summary>映射状态。Disabled 时该路由按 allowlist 以外的规则处理（默认拒绝）。</summary>
     public ApiMapStatus Status { get; private set; }

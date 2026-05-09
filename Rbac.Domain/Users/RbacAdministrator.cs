@@ -29,13 +29,13 @@ public sealed class RbacAdministrator
     /// 前端兼容业务 ID。API 返回时必须为 string。
     /// 只用于前端编辑、删除、排序和迁移追踪，不作为权限判断依据。
     /// </summary>
-    public DxEId DxEId { get; private set; }
+    public DxEId DxEId { get; private set; } = new DxEId("0");
 
     /// <summary>用户业务标识（来自公司门户/JWT）。权限判断的主体。</summary>
-    public UserId Userid { get; private set; }
+    public UserId Userid { get; private set; } = new UserId("_");
 
     /// <summary>显示名称。</summary>
-    public string Username { get; private set; }
+    public string Username { get; private set; } = string.Empty;
 
     /// <summary>账号状态。</summary>
     public AdminStatus Status { get; private set; }

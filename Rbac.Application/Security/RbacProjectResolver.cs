@@ -113,11 +113,3 @@ public interface IProjectGrantStore
     /// </summary>
     Task<ProjectGrantInfo?> GetGrantAsync(string userid, string project, CancellationToken ct = default);
 }
-
-/// <summary>
-/// 审计事件发射契约。实现必须异步非阻塞（写入内存队列或 Channel）。
-/// </summary>
-public interface IAuditEventEmitter
-{
-    Task EmitAsync(RbacAuditEvent auditEvent);
-}

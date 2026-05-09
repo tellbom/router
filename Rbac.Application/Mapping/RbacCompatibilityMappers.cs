@@ -1,3 +1,4 @@
+using Rbac.Application.Contracts.Menus;
 using Rbac.Application.Contracts.Compatibility;
 using Rbac.Domain.Groups;
 using Rbac.Domain.Permissions;

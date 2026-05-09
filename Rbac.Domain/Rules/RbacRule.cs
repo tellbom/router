@@ -47,19 +47,19 @@ public sealed class RbacRule
     public Guid Id { get; private set; }
 
     /// <summary>前端兼容业务 ID（string）。不作为权限判断依据。</summary>
-    public DxEId DxEId { get; private set; }
+    public DxEId DxEId { get; private set; } = new DxEId("0");
 
     /// <summary>所属项目。</summary>
-    public ProjectCode Project { get; private set; }
+    public ProjectCode Project { get; private set; } = new ProjectCode("_");
 
     /// <summary>规则码（唯一标识，用于菜单树构建和 authNode 匹配）。</summary>
-    public RuleCode RuleCode { get; private set; }
+    public RuleCode RuleCode { get; private set; } = new RuleCode("_");
 
     /// <summary>
     /// 权限码（服务端鉴权依据）。
     /// 格式：{resourceType}:{scope}，例如 menu:system.user / button:system.user.add。
     /// </summary>
-    public PermissionCode PermissionCode { get; private set; }
+    public PermissionCode PermissionCode { get; private set; } = new PermissionCode("_:_");
 
     /// <summary>父级规则码（根节点为 null）。</summary>
     public RuleCode? ParentRuleCode { get; private set; }
@@ -70,13 +70,13 @@ public sealed class RbacRule
     // ── 菜单元数据（Menu / MenuDir 有效）─────────────────────────
 
     /// <summary>菜单显示标题。</summary>
-    public string Title { get; private set; }
+    public string Title { get; private set; } = string.Empty;
 
     /// <summary>前端路由 name，用于 auth() / v-auth 匹配。</summary>
-    public string Name { get; private set; }
+    public string Name { get; private set; } = string.Empty;
 
     /// <summary>前端路由 path。</summary>
-    public string Path { get; private set; }
+    public string Path { get; private set; } = string.Empty;
 
     /// <summary>菜单渲染类型（Tab / Link / Iframe），Button 节点为 null。</summary>
     public MenuType? MenuType { get; private set; }

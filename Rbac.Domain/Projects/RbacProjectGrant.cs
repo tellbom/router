@@ -19,10 +19,10 @@ public sealed class RbacProjectGrant
     public Guid Id { get; private set; }
 
     /// <summary>被授权的用户 ID。</summary>
-    public UserId Userid { get; private set; }
+    public UserId Userid { get; private set; } = new UserId("_");
 
     /// <summary>被授权访问的项目标识。</summary>
-    public ProjectCode Project { get; private set; }
+    public ProjectCode Project { get; private set; } = new ProjectCode("_");
 
     /// <summary>
     /// 该用户在此 project 下是否为超级管理员。
@@ -38,7 +38,7 @@ public sealed class RbacProjectGrant
     public DateTimeOffset UpdatedAt { get; private set; }
 
     /// <summary>授权操作人 userid。</summary>
-    public string GrantedBy { get; private set; }
+    public string GrantedBy { get; private set; } = string.Empty;
 
     private RbacProjectGrant() { }
 

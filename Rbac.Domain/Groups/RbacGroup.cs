@@ -22,16 +22,16 @@ public sealed class RbacGroup
     public Guid Id { get; private set; }
 
     /// <summary>前端兼容业务 ID（string）。不作为权限判断依据。</summary>
-    public DxEId DxEId { get; private set; }
+    public DxEId DxEId { get; private set; } = new DxEId("0");
 
     /// <summary>权限组编码。唯一标识，用于 Casbin policy 中的 role/group。</summary>
-    public GroupCode GroupCode { get; private set; }
+    public GroupCode GroupCode { get; private set; } = new GroupCode("_");
 
     /// <summary>所属项目。权限组在 project 内隔离。</summary>
-    public ProjectCode Project { get; private set; }
+    public ProjectCode Project { get; private set; } = new ProjectCode("_");
 
     /// <summary>权限组名称（显示用）。</summary>
-    public string GroupName { get; private set; }
+    public string GroupName { get; private set; } = string.Empty;
 
     /// <summary>父级权限组编码，支持层级组织。根组为 null。</summary>
     public GroupCode? ParentGroupCode { get; private set; }

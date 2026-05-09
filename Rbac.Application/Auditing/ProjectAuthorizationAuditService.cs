@@ -1,3 +1,4 @@
+using Rbac.Application.Auditing;
 using Microsoft.Extensions.Logging;
 using Rbac.Application.Security;
 
