@@ -33,24 +33,23 @@ public interface IGroupRepository
     Task DeleteAsync(Guid id, CancellationToken ct = default);
 }
 
-/// <summary>用户-权限组关系仓储接口。</summary>
+// ── 用户-组成员关系 ───────────────────────────────────────────────
+
+/// <summary>
+/// 用户-权限组关联仓储接口。
+/// 对应 rbac_group_member 表（Casbin g policy 真相来源）。
+/// 注意：写操作（Add / Remove）由 RbacManagementWriteService 直接操作 DbContext，
+/// 此接口仅提供读取，避免重复封装写路径。
+/// </summary>
 public interface IGroupMemberRepository
 {
-    Task<RbacGroupMember?> FindAsync(
-        UserId userid,
-        GroupCode groupCode,
-        ProjectCode project,
-        CancellationToken ct = default);
+    /// <summary>获取指定用户在指定 project 下的所有组成员记录。</summary>
+    Task<IReadOnlyList<RbacGroupMember>> FindByUseridAndProjectAsync(
+        string userid, string project, CancellationToken ct = default);
 
-    Task<IReadOnlyList<RbacGroupMember>> FindByGroupAsync(
-        GroupCode groupCode,
-        ProjectCode project,
-        CancellationToken ct = default);
-
-    Task<IReadOnlyList<RbacGroupMember>> FindByUseridAsync(
-        UserId userid,
-        ProjectCode project,
-        CancellationToken ct = default);
+    /// <summary>获取指定 groupCode 在指定 project 下的所有成员。</summary>
+    Task<IReadOnlyList<RbacGroupMember>> FindByGroupCodeAndProjectAsync(
+        string groupCode, string project, CancellationToken ct = default);
 }
 
 // ── 菜单/按钮规则 ─────────────────────────────────────────────────

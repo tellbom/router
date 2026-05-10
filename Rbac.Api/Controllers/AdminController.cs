@@ -21,7 +21,7 @@ namespace Rbac.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/admin")]
-public sealed class AdminController : ControllerBase
+public sealed partial class AdminController : ControllerBase
 {
     private readonly ICurrentRbacContextAccessor _ctx;
     private readonly RbacBackendIndexService _indexService;
@@ -65,8 +65,7 @@ public sealed class AdminController : ControllerBase
         [FromQuery] UserSearchQuery query, CancellationToken ct)
     {
         // project 固定为当前上下文，忽略 query.Project 防止越权
-        var project = RequireContext().Project;
-        query.Project = project;
+        query.Project = RequireContext().Project;
         var data = await _search.SearchUsersAsync(query, ct);
         return ApiResponse<PagedData<UserSearchResult>>.Ok(data);
     }

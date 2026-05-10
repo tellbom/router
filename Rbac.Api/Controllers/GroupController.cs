@@ -19,14 +19,14 @@ namespace Rbac.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/group")]
-public sealed class GroupController : ControllerBase
+public sealed partial class GroupController : ControllerBase
 {
     private readonly ICurrentRbacContextAccessor _ctx;
     private readonly IRbacManagementSearchService _search;
     private readonly IRbacManagementWriteService _write;
     private readonly RbacManagementWriteGuard _guard;
     private readonly IRbacDxEIdGenerator _idGen;
-    private readonly IGroupMemberRepository _groupMemberRepo;
+    private readonly IGroupRepository _groupRepo;
 
     public GroupController(
         ICurrentRbacContextAccessor ctx,
@@ -34,14 +34,14 @@ public sealed class GroupController : ControllerBase
         IRbacManagementWriteService write,
         RbacManagementWriteGuard guard,
         IRbacDxEIdGenerator idGen,
-        IGroupMemberRepository groupMemberRepo)
+        IGroupRepository groupRepo)
     {
         _ctx = ctx;
         _search = search;
         _write = write;
         _guard = guard;
         _idGen = idGen;
-        _groupMemberRepo = groupMemberRepo;
+        _groupRepo = groupRepo;
     }
 
     // ── 列表 ──────────────────────────────────────────────────────
@@ -51,8 +51,7 @@ public sealed class GroupController : ControllerBase
     public async Task<ApiResponse<PagedData<GroupSearchResult>>> List(
         [FromQuery] GroupSearchQuery query, CancellationToken ct)
     {
-        var project = RequireContext().Project;
-        query.Project = project;
+        query.Project = RequireContext().Project;
         return ApiResponse<PagedData<GroupSearchResult>>.Ok(
             await _search.SearchGroupsAsync(query, ct));
     }
@@ -166,15 +165,9 @@ public sealed class GroupController : ControllerBase
         var group = await _guard.LoadGroupByDxEIdAsync(dxeId, ctx.Project, ct);
         if (group is null) return Fail(40400, "权限组不存在");
 
-        var userId = new UserId(req.Userid);
-        var existing = await _groupMemberRepo.FindAsync(
-            userId, group.GroupCode, group.Project, ct);
-        if (existing is not null)
-            return ApiResponse<object>.Ok(null!);
-
         var member = RbacGroupMember.Create(
             Guid.NewGuid(),
-            userId,
+            new UserId(req.Userid),
             group.GroupCode,
             group.Project,
             grantedBy: ctx.Userid);
@@ -199,9 +192,12 @@ public sealed class GroupController : ControllerBase
         var group = await _guard.LoadGroupByDxEIdAsync(dxeId, ctx.Project, ct);
         if (group is null) return Fail(40400, "权限组不存在");
 
-        var member = await _groupMemberRepo.FindAsync(
-            new UserId(userid), group.GroupCode, group.Project, ct);
-        if (member is null) return Fail(40400, "用户不在该权限组中");
+        var memberRepo = HttpContext.RequestServices
+            .GetRequiredService<IGroupMemberRepository>();
+        var member = (await memberRepo.FindByUseridAndProjectAsync(userid, ctx.Project, ct))
+            .FirstOrDefault(m => m.GroupCode == group.GroupCode);
+
+        if (member is null) return Fail(40400, "成员关系不存在");
 
         await _write.DeleteGroupMemberAsync(
             member,

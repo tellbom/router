@@ -36,8 +36,6 @@ public sealed class RbacGroup
     /// <summary>父级权限组编码，支持层级组织。根组为 null。</summary>
     public GroupCode? ParentGroupCode { get; private set; }
 
-    // PATCH-13 Step1: 加初始值消除 CS8618。
-    // EF Core 反射实例化后会通过 ValueConverter 覆盖，工厂方法 Create 也会立即赋值。
     /// <summary>该组拥有的规则码集合（对应菜单/按钮规则）。</summary>
     public IReadOnlyList<RuleCode> RuleCodes { get; private set; } = Array.Empty<RuleCode>();
 
@@ -100,6 +98,16 @@ public sealed class RbacGroup
         UpdatedAt = DateTimeOffset.UtcNow;
     }
 
+    /// <summary>
+    /// 更新父级权限组。传入 null 表示提升为根组。
+    /// 调用方有责任防止循环引用（不能将自身或子孙组设为父组）。
+    /// </summary>
+    public void UpdateParentGroupCode(GroupCode? parentGroupCode)
+    {
+        ParentGroupCode = parentGroupCode;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
     public void Disable() { Status = GroupStatus.Disabled; UpdatedAt = DateTimeOffset.UtcNow; }
-    public void Enable() { Status = GroupStatus.Active; UpdatedAt = DateTimeOffset.UtcNow; }
+    public void Enable()  { Status = GroupStatus.Active;   UpdatedAt = DateTimeOffset.UtcNow; }
 }

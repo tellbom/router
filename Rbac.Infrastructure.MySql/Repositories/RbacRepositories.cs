@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Rbac.Application.Repositories;
 using Rbac.Application.Security;
@@ -13,12 +13,10 @@ using Rbac.Infrastructure.MySql.Outbox;
 
 namespace Rbac.Infrastructure.MySql.Repositories;
 
-// ── 管理员 Repository ─────────────────────────────────────────────
+// 鈹€鈹€ 绠＄悊鍛?Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: IAdministratorRepository 的 MySQL/EF Core 实现。
-/// ProjectCode("*") 约定：跳过 project 过滤，读取所有 project 下的记录。
-/// </summary>
+/// PATCH-07: IAdministratorRepository 鐨?MySQL/EF Core 瀹炵幇銆?/// ProjectCode("*") 绾﹀畾锛氳烦杩?project 杩囨护锛岃鍙栨墍鏈?project 涓嬬殑璁板綍銆?/// </summary>
 public sealed class AdministratorRepository : IAdministratorRepository
 {
     private readonly RbacDbContext _db;
@@ -42,7 +40,7 @@ public sealed class AdministratorRepository : IAdministratorRepository
     public async Task<IReadOnlyList<RbacAdministrator>> FindByProjectAsync(
         ProjectCode project, CancellationToken ct = default)
     {
-        // project="*" 约定：返回所有记录（全量重建用）
+        // project="*" 绾﹀畾锛氳繑鍥炴墍鏈夎褰曪紙鍏ㄩ噺閲嶅缓鐢級
         var query = project.Value == "*"
             ? _db.Administrators
             : _db.Administrators.Where(a =>
@@ -72,11 +70,10 @@ public sealed class AdministratorRepository : IAdministratorRepository
     }
 }
 
-// ── 权限组 Repository ─────────────────────────────────────────────
+// 鈹€鈹€ 鏉冮檺缁?Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: IGroupRepository 的 MySQL/EF Core 实现。
-/// </summary>
+/// PATCH-07: IGroupRepository 鐨?MySQL/EF Core 瀹炵幇銆?/// </summary>
 public sealed class GroupRepository : IGroupRepository
 {
     private readonly RbacDbContext _db;
@@ -122,47 +119,10 @@ public sealed class GroupRepository : IGroupRepository
     }
 }
 
-// ── 规则 Repository ───────────────────────────────────────────────
+// 鈹€鈹€ 瑙勫垯 Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: IRuleRepository 的 MySQL/EF Core 实现。
-/// </summary>
-/// <summary>
-/// PATCH-07: IGroupMemberRepository 的 MySQL/EF Core 实现。
-/// </summary>
-public sealed class GroupMemberRepository : IGroupMemberRepository
-{
-    private readonly RbacDbContext _db;
-
-    public GroupMemberRepository(RbacDbContext db) => _db = db;
-
-    public Task<RbacGroupMember?> FindAsync(
-        UserId userid,
-        GroupCode groupCode,
-        ProjectCode project,
-        CancellationToken ct = default)
-        => _db.GroupMembers.FirstOrDefaultAsync(m =>
-            m.Userid == userid &&
-            m.GroupCode == groupCode &&
-            m.Project == project,
-            ct);
-
-    public async Task<IReadOnlyList<RbacGroupMember>> FindByGroupAsync(
-        GroupCode groupCode,
-        ProjectCode project,
-        CancellationToken ct = default)
-        => await _db.GroupMembers
-            .Where(m => m.GroupCode == groupCode && m.Project == project)
-            .ToListAsync(ct);
-
-    public async Task<IReadOnlyList<RbacGroupMember>> FindByUseridAsync(
-        UserId userid,
-        ProjectCode project,
-        CancellationToken ct = default)
-        => await _db.GroupMembers
-            .Where(m => m.Userid == userid && m.Project == project)
-            .ToListAsync(ct);
-}
+/// PATCH-07: IRuleRepository 鐨?MySQL/EF Core 瀹炵幇銆?/// </summary>
 
 public sealed class RuleRepository : IRuleRepository
 {
@@ -191,7 +151,7 @@ public sealed class RuleRepository : IRuleRepository
     public async Task<IReadOnlyList<RbacRule>> FindByGroupCodeAsync(
         GroupCode groupCode, ProjectCode project, CancellationToken ct = default)
     {
-        // 从组的 RuleCodes 集合匹配规则
+        // 浠庣粍鐨?RuleCodes 闆嗗悎鍖归厤瑙勫垯
         var group = await _db.Groups
             .FirstOrDefaultAsync(g => g.GroupCode == groupCode && g.Project == project, ct);
 
@@ -225,11 +185,10 @@ public sealed class RuleRepository : IRuleRepository
     }
 }
 
-// ── ProjectGrant Repository ───────────────────────────────────────
+// 鈹€鈹€ ProjectGrant Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: IProjectGrantRepository 的 MySQL/EF Core 实现。
-/// </summary>
+/// PATCH-07: IProjectGrantRepository 鐨?MySQL/EF Core 瀹炵幇銆?/// </summary>
 public sealed class ProjectGrantRepository : IProjectGrantRepository
 {
     private readonly RbacDbContext _db;
@@ -270,11 +229,10 @@ public sealed class ProjectGrantRepository : IProjectGrantRepository
     }
 }
 
-// ── ApiPermissionMap Repository ───────────────────────────────────
+// 鈹€鈹€ ApiPermissionMap Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: IApiPermissionMapRepository 的 MySQL/EF Core 实现。
-/// </summary>
+/// PATCH-07: IApiPermissionMapRepository 鐨?MySQL/EF Core 瀹炵幇銆?/// </summary>
 public sealed class ApiPermissionMapRepository : IApiPermissionMapRepository
 {
     private readonly RbacDbContext _db;
@@ -314,12 +272,10 @@ public sealed class ApiPermissionMapRepository : IApiPermissionMapRepository
     }
 }
 
-// ── CasbinPolicy Repository ───────────────────────────────────────
+// 鈹€鈹€ CasbinPolicy Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: ICasbinPolicyRepository 的 MySQL/EF Core 实现。
-/// 复用 GroupRepository 中的查询逻辑，通过 EF Core 直接查询。
-/// </summary>
+/// PATCH-07: ICasbinPolicyRepository 鐨?MySQL/EF Core 瀹炵幇銆?/// 澶嶇敤 GroupRepository 涓殑鏌ヨ閫昏緫锛岄€氳繃 EF Core 鐩存帴鏌ヨ銆?/// </summary>
 public sealed class CasbinPolicyRepository : ICasbinPolicyRepository
 {
     private readonly RbacDbContext _db;
@@ -329,9 +285,9 @@ public sealed class CasbinPolicyRepository : ICasbinPolicyRepository
     public async Task<IReadOnlyList<(string Userid, string GroupCode, string Project)>>
         GetGroupingPoliciesAsync(ProjectCode project, CancellationToken ct = default)
     {
-        // g policy：用户-组关系，当前由 Casbin 策略文件管理
-        // 此处返回空集合，等待 user_group_member 表建立后替换
-        // （与 CasbinMySqlGroupingPolicyReader 保持一致）
+        // g policy锛氱敤鎴?缁勫叧绯伙紝褰撳墠鐢?Casbin 绛栫暐鏂囦欢绠＄悊
+        // 姝ゅ杩斿洖绌洪泦鍚堬紝绛夊緟 user_group_member 琛ㄥ缓绔嬪悗鏇挎崲
+        // 锛堜笌 CasbinMySqlGroupingPolicyReader 淇濇寔涓€鑷达級
         await Task.CompletedTask;
         return Array.Empty<(string, string, string)>();
     }
@@ -367,12 +323,10 @@ public sealed class CasbinPolicyRepository : ICasbinPolicyRepository
     }
 }
 
-// ── ProjectGrantMySqlReader ───────────────────────────────────────
+// 鈹€鈹€ ProjectGrantMySqlReader 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: IProjectGrantMySqlReader 的 MySQL/EF Core 实现。
-/// 供 RbacProjectGrantCache 在 FusionCache/Redis 均未命中时做 MySQL 兜底。
-/// </summary>
+/// PATCH-07: IProjectGrantMySqlReader 鐨?MySQL/EF Core 瀹炵幇銆?/// 渚?RbacProjectGrantCache 鍦?FusionCache/Redis 鍧囨湭鍛戒腑鏃跺仛 MySQL 鍏滃簳銆?/// </summary>
 public sealed class ProjectGrantMySqlReader : IProjectGrantMySqlReader
 {
     private readonly RbacDbContext _db;
@@ -389,7 +343,6 @@ public sealed class ProjectGrantMySqlReader : IProjectGrantMySqlReader
     {
         _logger.LogDebug("MySQL fallback GetUserGrants userid={U}", userid);
 
-        // 查用户是否存在且未禁用
         var userId = new UserId(userid);
         var admin = await _db.Administrators
             .FirstOrDefaultAsync(a => a.Userid == userId, ct);
@@ -400,7 +353,7 @@ public sealed class ProjectGrantMySqlReader : IProjectGrantMySqlReader
             return null;
         }
 
-        // 读取该用户所有 project 授权
+        // 璇诲彇璇ョ敤鎴锋墍鏈?project 鎺堟潈
         var grants = await _db.ProjectGrants
             .Where(g => g.Userid == userId)
             .ToListAsync(ct);
@@ -417,7 +370,7 @@ public sealed class ProjectGrantMySqlReader : IProjectGrantMySqlReader
             map.Projects[grant.Project.Value] = new ProjectGrantInfo
             {
                 IsSuper = grant.IsSuper,
-                PolicyVersion = 0, // 从 Redis policy-version key 读取，此处占位
+                PolicyVersion = 0,
             };
         }
 

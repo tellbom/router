@@ -154,7 +154,51 @@ public sealed class RbacRule
     }
 
     public void Disable() { Status = RuleStatus.Disabled; UpdatedAt = DateTimeOffset.UtcNow; }
-    public void Enable() { Status = RuleStatus.Active; UpdatedAt = DateTimeOffset.UtcNow; }
+    public void Enable()  { Status = RuleStatus.Active;   UpdatedAt = DateTimeOffset.UtcNow; }
 
     public void UpdateWeigh(int weigh) { Weigh = weigh; UpdatedAt = DateTimeOffset.UtcNow; }
+
+    /// <summary>
+    /// 更新菜单/按钮规则的元数据字段。
+    /// 仅更新非 null 参数，null 表示"不变"。
+    /// permissionCode 变更后调用方必须通过 Outbox 触发 MenuChanged 事件。
+    /// parentRuleCode 变更表示菜单层级调整，同样产生 MenuChanged。
+    /// </summary>
+    public void UpdateMenuMeta(
+        string? title = null,
+        string? name = null,
+        string? path = null,
+        RuleCode? parentRuleCode = null,
+        Rules.MenuType? menuType = null,
+        string? url = null,
+        string? component = null,
+        string? extend = null,
+        bool? keepalive = null,
+        int? weigh = null,
+        RuleStatus? status = null,
+        PermissionCode? permissionCode = null,
+        bool parentRuleCodeSpecified = false)
+    {
+        if (title is not null)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("Title cannot be empty.", nameof(title));
+            Title = title.Trim();
+        }
+
+        if (name is not null)      Name          = name.Trim();
+        if (path is not null)      Path          = path.Trim();
+        if (parentRuleCodeSpecified) ParentRuleCode = parentRuleCode;
+        if (menuType is not null)  MenuType      = menuType;
+        if (url is not null)       Url           = url;
+        if (component is not null) Component     = component;
+        if (extend is not null)    Extend        = extend;
+        if (keepalive is not null) Keepalive     = keepalive.Value;
+        if (weigh is not null)     Weigh         = weigh.Value;
+        if (permissionCode is not null) PermissionCode = permissionCode;
+
+        if (status == RuleStatus.Disabled) Disable();
+        else if (status == RuleStatus.Active) Enable();
+        else UpdatedAt = DateTimeOffset.UtcNow; // 至少更新时间
+    }
 }

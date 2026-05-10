@@ -19,7 +19,7 @@ namespace Rbac.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/rule")]
-public sealed class RuleController : ControllerBase
+public sealed partial class RuleController : ControllerBase
 {
     private readonly ICurrentRbacContextAccessor _ctx;
     private readonly IRbacManagementSearchService _search;
@@ -62,8 +62,7 @@ public sealed class RuleController : ControllerBase
     public async Task<ApiResponse<PagedData<RuleSearchResult>>> List(
         [FromQuery] RuleSearchQuery query, CancellationToken ct)
     {
-        var project = RequireContext().Project;
-        query.Project = project;
+        query.Project = RequireContext().Project;
         return ApiResponse<PagedData<RuleSearchResult>>.Ok(
             await _search.SearchRulesAsync(query, ct));
     }

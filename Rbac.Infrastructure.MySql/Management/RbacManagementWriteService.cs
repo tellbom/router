@@ -19,12 +19,6 @@ namespace Rbac.Infrastructure.MySql.Management;
 /// 核心事务保证：
 ///   每个方法内，业务实体写入 + IOutboxWriter.Append 均在同一个 RbacDbContext 内完成，
 ///   由最后一次 SaveChangesAsync 原子提交。
-///   IOutboxWriter.Append 是 void（仅追加到变更跟踪），不单独 SaveChanges。
-///
-/// 约束：
-///   - 不从 Redis / ES 读取任何数据。
-///   - Payload 字段全部由调用方传入，不在服务内反查（除必要的 EF 状态判断）。
-///   - 禁止从 rbac_project_grant × rbac_group 做笛卡尔积推导。
 /// </summary>
 public sealed class RbacManagementWriteService : IRbacManagementWriteService
 {
@@ -58,36 +52,106 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
         CancellationToken ct = default)
     {
         ValidateOperator(operatorUserid);
-
-        // 新增 or 更新（按 Guid 判断是否已被 EF 跟踪）
         UpsertEntity(_db.Administrators, admin);
-
-        // 构造 Outbox 事件
-        var payload = new UserChangedPayload
-        {
-            Userid             = admin.Userid.Value,
-            UserGuid           = admin.Id.ToString(),
-            Project            = string.Empty, // 管理员不绑定单一 project
-            ChangedFields      = changedFields,
-            OldStatus          = oldStatus,
-            NewStatus          = admin.Status.ToString(),
-            AffectedGroupCodes = affectedGroupCodes,
-            OperatorUserid     = operatorUserid,
-        };
 
         _outbox.Append(new RbacOutboxEvent
         {
             EventType = RbacOutboxEventTypes.UserChanged,
             Project   = string.Empty,
             Userid    = admin.Userid.Value,
-            Payload   = Serialize(payload),
+            Payload   = Serialize(new UserChangedPayload
+            {
+                Userid             = admin.Userid.Value,
+                UserGuid           = admin.Id.ToString(),
+                Project            = string.Empty,
+                ChangedFields      = changedFields,
+                OldStatus          = oldStatus,
+                NewStatus          = admin.Status.ToString(),
+                AffectedGroupCodes = affectedGroupCodes,
+                OperatorUserid     = operatorUserid,
+            }),
         });
 
         await _db.SaveChangesAsync(ct);
+        _logger.LogInformation("SaveAdministrator userid={U} operator={Op}", admin.Userid.Value, operatorUserid);
+    }
 
+    public async Task DeleteAdministratorAsync(
+        RbacAdministrator admin,
+        string operatorUserid,
+        CancellationToken ct = default)
+    {
+        ValidateOperator(operatorUserid);
+
+        // 1. 查出该用户所有 GroupMember 记录，逐条产生 PolicyChanged + GroupChanged，
+        //    然后批量删除（同一事务）
+        var members = await _db.GroupMembers
+            .Where(m => m.Userid.Value == admin.Userid.Value)
+            .ToListAsync(ct);
+
+        foreach (var member in members)
+        {
+            // 取该组当前 permissionCodes（用于 Outbox payload）
+            var group = await _db.Groups.FirstOrDefaultAsync(
+                g => g.GroupCode == member.GroupCode && g.Project == member.Project, ct);
+            var permCodes = group?.PermissionCodes.Select(p => p.Value).ToList()
+                ?? new List<string>();
+
+            AppendPolicyChangedEvent(
+                member.Project.Value, member.GroupCode.Value,
+                permissionCode: string.Join(",", permCodes),
+                action: "access", changeKind: "Removed", subjectType: "User",
+                affectedUserids: new[] { admin.Userid.Value },
+                operatorUserid,
+                userid: admin.Userid.Value);
+
+            _outbox.Append(new RbacOutboxEvent
+            {
+                EventType = RbacOutboxEventTypes.GroupChanged,
+                Project   = member.Project.Value,
+                GroupCode = member.GroupCode.Value,
+                Payload   = Serialize(new GroupChangedPayload
+                {
+                    GroupCode          = member.GroupCode.Value,
+                    GroupGuid          = group?.Id.ToString() ?? string.Empty,
+                    Project            = member.Project.Value,
+                    ChangedFields      = new[] { "members" },
+                    OldPermissionCodes = permCodes,
+                    NewPermissionCodes = Array.Empty<string>(),
+                    AffectedUserids    = new[] { admin.Userid.Value },
+                    OperatorUserid     = operatorUserid,
+                }),
+            });
+        }
+
+        _db.GroupMembers.RemoveRange(members);
+
+        // 2. 删除管理员记录
+        _db.Administrators.Remove(admin);
+
+        // 3. UserChanged（变更类型 = deleted）
+        _outbox.Append(new RbacOutboxEvent
+        {
+            EventType = RbacOutboxEventTypes.UserChanged,
+            Project   = string.Empty,
+            Userid    = admin.Userid.Value,
+            Payload   = Serialize(new UserChangedPayload
+            {
+                Userid             = admin.Userid.Value,
+                UserGuid           = admin.Id.ToString(),
+                Project            = string.Empty,
+                ChangedFields      = new[] { "deleted" },
+                OldStatus          = admin.Status.ToString(),
+                NewStatus          = "Deleted",
+                AffectedGroupCodes = members.Select(m => m.GroupCode.Value).ToList(),
+                OperatorUserid     = operatorUserid,
+            }),
+        });
+
+        await _db.SaveChangesAsync(ct);
         _logger.LogInformation(
-            "SaveAdministrator userid={U} changedFields={F} operator={Op}",
-            admin.Userid.Value, string.Join(",", changedFields), operatorUserid);
+            "DeleteAdministrator userid={U} membersCleaned={N} operator={Op}",
+            admin.Userid.Value, members.Count, operatorUserid);
     }
 
     // ── 2. 权限组 ─────────────────────────────────────────────────
@@ -102,68 +166,122 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
         CancellationToken ct = default)
     {
         ValidateOperator(operatorUserid);
-
         UpsertEntity(_db.Groups, group);
 
         var newPermCodes = group.PermissionCodes.Select(p => p.Value).ToList();
         var newRuleCodes = group.RuleCodes.Select(r => r.Value).ToList();
-
-        // GroupChanged 事件（必须产生）
-        var groupPayload = new GroupChangedPayload
-        {
-            GroupCode         = group.GroupCode.Value,
-            GroupGuid         = group.Id.ToString(),
-            Project           = group.Project.Value,
-            ChangedFields     = changedFields,
-            OldRuleCodes      = oldRuleCodes,
-            NewRuleCodes      = newRuleCodes,
-            OldPermissionCodes = oldPermissionCodes,
-            NewPermissionCodes = newPermCodes,
-            AffectedUserids   = affectedUserids,
-            OperatorUserid    = operatorUserid,
-        };
 
         _outbox.Append(new RbacOutboxEvent
         {
             EventType = RbacOutboxEventTypes.GroupChanged,
             Project   = group.Project.Value,
             GroupCode = group.GroupCode.Value,
-            Payload   = Serialize(groupPayload),
+            Payload   = Serialize(new GroupChangedPayload
+            {
+                GroupCode          = group.GroupCode.Value,
+                GroupGuid          = group.Id.ToString(),
+                Project            = group.Project.Value,
+                ChangedFields      = changedFields,
+                OldRuleCodes       = oldRuleCodes,
+                NewRuleCodes       = newRuleCodes,
+                OldPermissionCodes = oldPermissionCodes,
+                NewPermissionCodes = newPermCodes,
+                AffectedUserids    = affectedUserids,
+                OperatorUserid     = operatorUserid,
+            }),
         });
 
-        // PolicyChanged 事件（permissionCodes 有变化时额外产生，驱动 Casbin reload）
-        var permCodesChanged = !oldPermissionCodes
-            .OrderBy(x => x)
+        var permCodesChanged = !oldPermissionCodes.OrderBy(x => x)
             .SequenceEqual(newPermCodes.OrderBy(x => x));
 
         if (permCodesChanged)
         {
-            // 每个新增的权限码产生一条 Added 策略记录
-            foreach (var addedPerm in newPermCodes.Except(oldPermissionCodes, StringComparer.OrdinalIgnoreCase))
-            {
-                AppendPolicyChangedEvent(
-                    group.Project.Value, group.GroupCode.Value,
-                    addedPerm, action: "access",
-                    changeKind: "Added", subjectType: "Group",
-                    affectedUserids, operatorUserid);
-            }
+            foreach (var added in newPermCodes.Except(oldPermissionCodes, StringComparer.OrdinalIgnoreCase))
+                AppendPolicyChangedEvent(group.Project.Value, group.GroupCode.Value,
+                    added, "access", "Added", "Group", affectedUserids, operatorUserid);
 
-            // 每个移除的权限码产生一条 Removed 策略记录
-            foreach (var removedPerm in oldPermissionCodes.Except(newPermCodes, StringComparer.OrdinalIgnoreCase))
-            {
-                AppendPolicyChangedEvent(
-                    group.Project.Value, group.GroupCode.Value,
-                    removedPerm, action: "access",
-                    changeKind: "Removed", subjectType: "Group",
-                    affectedUserids, operatorUserid);
-            }
+            foreach (var removed in oldPermissionCodes.Except(newPermCodes, StringComparer.OrdinalIgnoreCase))
+                AppendPolicyChangedEvent(group.Project.Value, group.GroupCode.Value,
+                    removed, "access", "Removed", "Group", affectedUserids, operatorUserid);
         }
 
         await _db.SaveChangesAsync(ct);
+        _logger.LogInformation("SaveGroup groupCode={G} project={P} operator={Op}",
+            group.GroupCode.Value, group.Project.Value, operatorUserid);
+    }
 
+    public async Task DeleteGroupAsync(
+        RbacGroup group,
+        IReadOnlyList<string> affectedUserids,
+        string operatorUserid,
+        CancellationToken ct = default)
+    {
+        ValidateOperator(operatorUserid);
+
+        // 1. 清理 GroupMember，每条产生 PolicyChanged + GroupChanged
+        var members = await _db.GroupMembers
+            .Where(m => m.GroupCode == group.GroupCode && m.Project == group.Project)
+            .ToListAsync(ct);
+
+        var permCodes = group.PermissionCodes.Select(p => p.Value).ToList();
+
+        foreach (var member in members)
+        {
+            AppendPolicyChangedEvent(
+                group.Project.Value, group.GroupCode.Value,
+                permissionCode: string.Join(",", permCodes),
+                action: "access", changeKind: "Removed", subjectType: "User",
+                affectedUserids: new[] { member.Userid.Value },
+                operatorUserid,
+                userid: member.Userid.Value);
+
+            _outbox.Append(new RbacOutboxEvent
+            {
+                EventType = RbacOutboxEventTypes.GroupChanged,
+                Project   = group.Project.Value,
+                GroupCode = group.GroupCode.Value,
+                Payload   = Serialize(new GroupChangedPayload
+                {
+                    GroupCode          = group.GroupCode.Value,
+                    GroupGuid          = group.Id.ToString(),
+                    Project            = group.Project.Value,
+                    ChangedFields      = new[] { "members" },
+                    OldPermissionCodes = permCodes,
+                    NewPermissionCodes = Array.Empty<string>(),
+                    AffectedUserids    = new[] { member.Userid.Value },
+                    OperatorUserid     = operatorUserid,
+                }),
+            });
+        }
+
+        _db.GroupMembers.RemoveRange(members);
+
+        // 2. 删除 Group 记录
+        _db.Groups.Remove(group);
+
+        // 3. 最终 GroupChanged（changeKind=Deleted）
+        _outbox.Append(new RbacOutboxEvent
+        {
+            EventType = RbacOutboxEventTypes.GroupChanged,
+            Project   = group.Project.Value,
+            GroupCode = group.GroupCode.Value,
+            Payload   = Serialize(new GroupChangedPayload
+            {
+                GroupCode          = group.GroupCode.Value,
+                GroupGuid          = group.Id.ToString(),
+                Project            = group.Project.Value,
+                ChangedFields      = new[] { "deleted" },
+                OldPermissionCodes = permCodes,
+                NewPermissionCodes = Array.Empty<string>(),
+                AffectedUserids    = affectedUserids,
+                OperatorUserid     = operatorUserid,
+            }),
+        });
+
+        await _db.SaveChangesAsync(ct);
         _logger.LogInformation(
-            "SaveGroup groupCode={G} project={P} permCodesChanged={C} operator={Op}",
-            group.GroupCode.Value, group.Project.Value, permCodesChanged, operatorUserid);
+            "DeleteGroup groupCode={G} project={P} membersCleaned={N} operator={Op}",
+            group.GroupCode.Value, group.Project.Value, members.Count, operatorUserid);
     }
 
     // ── 3. 规则/菜单 ──────────────────────────────────────────────
@@ -176,15 +294,10 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
         CancellationToken ct = default)
     {
         ValidateOperator(operatorUserid);
-
         UpsertEntity(_db.Rules, rule);
-
         _outbox.Append(BuildMenuChangedEvent(rule, changeKind, affectedPermissionCodes, operatorUserid));
-
         await _db.SaveChangesAsync(ct);
-
-        _logger.LogInformation(
-            "SaveRule ruleCode={R} project={P} changeKind={K} operator={Op}",
+        _logger.LogInformation("SaveRule ruleCode={R} project={P} changeKind={K} operator={Op}",
             rule.RuleCode.Value, rule.Project.Value, changeKind, operatorUserid);
     }
 
@@ -195,16 +308,10 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
         CancellationToken ct = default)
     {
         ValidateOperator(operatorUserid);
-
-        // 软删除：由领域模型 Disable 控制状态；硬删除时直接 Remove
         _db.Rules.Remove(rule);
-
         _outbox.Append(BuildMenuChangedEvent(rule, "Deleted", affectedPermissionCodes, operatorUserid));
-
         await _db.SaveChangesAsync(ct);
-
-        _logger.LogInformation(
-            "DeleteRule ruleCode={R} project={P} operator={Op}",
+        _logger.LogInformation("DeleteRule ruleCode={R} project={P} operator={Op}",
             rule.RuleCode.Value, rule.Project.Value, operatorUserid);
     }
 
@@ -220,33 +327,28 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
         CancellationToken ct = default)
     {
         ValidateOperator(operatorUserid);
-
         UpsertEntity(_db.ProjectGrants, grant);
-
-        var payload = new ProjectGrantChangedPayload
-        {
-            Project        = grant.Project.Value,
-            Userid         = grant.Userid.Value,
-            GrantKind      = grantKind,
-            OldProjects    = oldProjects,
-            NewProjects    = newProjects,
-            OldSuper       = oldSuper,
-            NewSuper       = grant.IsSuper,
-            OperatorUserid = operatorUserid,
-        };
 
         _outbox.Append(new RbacOutboxEvent
         {
             EventType = RbacOutboxEventTypes.ProjectGrantChanged,
             Project   = grant.Project.Value,
             Userid    = grant.Userid.Value,
-            Payload   = Serialize(payload),
+            Payload   = Serialize(new ProjectGrantChangedPayload
+            {
+                Project        = grant.Project.Value,
+                Userid         = grant.Userid.Value,
+                GrantKind      = grantKind,
+                OldProjects    = oldProjects,
+                NewProjects    = newProjects,
+                OldSuper       = oldSuper,
+                NewSuper       = grant.IsSuper,
+                OperatorUserid = operatorUserid,
+            }),
         });
 
         await _db.SaveChangesAsync(ct);
-
-        _logger.LogInformation(
-            "SaveProjectGrant userid={U} project={P} grantKind={K} operator={Op}",
+        _logger.LogInformation("SaveProjectGrant userid={U} project={P} grantKind={K} operator={Op}",
             grant.Userid.Value, grant.Project.Value, grantKind, operatorUserid);
     }
 
@@ -257,33 +359,28 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
         CancellationToken ct = default)
     {
         ValidateOperator(operatorUserid);
-
         _db.ProjectGrants.Remove(grant);
-
-        var payload = new ProjectGrantChangedPayload
-        {
-            Project        = grant.Project.Value,
-            Userid         = grant.Userid.Value,
-            GrantKind      = "Revoked",
-            OldProjects    = new[] { grant.Project.Value },
-            NewProjects    = remainingProjects,
-            OldSuper       = grant.IsSuper,
-            NewSuper       = false,
-            OperatorUserid = operatorUserid,
-        };
 
         _outbox.Append(new RbacOutboxEvent
         {
             EventType = RbacOutboxEventTypes.ProjectGrantChanged,
             Project   = grant.Project.Value,
             Userid    = grant.Userid.Value,
-            Payload   = Serialize(payload),
+            Payload   = Serialize(new ProjectGrantChangedPayload
+            {
+                Project        = grant.Project.Value,
+                Userid         = grant.Userid.Value,
+                GrantKind      = "Revoked",
+                OldProjects    = new[] { grant.Project.Value },
+                NewProjects    = remainingProjects,
+                OldSuper       = grant.IsSuper,
+                NewSuper       = false,
+                OperatorUserid = operatorUserid,
+            }),
         });
 
         await _db.SaveChangesAsync(ct);
-
-        _logger.LogInformation(
-            "RevokeProjectGrant userid={U} project={P} operator={Op}",
+        _logger.LogInformation("RevokeProjectGrant userid={U} project={P} operator={Op}",
             grant.Userid.Value, grant.Project.Value, operatorUserid);
     }
 
@@ -298,16 +395,10 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
         CancellationToken ct = default)
     {
         ValidateOperator(operatorUserid);
-
         UpsertEntity(_db.ApiPermissionMaps, map);
-
-        _outbox.Append(BuildApiMapChangedEvent(
-            map, changeKind, oldPermissionCode, oldAction, operatorUserid));
-
+        _outbox.Append(BuildApiMapChangedEvent(map, changeKind, oldPermissionCode, oldAction, operatorUserid));
         await _db.SaveChangesAsync(ct);
-
-        _logger.LogInformation(
-            "SaveApiPermissionMap project={P} method={M} route={R} changeKind={K} operator={Op}",
+        _logger.LogInformation("SaveApiPermissionMap project={P} method={M} route={R} changeKind={K} operator={Op}",
             map.Project.Value, map.HttpMethod, map.RoutePattern, changeKind, operatorUserid);
     }
 
@@ -317,19 +408,12 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
         CancellationToken ct = default)
     {
         ValidateOperator(operatorUserid);
-
         _db.ApiPermissionMaps.Remove(map);
-
-        _outbox.Append(BuildApiMapChangedEvent(
-            map, "Deleted",
+        _outbox.Append(BuildApiMapChangedEvent(map, "Deleted",
             oldPermissionCode: map.PermissionCode.Value,
-            oldAction: map.Action,
-            operatorUserid));
-
+            oldAction: map.Action, operatorUserid));
         await _db.SaveChangesAsync(ct);
-
-        _logger.LogInformation(
-            "DeleteApiPermissionMap project={P} method={M} route={R} operator={Op}",
+        _logger.LogInformation("DeleteApiPermissionMap project={P} method={M} route={R} operator={Op}",
             map.Project.Value, map.HttpMethod, map.RoutePattern, operatorUserid);
     }
 
@@ -343,44 +427,33 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
         CancellationToken ct = default)
     {
         ValidateOperator(operatorUserid);
-
         UpsertEntity(_db.GroupMembers, member);
 
-        // PolicyChanged：驱动 Casbin 加载新 g policy（用户被加入组）
         AppendPolicyChangedEvent(
             member.Project.Value, member.GroupCode.Value,
             permissionCode: string.Join(",", groupPermissionCodes),
             action: "access", changeKind: "Added", subjectType: "User",
-            affectedUserids, operatorUserid,
-            userid: member.Userid.Value);
-
-        // GroupChanged：驱动受影响用户的 permset 失效
-        var groupPayload = new GroupChangedPayload
-        {
-            GroupCode         = member.GroupCode.Value,
-            GroupGuid         = string.Empty, // 调用方可补充；此处不反查 group
-            Project           = member.Project.Value,
-            ChangedFields     = new[] { "members" },
-            OldRuleCodes      = Array.Empty<string>(),
-            NewRuleCodes      = Array.Empty<string>(),
-            OldPermissionCodes = Array.Empty<string>(),
-            NewPermissionCodes = groupPermissionCodes,
-            AffectedUserids   = affectedUserids,
-            OperatorUserid    = operatorUserid,
-        };
+            affectedUserids, operatorUserid, userid: member.Userid.Value);
 
         _outbox.Append(new RbacOutboxEvent
         {
             EventType = RbacOutboxEventTypes.GroupChanged,
             Project   = member.Project.Value,
             GroupCode = member.GroupCode.Value,
-            Payload   = Serialize(groupPayload),
+            Payload   = Serialize(new GroupChangedPayload
+            {
+                GroupCode          = member.GroupCode.Value,
+                GroupGuid          = string.Empty,
+                Project            = member.Project.Value,
+                ChangedFields      = new[] { "members" },
+                NewPermissionCodes = groupPermissionCodes,
+                AffectedUserids    = affectedUserids,
+                OperatorUserid     = operatorUserid,
+            }),
         });
 
         await _db.SaveChangesAsync(ct);
-
-        _logger.LogInformation(
-            "SaveGroupMember userid={U} groupCode={G} project={P} operator={Op}",
+        _logger.LogInformation("SaveGroupMember userid={U} groupCode={G} project={P} operator={Op}",
             member.Userid.Value, member.GroupCode.Value, member.Project.Value, operatorUserid);
     }
 
@@ -392,53 +465,38 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
         CancellationToken ct = default)
     {
         ValidateOperator(operatorUserid);
-
         _db.GroupMembers.Remove(member);
 
-        // PolicyChanged：驱动 Casbin 移除 g policy（用户被移出组）
         AppendPolicyChangedEvent(
             member.Project.Value, member.GroupCode.Value,
             permissionCode: string.Join(",", groupPermissionCodes),
             action: "access", changeKind: "Removed", subjectType: "User",
-            affectedUserids, operatorUserid,
-            userid: member.Userid.Value);
-
-        // GroupChanged：驱动受影响用户的 permset 失效
-        var groupPayload = new GroupChangedPayload
-        {
-            GroupCode         = member.GroupCode.Value,
-            GroupGuid         = string.Empty,
-            Project           = member.Project.Value,
-            ChangedFields     = new[] { "members" },
-            OldRuleCodes      = Array.Empty<string>(),
-            NewRuleCodes      = Array.Empty<string>(),
-            OldPermissionCodes = groupPermissionCodes,
-            NewPermissionCodes = Array.Empty<string>(),
-            AffectedUserids   = affectedUserids,
-            OperatorUserid    = operatorUserid,
-        };
+            affectedUserids, operatorUserid, userid: member.Userid.Value);
 
         _outbox.Append(new RbacOutboxEvent
         {
             EventType = RbacOutboxEventTypes.GroupChanged,
             Project   = member.Project.Value,
             GroupCode = member.GroupCode.Value,
-            Payload   = Serialize(groupPayload),
+            Payload   = Serialize(new GroupChangedPayload
+            {
+                GroupCode          = member.GroupCode.Value,
+                GroupGuid          = string.Empty,
+                Project            = member.Project.Value,
+                ChangedFields      = new[] { "members" },
+                OldPermissionCodes = groupPermissionCodes,
+                AffectedUserids    = affectedUserids,
+                OperatorUserid     = operatorUserid,
+            }),
         });
 
         await _db.SaveChangesAsync(ct);
-
-        _logger.LogInformation(
-            "DeleteGroupMember userid={U} groupCode={G} project={P} operator={Op}",
+        _logger.LogInformation("DeleteGroupMember userid={U} groupCode={G} project={P} operator={Op}",
             member.Userid.Value, member.GroupCode.Value, member.Project.Value, operatorUserid);
     }
 
     // ── 私有辅助 ──────────────────────────────────────────────────
 
-    /// <summary>
-    /// Add（新实体）或 Update（已有实体）。
-    /// 按 EF Core EntityState 判断：Detached 表示新实体，否则已跟踪直接更新。
-    /// </summary>
     private void UpsertEntity<T>(DbSet<T> set, T entity) where T : class
     {
         if (_db.Entry(entity).State == EntityState.Detached)
@@ -450,70 +508,55 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
     private static void ValidateOperator(string operatorUserid)
     {
         if (string.IsNullOrWhiteSpace(operatorUserid))
-            throw new ArgumentException(
-                "operatorUserid is required for audit trail.", nameof(operatorUserid));
+            throw new ArgumentException("operatorUserid is required.", nameof(operatorUserid));
     }
 
-    private static string Serialize<T>(T payload) =>
-        JsonSerializer.Serialize(payload, _json);
+    private static string Serialize<T>(T payload) => JsonSerializer.Serialize(payload, _json);
 
-    /// <summary>构造 MenuChanged Outbox 事件。</summary>
     private static RbacOutboxEvent BuildMenuChangedEvent(
         RbacRule rule, string changeKind,
-        IReadOnlyList<string> affectedPermissionCodes,
-        string operatorUserid)
-    {
-        var payload = new MenuChangedPayload
-        {
-            RuleCode                = rule.RuleCode.Value,
-            RuleGuid                = rule.Id.ToString(),
-            DxEId                   = rule.DxEId.Value,
-            Project                 = rule.Project.Value,
-            ChangeKind              = changeKind,
-            ParentRuleCode          = rule.ParentRuleCode?.Value,
-            PermissionCode          = rule.PermissionCode.Value,
-            RoutePath               = rule.Path,
-            MenuType                = rule.MenuType?.ToString(),
-            AffectedPermissionCodes = affectedPermissionCodes,
-            OperatorUserid          = operatorUserid,
-        };
-
-        return new RbacOutboxEvent
+        IReadOnlyList<string> affectedPermissionCodes, string operatorUserid) =>
+        new()
         {
             EventType = RbacOutboxEventTypes.MenuChanged,
             Project   = rule.Project.Value,
-            Payload   = JsonSerializer.Serialize(payload, _json),
+            Payload   = JsonSerializer.Serialize(new MenuChangedPayload
+            {
+                RuleCode                = rule.RuleCode.Value,
+                RuleGuid                = rule.Id.ToString(),
+                DxEId                   = rule.DxEId.Value,
+                Project                 = rule.Project.Value,
+                ChangeKind              = changeKind,
+                ParentRuleCode          = rule.ParentRuleCode?.Value,
+                PermissionCode          = rule.PermissionCode.Value,
+                RoutePath               = rule.Path,
+                MenuType                = rule.MenuType?.ToString(),
+                AffectedPermissionCodes = affectedPermissionCodes,
+                OperatorUserid          = operatorUserid,
+            }, _json),
         };
-    }
 
-    /// <summary>构造 ApiMapChanged Outbox 事件。</summary>
     private static RbacOutboxEvent BuildApiMapChangedEvent(
         RbacApiPermissionMap map, string changeKind,
-        string? oldPermissionCode, string? oldAction,
-        string operatorUserid)
-    {
-        var payload = new ApiMapChangedPayload
-        {
-            Project           = map.Project.Value,
-            HttpMethod        = map.HttpMethod,
-            RoutePattern      = map.RoutePattern,
-            OldPermissionCode = oldPermissionCode,
-            NewPermissionCode = changeKind == "Deleted" ? null : map.PermissionCode.Value,
-            OldAction         = oldAction,
-            NewAction         = changeKind == "Deleted" ? null : map.Action,
-            ChangeKind        = changeKind,
-            OperatorUserid    = operatorUserid,
-        };
-
-        return new RbacOutboxEvent
+        string? oldPermissionCode, string? oldAction, string operatorUserid) =>
+        new()
         {
             EventType = RbacOutboxEventTypes.ApiMapChanged,
             Project   = map.Project.Value,
-            Payload   = JsonSerializer.Serialize(payload, _json),
+            Payload   = JsonSerializer.Serialize(new ApiMapChangedPayload
+            {
+                Project           = map.Project.Value,
+                HttpMethod        = map.HttpMethod,
+                RoutePattern      = map.RoutePattern,
+                OldPermissionCode = oldPermissionCode,
+                NewPermissionCode = changeKind == "Deleted" ? null : map.PermissionCode.Value,
+                OldAction         = oldAction,
+                NewAction         = changeKind == "Deleted" ? null : map.Action,
+                ChangeKind        = changeKind,
+                OperatorUserid    = operatorUserid,
+            }, _json),
         };
-    }
 
-    /// <summary>追加单条 PolicyChanged Outbox 事件到当前 DbContext。</summary>
     private void AppendPolicyChangedEvent(
         string project, string groupCode,
         string permissionCode, string action,
@@ -522,27 +565,25 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
         string operatorUserid,
         string? userid = null)
     {
-        var payload = new PolicyChangedPayload
-        {
-            Project         = project,
-            PolicyVersion   = 0,           // 实际版本由 Redis IncrPolicyVersion 在消费侧递增
-            ChangeKind      = changeKind,
-            SubjectType     = subjectType,
-            Userid          = userid,
-            GroupCode       = groupCode,
-            PermissionCode  = permissionCode,
-            Action          = action,
-            AffectedUserids = affectedUserids,
-            OperatorUserid  = operatorUserid,
-        };
-
         _outbox.Append(new RbacOutboxEvent
         {
             EventType = RbacOutboxEventTypes.PolicyChanged,
             Project   = project,
             GroupCode = groupCode,
             Userid    = userid,
-            Payload   = Serialize(payload),
+            Payload   = Serialize(new PolicyChangedPayload
+            {
+                Project         = project,
+                PolicyVersion   = 0,
+                ChangeKind      = changeKind,
+                SubjectType     = subjectType,
+                Userid          = userid,
+                GroupCode       = groupCode,
+                PermissionCode  = permissionCode,
+                Action          = action,
+                AffectedUserids = affectedUserids,
+                OperatorUserid  = operatorUserid,
+            }),
         });
     }
 }

@@ -14,24 +14,16 @@ namespace Rbac.Application.Management;
 /// 2. 对应 RbacOutboxEvent 追加到同一 DbContext（IOutboxWriter.Append）。
 /// 3. 一次 SaveChangesAsync 同事务提交，两者要么同时成功要么同时回滚。
 ///
-/// 调用方（Controller / Application Service）职责：
+/// 调用方职责：
 /// - 编辑/删除前先通过 RbacManagementWriteGuard 从 MySQL 重新加载聚合根。
-/// - 传入完整的 operatorUserid（不可为 null，写入审计）。
-/// - 传入 changedFields / affectedUserids 等上下文字段（服务内不反查，避免多余查询）。
+/// - 传入完整的 operatorUserid（不可为 null）。
+/// - 传入 changedFields / affectedUserids 等上下文字段（服务内不反查，除明确标注的方法）。
 /// </summary>
 public interface IRbacManagementWriteService
 {
     // ── 1. 管理员 ────────────────────────────────────────────────
 
-    /// <summary>
-    /// 新增或更新管理员账号。
-    /// 产生事件：UserChanged。
-    /// </summary>
-    /// <param name="admin">已构造好的管理员聚合根（调用方负责 Create / 加载后修改）。</param>
-    /// <param name="changedFields">本次变更的字段名列表，例如 ["status", "username"]。</param>
-    /// <param name="oldStatus">变更前状态（可选，首次创建时为 null）。</param>
-    /// <param name="affectedGroupCodes">受影响的权限组编码（用户被移出/移入的组）。</param>
-    /// <param name="operatorUserid">执行操作的管理员 userid，不可为 null。</param>
+    /// <summary>新增或更新管理员账号。产生事件：UserChanged。</summary>
     Task SaveAdministratorAsync(
         RbacAdministrator admin,
         IReadOnlyList<string> changedFields,
@@ -40,18 +32,25 @@ public interface IRbacManagementWriteService
         string operatorUserid,
         CancellationToken ct = default);
 
+    /// <summary>
+    /// 物理删除管理员账号。
+    /// 实现内部负责：① 删除 GroupMember 记录并为每条产生 PolicyChanged + GroupChanged；
+    ///               ② 删除 Administrator 记录并产生 UserChanged。
+    /// 调用方只需传入已从 MySQL 加载的聚合根和操作人。
+    /// 产生事件：UserChanged + N×(PolicyChanged + GroupChanged)。
+    /// </summary>
+    Task DeleteAdministratorAsync(
+        RbacAdministrator admin,
+        string operatorUserid,
+        CancellationToken ct = default);
+
     // ── 2. 权限组 ─────────────────────────────────────────────────
 
     /// <summary>
-    /// 新增或更新权限组（名称、状态、ruleCodes、permissionCodes 变更）。
-    /// 产生事件：GroupChanged；若 permissionCodes 变化额外产生 PolicyChanged。
+    /// 新增或更新权限组（名称、parentGroupCode、状态、ruleCodes、permissionCodes）。
+    /// permissionCodes 变化时额外产生 PolicyChanged。
+    /// 产生事件：GroupChanged [+ PolicyChanged×N]。
     /// </summary>
-    /// <param name="group">已构造好的权限组聚合根。</param>
-    /// <param name="changedFields">变更字段列表。</param>
-    /// <param name="oldRuleCodes">变更前 ruleCodes（首次创建时传空列表）。</param>
-    /// <param name="oldPermissionCodes">变更前 permissionCodes（首次创建时传空列表）。</param>
-    /// <param name="affectedUserids">该组下受影响的用户 ID 列表（调用方从 GroupMembers 查得）。</param>
-    /// <param name="operatorUserid">执行操作的管理员 userid。</param>
     Task SaveGroupAsync(
         RbacGroup group,
         IReadOnlyList<string> changedFields,
@@ -61,16 +60,22 @@ public interface IRbacManagementWriteService
         string operatorUserid,
         CancellationToken ct = default);
 
+    /// <summary>
+    /// 物理删除权限组。
+    /// 实现内部负责：① 删除所有 GroupMember 并产生 PolicyChanged + GroupChanged；
+    ///               ② 删除 Group 记录并产生最终 GroupChanged（changeKind=Deleted）。
+    /// 调用方已在 Controller 完成前置校验（无子组、无关联成员、非操作人所属组）。
+    /// 产生事件：GroupChanged(Deleted) + N×(PolicyChanged + GroupChanged)。
+    /// </summary>
+    Task DeleteGroupAsync(
+        RbacGroup group,
+        IReadOnlyList<string> affectedUserids,
+        string operatorUserid,
+        CancellationToken ct = default);
+
     // ── 3. 规则/菜单 ──────────────────────────────────────────────
 
-    /// <summary>
-    /// 新增或更新规则（菜单/按钮）。
-    /// 产生事件：MenuChanged。
-    /// </summary>
-    /// <param name="rule">已构造好的规则聚合根。</param>
-    /// <param name="changeKind">Created / Updated / Deleted / StatusChanged / Reordered。</param>
-    /// <param name="affectedPermissionCodes">因此菜单变更受影响的权限码列表。</param>
-    /// <param name="operatorUserid">执行操作的管理员 userid。</param>
+    /// <summary>新增或更新规则。产生事件：MenuChanged。</summary>
     Task SaveRuleAsync(
         RbacRule rule,
         string changeKind,
@@ -78,10 +83,7 @@ public interface IRbacManagementWriteService
         string operatorUserid,
         CancellationToken ct = default);
 
-    /// <summary>
-    /// 删除规则。
-    /// 产生事件：MenuChanged（changeKind = Deleted）。
-    /// </summary>
+    /// <summary>删除规则（物理删除）。产生事件：MenuChanged(Deleted)。</summary>
     Task DeleteRuleAsync(
         RbacRule rule,
         IReadOnlyList<string> affectedPermissionCodes,
@@ -90,16 +92,7 @@ public interface IRbacManagementWriteService
 
     // ── 4. Project 授权 ───────────────────────────────────────────
 
-    /// <summary>
-    /// 新增或更新用户-project 授权（含 super 变更）。
-    /// 产生事件：ProjectGrantChanged。
-    /// </summary>
-    /// <param name="grant">已构造好的 ProjectGrant 聚合根。</param>
-    /// <param name="grantKind">Granted / Revoked / SuperGranted / SuperRevoked。</param>
-    /// <param name="oldProjects">变更前该用户的 project 列表（首次授权时传空）。</param>
-    /// <param name="newProjects">变更后该用户的 project 列表。</param>
-    /// <param name="oldSuper">变更前是否 super。</param>
-    /// <param name="operatorUserid">执行操作的管理员 userid。</param>
+    /// <summary>新增或更新 project 授权。产生事件：ProjectGrantChanged。</summary>
     Task SaveProjectGrantAsync(
         RbacProjectGrant grant,
         string grantKind,
@@ -109,10 +102,7 @@ public interface IRbacManagementWriteService
         string operatorUserid,
         CancellationToken ct = default);
 
-    /// <summary>
-    /// 撤销用户-project 授权（删除 grant 记录）。
-    /// 产生事件：ProjectGrantChanged（grantKind = Revoked）。
-    /// </summary>
+    /// <summary>撤销 project 授权。产生事件：ProjectGrantChanged(Revoked)。</summary>
     Task RevokeProjectGrantAsync(
         RbacProjectGrant grant,
         IReadOnlyList<string> remainingProjects,
@@ -121,15 +111,7 @@ public interface IRbacManagementWriteService
 
     // ── 5. API 权限映射 ───────────────────────────────────────────
 
-    /// <summary>
-    /// 新增或更新 API route → permissionCode 映射。
-    /// 产生事件：ApiMapChanged。
-    /// </summary>
-    /// <param name="map">已构造好的 ApiPermissionMap 聚合根。</param>
-    /// <param name="changeKind">Created / Updated / Deleted。</param>
-    /// <param name="oldPermissionCode">变更前权限码（新增时为 null）。</param>
-    /// <param name="oldAction">变更前 action（新增时为 null）。</param>
-    /// <param name="operatorUserid">执行操作的管理员 userid。</param>
+    /// <summary>新增或更新 API 路由映射。产生事件：ApiMapChanged。</summary>
     Task SaveApiPermissionMapAsync(
         RbacApiPermissionMap map,
         string changeKind,
@@ -138,10 +120,7 @@ public interface IRbacManagementWriteService
         string operatorUserid,
         CancellationToken ct = default);
 
-    /// <summary>
-    /// 删除 API 权限映射。
-    /// 产生事件：ApiMapChanged（changeKind = Deleted）。
-    /// </summary>
+    /// <summary>删除 API 路由映射。产生事件：ApiMapChanged(Deleted)。</summary>
     Task DeleteApiPermissionMapAsync(
         RbacApiPermissionMap map,
         string operatorUserid,
@@ -149,14 +128,7 @@ public interface IRbacManagementWriteService
 
     // ── 6. 用户-组成员关系 ─────────────────────────────────────────
 
-    /// <summary>
-    /// 将用户加入权限组。
-    /// 产生事件：PolicyChanged + GroupChanged（双事件，同一事务）。
-    /// </summary>
-    /// <param name="member">已构造好的 GroupMember 聚合根。</param>
-    /// <param name="affectedUserids">此次变更受影响的用户列表（至少包含 member.Userid）。</param>
-    /// <param name="groupPermissionCodes">该组当前的 permissionCodes（用于 PolicyChanged payload）。</param>
-    /// <param name="operatorUserid">执行操作的管理员 userid。</param>
+    /// <summary>将用户加入权限组。产生事件：PolicyChanged + GroupChanged。</summary>
     Task SaveGroupMemberAsync(
         RbacGroupMember member,
         IReadOnlyList<string> affectedUserids,
@@ -164,10 +136,7 @@ public interface IRbacManagementWriteService
         string operatorUserid,
         CancellationToken ct = default);
 
-    /// <summary>
-    /// 将用户从权限组移除。
-    /// 产生事件：PolicyChanged + GroupChanged（双事件，同一事务）。
-    /// </summary>
+    /// <summary>将用户从权限组移除。产生事件：PolicyChanged + GroupChanged。</summary>
     Task DeleteGroupMemberAsync(
         RbacGroupMember member,
         IReadOnlyList<string> affectedUserids,
