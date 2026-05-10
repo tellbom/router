@@ -36,11 +36,13 @@ public sealed class RbacGroup
     /// <summary>父级权限组编码，支持层级组织。根组为 null。</summary>
     public GroupCode? ParentGroupCode { get; private set; }
 
+    // PATCH-13 Step1: 加初始值消除 CS8618。
+    // EF Core 反射实例化后会通过 ValueConverter 覆盖，工厂方法 Create 也会立即赋值。
     /// <summary>该组拥有的规则码集合（对应菜单/按钮规则）。</summary>
-    public IReadOnlyList<RuleCode> RuleCodes { get; private set; }
+    public IReadOnlyList<RuleCode> RuleCodes { get; private set; } = Array.Empty<RuleCode>();
 
     /// <summary>由规则码展开的权限码集合（冗余字段，加速 permset 构建）。</summary>
-    public IReadOnlyList<PermissionCode> PermissionCodes { get; private set; }
+    public IReadOnlyList<PermissionCode> PermissionCodes { get; private set; } = Array.Empty<PermissionCode>();
 
     /// <summary>权限组状态。</summary>
     public GroupStatus Status { get; private set; }

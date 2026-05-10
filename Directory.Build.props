@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>10.0</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Rbac.Domain' Or '$(MSBuildProjectName)' == 'Rbac.Application'">
+    <WarningsAsErrors>$(WarningsAsErrors);CS8618;CS8601;CS8602;CS8603;CS8604</WarningsAsErrors>
+  </PropertyGroup>
+</Project>
