@@ -31,6 +31,7 @@ using Rbac.Infrastructure.MySql.Outbox;
 using Rbac.Infrastructure.MySql.Policies;
 using Rbac.Infrastructure.MySql.Repositories;
 using Rbac.Infrastructure.Redis;
+using Rbac.Application.Backend;
 
 // ─── 注意：不引用 Rbac.Worker ────────────────────────────────────
 // ChannelAuditEventEmitter / RbacAuditEventWorker 已移至
@@ -88,6 +89,7 @@ builder.Services.AddScoped<IOutboxReader>(sp => sp.GetRequiredService<OutboxRead
 // Repositories（PATCH-07）
 builder.Services.AddScoped<IAdministratorRepository,   AdministratorRepository>();
 builder.Services.AddScoped<IGroupRepository,           GroupRepository>();
+builder.Services.AddScoped<IGroupMemberRepository,     GroupMemberRepository>();
 builder.Services.AddScoped<IRuleRepository,            RuleRepository>();
 builder.Services.AddScoped<IProjectGrantRepository,    ProjectGrantRepository>();
 builder.Services.AddScoped<IApiPermissionMapRepository, ApiPermissionMapRepository>();
@@ -181,6 +183,11 @@ builder.Services.AddScoped<RbacProjectMenuTreeService>();
 
 // ── Observability ─────────────────────────────────────────────────
 builder.Services.AddSingleton<Rbac.Application.Observability.RbacMetrics>();
+
+
+// —— Controller
+builder.Services.AddScoped<RbacBackendIndexService>();
+
 
 // ── Build & Pipeline ─────────────────────────────────────────────
 var app = builder.Build();

@@ -127,6 +127,43 @@ public sealed class GroupRepository : IGroupRepository
 /// <summary>
 /// PATCH-07: IRuleRepository 的 MySQL/EF Core 实现。
 /// </summary>
+/// <summary>
+/// PATCH-07: IGroupMemberRepository 的 MySQL/EF Core 实现。
+/// </summary>
+public sealed class GroupMemberRepository : IGroupMemberRepository
+{
+    private readonly RbacDbContext _db;
+
+    public GroupMemberRepository(RbacDbContext db) => _db = db;
+
+    public Task<RbacGroupMember?> FindAsync(
+        UserId userid,
+        GroupCode groupCode,
+        ProjectCode project,
+        CancellationToken ct = default)
+        => _db.GroupMembers.FirstOrDefaultAsync(m =>
+            m.Userid == userid &&
+            m.GroupCode == groupCode &&
+            m.Project == project,
+            ct);
+
+    public async Task<IReadOnlyList<RbacGroupMember>> FindByGroupAsync(
+        GroupCode groupCode,
+        ProjectCode project,
+        CancellationToken ct = default)
+        => await _db.GroupMembers
+            .Where(m => m.GroupCode == groupCode && m.Project == project)
+            .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<RbacGroupMember>> FindByUseridAsync(
+        UserId userid,
+        ProjectCode project,
+        CancellationToken ct = default)
+        => await _db.GroupMembers
+            .Where(m => m.Userid == userid && m.Project == project)
+            .ToListAsync(ct);
+}
+
 public sealed class RuleRepository : IRuleRepository
 {
     private readonly RbacDbContext _db;

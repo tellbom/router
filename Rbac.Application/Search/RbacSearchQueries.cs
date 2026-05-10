@@ -7,7 +7,7 @@ namespace Rbac.Application.Search;
 /// </summary>
 public abstract class EsManagementQuery : PagedQuery
 {
-    public string? Project { get; init; }
+    public string? Project { get; set; }
     public string? Status { get; init; }
     public string? Keyword { get; init; }
 }

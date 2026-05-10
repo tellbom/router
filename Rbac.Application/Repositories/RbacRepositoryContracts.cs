@@ -33,6 +33,26 @@ public interface IGroupRepository
     Task DeleteAsync(Guid id, CancellationToken ct = default);
 }
 
+/// <summary>用户-权限组关系仓储接口。</summary>
+public interface IGroupMemberRepository
+{
+    Task<RbacGroupMember?> FindAsync(
+        UserId userid,
+        GroupCode groupCode,
+        ProjectCode project,
+        CancellationToken ct = default);
+
+    Task<IReadOnlyList<RbacGroupMember>> FindByGroupAsync(
+        GroupCode groupCode,
+        ProjectCode project,
+        CancellationToken ct = default);
+
+    Task<IReadOnlyList<RbacGroupMember>> FindByUseridAsync(
+        UserId userid,
+        ProjectCode project,
+        CancellationToken ct = default);
+}
+
 // ── 菜单/按钮规则 ─────────────────────────────────────────────────
 
 /// <summary>规则聚合根仓储接口。</summary>
