@@ -32,12 +32,10 @@ public sealed class RbacAuditEventWorker : BackgroundService
     /// <summary>全局 Channel Writer，供 ChannelAuditEventEmitter 使用。</summary>
     public static ChannelWriter<RbacAuditEvent> Writer => _channel.Writer;
 
-    private readonly IAuditEventEmitter _emitter;
     private readonly ILogger<RbacAuditEventWorker> _logger;
 
-    public RbacAuditEventWorker(IAuditEventEmitter emitter, ILogger<RbacAuditEventWorker> logger)
+    public RbacAuditEventWorker(ILogger<RbacAuditEventWorker> logger)
     {
-        _emitter = emitter;
         _logger = logger;
     }
 
@@ -49,7 +47,10 @@ public sealed class RbacAuditEventWorker : BackgroundService
         {
             try
             {
-                await _emitter.EmitAsync(evt);
+                _logger.LogInformation(
+                    "Audit event consumed auditId={Id} type={Type}",
+                    evt.AuditId, evt.GetType().Name);
+                await Task.CompletedTask;
             }
             catch (Exception ex)
             {

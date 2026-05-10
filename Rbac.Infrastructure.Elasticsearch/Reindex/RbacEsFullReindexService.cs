@@ -194,7 +194,7 @@ public sealed class RbacEsFullReindexService
             var docs = maps.Select(m =>
             {
                 var key = m.PermissionCode.Value;
-                permToGroups.TryGetValue(key, out var groupInfo);
+                var hasGroupInfo = permToGroups.TryGetValue(key, out var groupInfo);
 
                 return new PermissionViewDocument
                 {
@@ -204,8 +204,8 @@ public sealed class RbacEsFullReindexService
                     Action         = m.Action,
                     ResourceType   = "api",
                     Path           = m.RoutePattern,
-                    GroupCodes     = groupInfo?.Codes ?? new List<string>(),
-                    GroupNames     = groupInfo?.Names ?? new List<string>(),
+                    GroupCodes     = hasGroupInfo ? groupInfo.Codes : new List<string>(),
+                    GroupNames     = hasGroupInfo ? groupInfo.Names : new List<string>(),
                     Status         = m.Status.ToString(),
                     UpdatedAt      = m.UpdatedAt,
                 };
@@ -236,7 +236,7 @@ public sealed class RbacEsFullReindexService
 
         // 审计日志的全量重建是"确保索引和 alias 健康"，而非从 MySQL 批量回填
         // 因为 audit_log 数据量通常极大，且写入是实时流式的
-        return await ExecuteReindexAsync(alias, newIndex, ct, () =>
+        return await ExecuteReindexAsync(alias, newIndex, ct, async () =>
         {
             _logger.LogInformation(
                 "AuditLog reindex: new empty index created. " +
@@ -244,7 +244,8 @@ public sealed class RbacEsFullReindexService
                 "Streaming write via RbacAuditEventWorker will populate the new index going forward.");
 
             // 返回 0：新索引为空，文档数验证跳过（见 ExecuteReindexAsync 中的 0 文档逻辑）
-            return Task.FromResult(0);
+            await Task.CompletedTask;
+            return 0;
         });
     }
 

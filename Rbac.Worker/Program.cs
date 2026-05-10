@@ -6,6 +6,7 @@ using Rbac.Application.Auditing;
 using Rbac.Application.Authorization;
 using Rbac.Application.Cache;
 using Rbac.Application.Identity;
+using Rbac.Application.Management;
 using Rbac.Application.Menus;
 using Rbac.Application.Policies;
 using Rbac.Application.Repositories;
@@ -17,6 +18,7 @@ using Rbac.Infrastructure.Elasticsearch.Bootstrap;
 using Rbac.Infrastructure.Elasticsearch.Reindex;
 using Rbac.Infrastructure.Elasticsearch.Services;
 using Rbac.Infrastructure.MySql.Identity;   // RbacDxEIdGenerationOptions + SnowflakeDxEIdGenerator
+using Rbac.Infrastructure.MySql.Management;
 using Rbac.Infrastructure.MySql.Mapping;
 using Rbac.Infrastructure.MySql.Outbox;
 using Rbac.Infrastructure.MySql.Policies;
@@ -56,6 +58,8 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IApiPermissionMapRepository, ApiPermissionMapRepository>();
         services.AddScoped<ICasbinPolicyRepository,    CasbinPolicyRepository>();
         services.AddScoped<IProjectGrantMySqlReader,   ProjectGrantMySqlReader>();
+        services.AddScoped<RbacManagementWriteGuard>();
+        services.AddScoped<IRbacManagementWriteService, RbacManagementWriteService>();
 
         // Casbin policy readers（PATCH-06）
         services.AddScoped<ICasbinGroupingPolicyReader,   CasbinMySqlGroupingPolicyReader>();

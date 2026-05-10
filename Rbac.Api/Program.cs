@@ -12,6 +12,7 @@ using Rbac.Application.Auditing;
 using Rbac.Application.Authorization;
 using Rbac.Application.Cache;
 using Rbac.Application.Identity;
+using Rbac.Application.Management;
 using Rbac.Application.Menus;
 using Rbac.Application.Policies;
 using Rbac.Application.Repositories;
@@ -24,6 +25,7 @@ using Rbac.Infrastructure.Elasticsearch.Bootstrap;
 using Rbac.Infrastructure.Elasticsearch.Reindex;
 using Rbac.Infrastructure.Elasticsearch.Services;
 using Rbac.Infrastructure.MySql.Identity;
+using Rbac.Infrastructure.MySql.Management;
 using Rbac.Infrastructure.MySql.Mapping;
 using Rbac.Infrastructure.MySql.Outbox;
 using Rbac.Infrastructure.MySql.Policies;
@@ -91,6 +93,8 @@ builder.Services.AddScoped<IProjectGrantRepository,    ProjectGrantRepository>()
 builder.Services.AddScoped<IApiPermissionMapRepository, ApiPermissionMapRepository>();
 builder.Services.AddScoped<ICasbinPolicyRepository,    CasbinPolicyRepository>();
 builder.Services.AddScoped<IProjectGrantMySqlReader,   ProjectGrantMySqlReader>();
+builder.Services.AddScoped<RbacManagementWriteGuard>();
+builder.Services.AddScoped<IRbacManagementWriteService, RbacManagementWriteService>();
 
 // Casbin policy readers（PATCH-06）
 builder.Services.AddScoped<ICasbinGroupingPolicyReader,   CasbinMySqlGroupingPolicyReader>();
