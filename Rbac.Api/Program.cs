@@ -9,6 +9,7 @@ using Rbac.Api.Filters;
 using Rbac.Api.Middleware;
 using Rbac.Api.Options;
 using Rbac.Api.Security;
+using Rbac.Application.Authentication;
 using Rbac.Application.Auditing;
 using Rbac.Application.Authorization;
 using Rbac.Application.Cache;
@@ -200,6 +201,7 @@ builder.Services.AddSingleton<Rbac.Application.Observability.RbacMetrics>();
 
 // —— Controller
 builder.Services.AddScoped<RbacBackendIndexService>();
+builder.Services.AddSingleton<RbacLoginResultFactory>();
 
 
 // ── Build & Pipeline ─────────────────────────────────────────────
