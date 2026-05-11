@@ -3,22 +3,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Rbac.Api.Options;
 using Rbac.Application.Authorization;
 using Rbac.Application.Security;
-using Rbac.Api.Options;
 
 namespace Rbac.Api.Filters;
 
 /// <summary>
-/// 服务端鉴权过滤器。实现 deny-by-default 策略。
-///
-/// 执行顺序：
-/// 1. 路由命中 allowlist → 放行（记录基础访问日志）。
-/// 2. CurrentRbacContext 未授权（IsProjectAuthorized = false）→ 403。
-/// 3. 路由无法映射到 permissionCode → 403（deny-by-default）。
-/// 4. 调用 IRbacPermissionChecker 判断 → allow 或 403。
-///
-/// allowlist 必须集中配置（RbacAllowlistOptions），不允许散落在 Controller。
+/// Server-side authorization filter with deny-by-default behavior.
+/// Order:
+/// 1. Allowlist: anonymous/basic routes.
+/// 2. Project authorization: user must be authorized for current project.
+/// 3. ProjectAccessAllowlist: project-authorized routes that need no permissionCode.
+/// 4. API permission mapping: unmapped routes are denied by default.
+/// 5. Permission check.
 /// </summary>
 public sealed class RbacAuthorizationFilter : IAsyncActionFilter
 {
@@ -26,6 +24,7 @@ public sealed class RbacAuthorizationFilter : IAsyncActionFilter
     private readonly IRbacApiPermissionMapper _permissionMapper;
     private readonly IRbacPermissionChecker _permissionChecker;
     private readonly RbacAllowlistOptions _allowlist;
+    private readonly RbacProjectAccessAllowlistOptions _projectAccessAllowlist;
     private readonly ILogger<RbacAuthorizationFilter> _logger;
 
     public RbacAuthorizationFilter(
@@ -33,12 +32,14 @@ public sealed class RbacAuthorizationFilter : IAsyncActionFilter
         IRbacApiPermissionMapper permissionMapper,
         IRbacPermissionChecker permissionChecker,
         IOptions<RbacAllowlistOptions> allowlist,
+        IOptions<RbacProjectAccessAllowlistOptions> projectAccessAllowlist,
         ILogger<RbacAuthorizationFilter> logger)
     {
         _contextAccessor = contextAccessor;
         _permissionMapper = permissionMapper;
         _permissionChecker = permissionChecker;
         _allowlist = allowlist.Value;
+        _projectAccessAllowlist = projectAccessAllowlist.Value;
         _logger = logger;
     }
 
@@ -47,7 +48,6 @@ public sealed class RbacAuthorizationFilter : IAsyncActionFilter
         var httpContext = context.HttpContext;
         var path = httpContext.Request.Path.Value ?? string.Empty;
 
-        // 1. allowlist 检查
         if (_allowlist.IsAllowed(path, httpContext.Request.Method))
         {
             _logger.LogDebug("Allowlist hit path={Path}", path);
@@ -55,7 +55,6 @@ public sealed class RbacAuthorizationFilter : IAsyncActionFilter
             return;
         }
 
-        // 2. project 未授权
         var rbacCtx = _contextAccessor.Context;
         if (rbacCtx is null || !rbacCtx.IsProjectAuthorized)
         {
@@ -65,7 +64,13 @@ public sealed class RbacAuthorizationFilter : IAsyncActionFilter
             return;
         }
 
-        // 3. 解析 API 权限映射（deny-by-default：未映射 = 拒绝）
+        if (_projectAccessAllowlist.IsAllowed(path))
+        {
+            _logger.LogDebug("ProjectAccessAllowlist hit path={Path}", path);
+            await next();
+            return;
+        }
+
         var mapping = await _permissionMapper.ResolveAsync(rbacCtx.Project, httpContext);
         if (mapping is null)
         {
@@ -74,7 +79,6 @@ public sealed class RbacAuthorizationFilter : IAsyncActionFilter
             return;
         }
 
-        // 4. 执行鉴权判断
         var checkRequest = new PermissionCheckRequest
         {
             Context = rbacCtx,
@@ -95,8 +99,6 @@ public sealed class RbacAuthorizationFilter : IAsyncActionFilter
 
         await next();
     }
-
-    // ── 私有辅助 ──────────────────────────────────────────────────
 
     private static ObjectResult ForbidResult(string reason) =>
         new(new { code = 40300, msg = "Forbidden", reason })

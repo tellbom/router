@@ -47,6 +47,8 @@ builder.Services.Configure<RbacProjectOptions>(
     builder.Configuration.GetSection(RbacProjectOptions.SectionName));
 builder.Services.Configure<RbacAllowlistOptions>(
     builder.Configuration.GetSection(RbacAllowlistOptions.SectionName));
+builder.Services.Configure<RbacProjectAccessAllowlistOptions>(
+    builder.Configuration.GetSection(RbacProjectAccessAllowlistOptions.SectionName));
 // RbacDxEIdGenerationOptions 在 Rbac.Infrastructure.MySql.Identity
 builder.Services.Configure<RbacDxEIdGenerationOptions>(
     builder.Configuration.GetSection(RbacDxEIdGenerationOptions.SectionName));
