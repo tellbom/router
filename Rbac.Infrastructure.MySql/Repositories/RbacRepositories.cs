@@ -295,16 +295,19 @@ public sealed class CasbinPolicyRepository : ICasbinPolicyRepository
     public async Task<IReadOnlyList<(string GroupCode, string Project, string PermissionCode, string Action)>>
         GetPermissionPoliciesAsync(ProjectCode project, CancellationToken ct = default)
     {
-        var groups = await _db.Groups
-            .Where(g => (project.Value == "*" || g.Project.Value == project.Value)
-                        && g.Status == GroupStatus.Active)
-            .ToListAsync(ct);
+        var groupsQuery = _db.Groups.Where(g => g.Status == GroupStatus.Active);
+        if (project.Value != "*")
+            groupsQuery = groupsQuery.Where(g => g.Project == project);
 
-        var apiMaps = await _db.ApiPermissionMaps
-            .Where(m => (project.Value == "*" || m.Project.Value == project.Value)
-                        && m.Status == ApiMapStatus.Active)
+        var groups = await groupsQuery.ToListAsync(ct);
+
+        var apiMapsQuery = _db.ApiPermissionMaps.Where(m => m.Status == ApiMapStatus.Active);
+        if (project.Value != "*")
+            apiMapsQuery = apiMapsQuery.Where(m => m.Project == project);
+
+        var apiMaps = (await apiMapsQuery.ToListAsync(ct))
             .Select(m => new { PermCode = m.PermissionCode.Value, Action = m.Action })
-            .ToListAsync(ct);
+            .ToList();
 
         var actionLookup = apiMaps
             .GroupBy(m => m.PermCode)

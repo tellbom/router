@@ -39,16 +39,17 @@ public sealed class CasbinMySqlGroupingPolicyReader : ICasbinGroupingPolicyReade
 
         // 直接从 rbac_group_member 读取 (userid, groupCode, project) 三元组
         // ProjectCode("*") = 全项目，跳过 project 过滤
-        var query = project.Value == "*"
-            ? _db.GroupMembers
-            : _db.GroupMembers.Where(m => m.Project.Value == project.Value);
+        var query = _db.GroupMembers.AsQueryable();
+        if (project.Value != "*")
+            query = query.Where(m => m.Project == project);
 
-        var result = await query
+        var members = await query.ToListAsync(ct);
+        var result = members
             .Select(m => ValueTuple.Create(
                 m.Userid.Value,
                 m.GroupCode.Value,
                 m.Project.Value))
-            .ToListAsync(ct);
+            .ToList();
 
         _logger.LogDebug(
             "GroupingPolicy loaded project={P} rows={N}", project.Value, result.Count);
@@ -82,16 +83,19 @@ public sealed class CasbinMySqlPermissionPolicyReader : ICasbinPermissionPolicyR
     {
         _logger.LogDebug("LoadPermissionPolicy project={P}", project.Value);
 
-        var groups = await _db.Groups
-            .Where(g => (project.Value == "*" || g.Project.Value == project.Value)
-                        && g.Status == GroupStatus.Active)
-            .ToListAsync(ct);
+        var groupsQuery = _db.Groups.Where(g => g.Status == GroupStatus.Active);
+        if (project.Value != "*")
+            groupsQuery = groupsQuery.Where(g => g.Project == project);
 
-        var apiMaps = await _db.ApiPermissionMaps
-            .Where(m => (project.Value == "*" || m.Project.Value == project.Value)
-                        && m.Status == ApiMapStatus.Active)
+        var groups = await groupsQuery.ToListAsync(ct);
+
+        var apiMapsQuery = _db.ApiPermissionMaps.Where(m => m.Status == ApiMapStatus.Active);
+        if (project.Value != "*")
+            apiMapsQuery = apiMapsQuery.Where(m => m.Project == project);
+
+        var apiMaps = (await apiMapsQuery.ToListAsync(ct))
             .Select(m => new { PermCode = m.PermissionCode.Value, Action = m.Action })
-            .ToListAsync(ct);
+            .ToList();
 
         var actionLookup = apiMaps
             .GroupBy(m => m.PermCode)
