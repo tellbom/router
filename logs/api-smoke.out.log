@@ -1,0 +1,846 @@
+info: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[63]
+      User profile is available. Using 'C:\Users\24203\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+dbug: Microsoft.Extensions.Hosting.Internal.Host[1]
+      Hosting starting
+info: Rbac.Infrastructure.Redis.RbacCacheInvalidationSubscriber[0]
+      Subscribed to Redis channel: rbac.cache.invalidate
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      RbacAuditEventWorker started.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5263
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: E:\router\router\Rbac.Api\
+dbug: Microsoft.Extensions.Hosting.Internal.Host[2]
+      Hosting started
+dbug: Rbac.Infrastructure.Redis.RbacFusionCacheEvictionHandler[0]
+      L1 eviction event project= userid=u_smoke_001 resourceType=snapshot
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMA K=rbac:snapshot::u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMA K=rbac:snapshot::u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMB K=rbac:user-projects:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMB K=rbac:user-projects:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMC K=rbac:snapshot::u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMC K=rbac:snapshot::u_smoke_001): [MC] removing data (from memory)
+dbug: Rbac.Infrastructure.Redis.RbacFusionCacheEvictionHandler[0]
+      L1 eviction event project=default userid=(null) resourceType=snapshot
+dbug: Rbac.Infrastructure.Redis.RbacFusionCacheEvictionHandler[0]
+      L1 eviction event project=default userid=(null) resourceType=menu
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMD K=rbac:menu-tree:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMD K=rbac:menu-tree:default): [MC] removing data (from memory)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/api/admin/list?page=1&pageSize=5 - -
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10401]
+      An 'IServiceProvider' was created for internal use by Entity Framework.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LME K=rbac:user-projects:system_admin): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LME K=rbac:user-projects:system_admin): [MC] memory entry not found
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LME K=rbac:user-projects:system_admin): [MC] memory entry not found
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LME K=rbac:user-projects:system_admin): calling the factory (timeout=/)
+dbug: Rbac.Infrastructure.MySql.Repositories.ProjectGrantMySqlReader[0]
+      MySQL fallback GetUserGrants userid=system_admin
+warn: Microsoft.EntityFrameworkCore.Model.Validation[10620]
+      The property 'RbacGroup.PermissionCodes' is a collection or enumeration type with a value converter but with no value comparer. Set a value comparer to ensure the collection/enumeration elements are compared correctly.
+warn: Microsoft.EntityFrameworkCore.Model.Validation[10620]
+      The property 'RbacGroup.RuleCodes' is a collection or enumeration type with a value converter but with no value comparer. Set a value comparer to ensure the collection/enumeration elements are compared correctly.
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacAdministrator>()
+          .FirstOrDefault(a => a.Userid == __userId_0)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync<RbacAdministrator>(
+          asyncEnumerable: new SingleQueryingEnumerable<RbacAdministrator>(
+              (RelationalQueryContext)queryContext, 
+              RelationalCommandCache.SelectExpression(
+                  Projection Mapping:
+                      EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacAdministrator.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacAdministrator.CreatedAt (DateTimeOffset) Required, 1], [Property: RbacAdministrator.DxEId (DxEId) Required Index MaxLength(64), 2], [Property: RbacAdministrator.Status (AdminStatus) Required MaxLength(16), 3], [Property: RbacAdministrator.UpdatedAt (DateTimeOffset) Required, 4], [Property: RbacAdministrator.Userid (UserId) Required Index MaxLength(128), 5], [Property: RbacAdministrator.Username (string) Required MaxLength(128), 6] }
+                  SELECT TOP(1) r.id, r.created_at, r.dxe_id, r.status, r.updated_at, r.userid, r.username
+                  FROM rbac_administrator AS r
+                  WHERE r.userid == @__userId_0), 
+              Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacAdministrator>, 
+              Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+              False, 
+              False, 
+              True
+          ), 
+          cancellationToken: queryContext.CancellationToken)'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (30ms) [Parameters=[@__userId_0='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`dxe_id`, `r`.`status`, `r`.`updated_at`, `r`.`userid`, `r`.`username`
+      FROM `rbac_administrator` AS `r`
+      WHERE `r`.`userid` = @__userId_0
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+warn: Rbac.Infrastructure.MySql.Repositories.ProjectGrantMySqlReader[0]
+      User not found or disabled userid=system_admin
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LME K=rbac:user-projects:system_admin): [MC] saving entry in memory FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LME K=rbac:user-projects:system_admin): return FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+warn: Rbac.Infrastructure.Redis.RbacProjectGrantCache[0]
+      No grants found userid=system_admin
+warn: Rbac.Application.Security.RbacProjectResolver[0]
+      Unauthorized userid=system_admin project=default traceId=0HNLF1CNILOO3:00000002
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=a771f42db7ee472db2540ba67aa26c8b type=AuthorizationAuditEvent
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=system_admin project=default authorized=False traceId=0HNLF1CNILOO3:00000002
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.AdminController.List (Rbac.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "List", controller = "Admin", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[Rbac.Application.Contracts.Common.PagedData`1[Rbac.Application.Search.UserSearchResult]]] List(Rbac.Application.Search.UserSearchQuery, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.AdminController (Rbac.Api).
+dbug: Rbac.Api.Filters.RbacAuthorizationFilter[0]
+      Allowlist hit path=/api/admin/list
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[Rbac.Application.Contracts.Common.PagedData`1[[Rbac.Application.Search.UserSearchResult, Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.AdminController.List (Rbac.Api) in 390.0639ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.AdminController.List (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/api/admin/list?page=1&pageSize=5 - - - 200 - application/json;+charset=utf-8 4405.7434ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/api/group/list?page=1&pageSize=5 - -
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMF K=rbac:user-projects:system_admin): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMF K=rbac:user-projects:system_admin): [MC] memory entry found FE[FFS=N, LEXP=24s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMF K=rbac:user-projects:system_admin): return FE[FFS=N, LEXP=24s, EEXP=/, LM=/, ET=/]
+warn: Rbac.Infrastructure.Redis.RbacProjectGrantCache[0]
+      No grants found userid=system_admin
+warn: Rbac.Application.Security.RbacProjectResolver[0]
+      Unauthorized userid=system_admin project=default traceId=0HNLF1CNILOO4:00000002
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=system_admin project=default authorized=False traceId=0HNLF1CNILOO4:00000002
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=b167c87080244a8e949aefd24604f2ce type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.GroupController.List (Rbac.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "List", controller = "Group", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[Rbac.Application.Contracts.Common.PagedData`1[Rbac.Application.Search.GroupSearchResult]]] List(Rbac.Application.Search.GroupSearchQuery, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.GroupController (Rbac.Api).
+dbug: Rbac.Api.Filters.RbacAuthorizationFilter[0]
+      Allowlist hit path=/api/group/list
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[Rbac.Application.Contracts.Common.PagedData`1[[Rbac.Application.Search.GroupSearchResult, Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.GroupController.List (Rbac.Api) in 73.6338ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.GroupController.List (Rbac.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/api/group/list?page=1&pageSize=5 - - - 200 - application/json;+charset=utf-8 143.1296ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/api/rule/list?page=1&pageSize=5 - -
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMG K=rbac:user-projects:system_admin): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMG K=rbac:user-projects:system_admin): [MC] memory entry found FE[FFS=N, LEXP=24s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMG K=rbac:user-projects:system_admin): return FE[FFS=N, LEXP=24s, EEXP=/, LM=/, ET=/]
+warn: Rbac.Infrastructure.Redis.RbacProjectGrantCache[0]
+      No grants found userid=system_admin
+warn: Rbac.Application.Security.RbacProjectResolver[0]
+      Unauthorized userid=system_admin project=default traceId=0HNLF1CNILOO5:00000002
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=system_admin project=default authorized=False traceId=0HNLF1CNILOO5:00000002
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=7e69f60e231f431bb50f0f1e2c17cf8f type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.RuleController.List (Rbac.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "List", controller = "Rule", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[Rbac.Application.Contracts.Common.PagedData`1[Rbac.Application.Search.RuleSearchResult]]] List(Rbac.Application.Search.RuleSearchQuery, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.RuleController (Rbac.Api).
+dbug: Rbac.Api.Filters.RbacAuthorizationFilter[0]
+      Allowlist hit path=/api/rule/list
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[Rbac.Application.Contracts.Common.PagedData`1[[Rbac.Application.Search.RuleSearchResult, Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.RuleController.List (Rbac.Api) in 62.5083ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.RuleController.List (Rbac.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/api/rule/list?page=1&pageSize=5 - - - 200 - application/json;+charset=utf-8 122.5915ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://localhost:5263/api/project-grant application/json 40
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMH K=rbac:user-projects:system_admin): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMH K=rbac:user-projects:system_admin): [MC] memory entry found FE[FFS=N, LEXP=23s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMH K=rbac:user-projects:system_admin): return FE[FFS=N, LEXP=23s, EEXP=/, LM=/, ET=/]
+warn: Rbac.Infrastructure.Redis.RbacProjectGrantCache[0]
+      No grants found userid=system_admin
+warn: Rbac.Application.Security.RbacProjectResolver[0]
+      Unauthorized userid=system_admin project=default traceId=0HNLF1CNILOO6:00000002
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=system_admin project=default authorized=False traceId=0HNLF1CNILOO6:00000002
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.ProjectGrantController.Grant (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=b40bfcae713249efae55407ef8d75119 type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "Grant", controller = "ProjectGrant", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] Grant(Rbac.Api.Controllers.GrantProjectRequest, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.ProjectGrantController (Rbac.Api).
+dbug: Rbac.Api.Filters.RbacAuthorizationFilter[0]
+      Allowlist hit path=/api/project-grant
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacProjectGrant>()
+          .FirstOrDefault(g => g.Userid == __userid_0 && g.Project == __project_1)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync<RbacProjectGrant>(
+          asyncEnumerable: new SingleQueryingEnumerable<RbacProjectGrant>(
+              (RelationalQueryContext)queryContext, 
+              RelationalCommandCache.SelectExpression(
+                  Projection Mapping:
+                      EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacProjectGrant.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacProjectGrant.GrantedAt (DateTimeOffset) Required, 1], [Property: RbacProjectGrant.GrantedBy (string) Required MaxLength(128), 2], [Property: RbacProjectGrant.IsSuper (bool) Required, 3], [Property: RbacProjectGrant.Project (ProjectCode) Required Index MaxLength(64), 4], [Property: RbacProjectGrant.UpdatedAt (DateTimeOffset) Required, 5], [Property: RbacProjectGrant.Userid (UserId) Required Index MaxLength(128), 6] }
+                  SELECT TOP(1) r.id, r.granted_at, r.granted_by, r.is_super, r.project, r.updated_at, r.userid
+                  FROM rbac_project_grant AS r
+                  WHERE (r.userid == @__userid_0) && (r.project == @__project_1)), 
+              Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacProjectGrant>, 
+              Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+              False, 
+              False, 
+              True
+          ), 
+          cancellationToken: queryContext.CancellationToken)'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (6ms) [Parameters=[@__userid_0='?' (Size = 128), @__project_1='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`granted_at`, `r`.`granted_by`, `r`.`is_super`, `r`.`project`, `r`.`updated_at`, `r`.`userid`
+      FROM `rbac_project_grant` AS `r`
+      WHERE (`r`.`userid` = @__userid_0) AND (`r`.`project` = @__project_1)
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacProjectGrant>()
+          .Where(g => g.Userid == __userid_0)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => new SingleQueryingEnumerable<RbacProjectGrant>(
+          (RelationalQueryContext)queryContext, 
+          RelationalCommandCache.SelectExpression(
+              Projection Mapping:
+                  EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacProjectGrant.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacProjectGrant.GrantedAt (DateTimeOffset) Required, 1], [Property: RbacProjectGrant.GrantedBy (string) Required MaxLength(128), 2], [Property: RbacProjectGrant.IsSuper (bool) Required, 3], [Property: RbacProjectGrant.Project (ProjectCode) Required Index MaxLength(64), 4], [Property: RbacProjectGrant.UpdatedAt (DateTimeOffset) Required, 5], [Property: RbacProjectGrant.Userid (UserId) Required Index MaxLength(128), 6] }
+              SELECT r.id, r.granted_at, r.granted_by, r.is_super, r.project, r.updated_at, r.userid
+              FROM rbac_project_grant AS r
+              WHERE r.userid == @__userid_0), 
+          Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacProjectGrant>, 
+          Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+          False, 
+          False, 
+          True
+      )'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@__userid_0='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`granted_at`, `r`.`granted_by`, `r`.`is_super`, `r`.`project`, `r`.`updated_at`, `r`.`userid`
+      FROM `rbac_project_grant` AS `r`
+      WHERE `r`.`userid` = @__userid_0
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacProjectGrant' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (60ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (8ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 128), @p3='?' (DbType = Boolean), @p4='?' (Size = 64), @p5='?' (DbType = DateTimeOffset), @p6='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_project_grant` (`id`, `granted_at`, `granted_by`, `is_super`, `project`, `updated_at`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6);
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacProjectGrant' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      SaveProjectGrant userid=u_smoke_001 project=default grantKind=Granted operator=system_admin
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.ProjectGrantController.Grant (Rbac.Api) in 437.7509ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.ProjectGrantController.Grant (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://localhost:5263/api/project-grant application/json 40 - 200 - application/json;+charset=utf-8 495.6783ms
+dbug: Rbac.Infrastructure.Redis.RbacFusionCacheEvictionHandler[0]
+      L1 eviction event project=default userid=u_smoke_001 resourceType=all
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMI K=rbac:snapshot:default:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMI K=rbac:snapshot:default:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMJ K=rbac:user-projects:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMJ K=rbac:user-projects:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMK K=rbac:menu-tree:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMK K=rbac:menu-tree:default): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LML K=rbac:api-map:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LML K=rbac:api-map:default): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMM K=rbac:snapshot:default:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMM K=rbac:snapshot:default:u_smoke_001): [MC] removing data (from memory)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/api/admin/list?page=1&pageSize=5 - -
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMN K=rbac:user-projects:system_admin): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMN K=rbac:user-projects:system_admin): [MC] memory entry found FE[FFS=N, LEXP=2s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMN K=rbac:user-projects:system_admin): return FE[FFS=N, LEXP=2s, EEXP=/, LM=/, ET=/]
+warn: Rbac.Infrastructure.Redis.RbacProjectGrantCache[0]
+      No grants found userid=system_admin
+warn: Rbac.Application.Security.RbacProjectResolver[0]
+      Unauthorized userid=system_admin project=default traceId=0HNLF1CNILOO7:00000002
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=system_admin project=default authorized=False traceId=0HNLF1CNILOO7:00000002
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.AdminController.List (Rbac.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "List", controller = "Admin", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[Rbac.Application.Contracts.Common.PagedData`1[Rbac.Application.Search.UserSearchResult]]] List(Rbac.Application.Search.UserSearchQuery, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.AdminController (Rbac.Api).
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=59f1c32be7a5416096ded80c17c2555e type=AuthorizationAuditEvent
+dbug: Rbac.Api.Filters.RbacAuthorizationFilter[0]
+      Allowlist hit path=/api/admin/list
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[Rbac.Application.Contracts.Common.PagedData`1[[Rbac.Application.Search.UserSearchResult, Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.AdminController.List (Rbac.Api) in 21.4631ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.AdminController.List (Rbac.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/api/admin/list?page=1&pageSize=5 - - - 200 - application/json;+charset=utf-8 89.2682ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://localhost:5263/api/project-grant/u_smoke_001/super application/json 16
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMO K=rbac:user-projects:system_admin): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMO K=rbac:user-projects:system_admin): [MC] memory entry found (expired) FE[FFS=N, LEXP=-5m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMO K=rbac:user-projects:system_admin): [MC] memory entry found (expired) FE[FFS=N, LEXP=-5m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMO K=rbac:user-projects:system_admin): calling the factory (timeout=/)
+dbug: Rbac.Infrastructure.MySql.Repositories.ProjectGrantMySqlReader[0]
+      MySQL fallback GetUserGrants userid=system_admin
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (7ms) [Parameters=[@__userId_0='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`dxe_id`, `r`.`status`, `r`.`updated_at`, `r`.`userid`, `r`.`username`
+      FROM `rbac_administrator` AS `r`
+      WHERE `r`.`userid` = @__userId_0
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+warn: Rbac.Infrastructure.MySql.Repositories.ProjectGrantMySqlReader[0]
+      User not found or disabled userid=system_admin
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMO K=rbac:user-projects:system_admin): [MC] saving entry in memory FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMO K=rbac:user-projects:system_admin): return FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+warn: Rbac.Infrastructure.Redis.RbacProjectGrantCache[0]
+      No grants found userid=system_admin
+warn: Rbac.Application.Security.RbacProjectResolver[0]
+      Unauthorized userid=system_admin project=default traceId=0HNLF1CNILOO8:00000002
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=system_admin project=default authorized=False traceId=0HNLF1CNILOO8:00000002
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=efeef885a6534a93b29e2fc29f55abd7 type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.ProjectGrantController.ToggleSuper (Rbac.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "ToggleSuper", controller = "ProjectGrant", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] ToggleSuper(System.String, Rbac.Api.Controllers.ToggleSuperRequest, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.ProjectGrantController (Rbac.Api).
+dbug: Rbac.Api.Filters.RbacAuthorizationFilter[0]
+      Allowlist hit path=/api/project-grant/u_smoke_001/super
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (6ms) [Parameters=[@__userid_0='?' (Size = 128), @__project_1='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`granted_at`, `r`.`granted_by`, `r`.`is_super`, `r`.`project`, `r`.`updated_at`, `r`.`userid`
+      FROM `rbac_project_grant` AS `r`
+      WHERE (`r`.`userid` = @__userid_0) AND (`r`.`project` = @__project_1)
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacProjectGrant' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10802]
+      The unchanged property 'RbacProjectGrant.IsSuper' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacProjectGrant' tracked by 'RbacDbContext' changed state from 'Unchanged' to 'Modified'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10802]
+      The unchanged property 'RbacProjectGrant.UpdatedAt' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (56ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (56ms) [Parameters=[@p6='?' (DbType = Guid), @p0='?' (DbType = DateTimeOffset), @p1='?' (Size = 128), @p2='?' (DbType = Boolean), @p3='?' (Size = 64), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      UPDATE `rbac_project_grant` SET `granted_at` = @p0, `granted_by` = @p1, `is_super` = @p2, `project` = @p3, `updated_at` = @p4, `userid` = @p5
+      WHERE `id` = @p6;
+      SELECT ROW_COUNT();
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacProjectGrant' tracked by 'RbacDbContext' changed state from 'Modified' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      SaveProjectGrant userid=u_smoke_001 project=default grantKind=SuperGranted operator=system_admin
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.ProjectGrantController.ToggleSuper (Rbac.Api) in 260.388ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.ProjectGrantController.ToggleSuper (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://localhost:5263/api/project-grant/u_smoke_001/super application/json 16 - 200 - application/json;+charset=utf-8 3116.4545ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/api/admin/list?page=1&pageSize=5 - -
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMP K=rbac:user-projects:system_admin): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMP K=rbac:user-projects:system_admin): [MC] memory entry found FE[FFS=N, LEXP=39s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMP K=rbac:user-projects:system_admin): return FE[FFS=N, LEXP=39s, EEXP=/, LM=/, ET=/]
+warn: Rbac.Infrastructure.Redis.RbacProjectGrantCache[0]
+      No grants found userid=system_admin
+warn: Rbac.Application.Security.RbacProjectResolver[0]
+      Unauthorized userid=system_admin project=default traceId=0HNLF1CNILOO9:00000002
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=system_admin project=default authorized=False traceId=0HNLF1CNILOO9:00000002
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.AdminController.List (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=34c2844a1f5548ecb78fb84e5a90580f type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "List", controller = "Admin", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[Rbac.Application.Contracts.Common.PagedData`1[Rbac.Application.Search.UserSearchResult]]] List(Rbac.Application.Search.UserSearchQuery, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.AdminController (Rbac.Api).
+dbug: Rbac.Api.Filters.RbacAuthorizationFilter[0]
+      Allowlist hit path=/api/admin/list
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[Rbac.Application.Contracts.Common.PagedData`1[[Rbac.Application.Search.UserSearchResult, Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.AdminController.List (Rbac.Api) in 10.6648ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.AdminController.List (Rbac.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/api/admin/list?page=1&pageSize=5 - - - 200 - application/json;+charset=utf-8 66.0934ms
+dbug: Rbac.Infrastructure.Redis.RbacFusionCacheEvictionHandler[0]
+      L1 eviction event project=default userid=u_smoke_001 resourceType=all
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMQ K=rbac:snapshot:default:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMQ K=rbac:snapshot:default:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMR K=rbac:user-projects:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMR K=rbac:user-projects:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMS K=rbac:menu-tree:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMS K=rbac:menu-tree:default): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMT K=rbac:api-map:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMT K=rbac:api-map:default): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMU K=rbac:snapshot:default:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMU K=rbac:snapshot:default:u_smoke_001): [MC] removing data (from memory)
+dbug: Rbac.Infrastructure.Redis.RbacFusionCacheEvictionHandler[0]
+      L1 eviction event project=default userid=u_smoke_001 resourceType=all
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMV K=rbac:snapshot:default:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LMV K=rbac:snapshot:default:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN0 K=rbac:user-projects:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN0 K=rbac:user-projects:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN1 K=rbac:menu-tree:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN1 K=rbac:menu-tree:default): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN2 K=rbac:api-map:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN2 K=rbac:api-map:default): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN3 K=rbac:snapshot:default:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN3 K=rbac:snapshot:default:u_smoke_001): [MC] removing data (from memory)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/api/admin/list?page=1&pageSize=5 - -
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN4 K=rbac:user-projects:system_admin): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN4 K=rbac:user-projects:system_admin): [MC] memory entry found (expired) FE[FFS=N, LEXP=-6s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN4 K=rbac:user-projects:system_admin): [MC] memory entry found (expired) FE[FFS=N, LEXP=-6s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN4 K=rbac:user-projects:system_admin): calling the factory (timeout=/)
+dbug: Rbac.Infrastructure.MySql.Repositories.ProjectGrantMySqlReader[0]
+      MySQL fallback GetUserGrants userid=system_admin
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@__userId_0='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`dxe_id`, `r`.`status`, `r`.`updated_at`, `r`.`userid`, `r`.`username`
+      FROM `rbac_administrator` AS `r`
+      WHERE `r`.`userid` = @__userId_0
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+warn: Rbac.Infrastructure.MySql.Repositories.ProjectGrantMySqlReader[0]
+      User not found or disabled userid=system_admin
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN4 K=rbac:user-projects:system_admin): [MC] saving entry in memory FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN4 K=rbac:user-projects:system_admin): return FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+warn: Rbac.Infrastructure.Redis.RbacProjectGrantCache[0]
+      No grants found userid=system_admin
+warn: Rbac.Application.Security.RbacProjectResolver[0]
+      Unauthorized userid=system_admin project=default traceId=0HNLF1CNILOOA:00000002
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=system_admin project=default authorized=False traceId=0HNLF1CNILOOA:00000002
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.AdminController.List (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=25359f55a5d44a15a784b7c5cf204a30 type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "List", controller = "Admin", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[Rbac.Application.Contracts.Common.PagedData`1[Rbac.Application.Search.UserSearchResult]]] List(Rbac.Application.Search.UserSearchQuery, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.AdminController (Rbac.Api).
+dbug: Rbac.Api.Filters.RbacAuthorizationFilter[0]
+      Allowlist hit path=/api/admin/list
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[Rbac.Application.Contracts.Common.PagedData`1[[Rbac.Application.Search.UserSearchResult, Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.AdminController.List (Rbac.Api) in 6.7227ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.AdminController.List (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/api/admin/list?page=1&pageSize=5 - - - 200 - application/json;+charset=utf-8 139.9024ms
+dbug: Rbac.Infrastructure.Redis.RbacFusionCacheEvictionHandler[0]
+      L1 eviction event project=default userid=u_smoke_001 resourceType=all
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN5 K=rbac:snapshot:default:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN5 K=rbac:snapshot:default:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN6 K=rbac:user-projects:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN6 K=rbac:user-projects:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN7 K=rbac:menu-tree:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN7 K=rbac:menu-tree:default): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN8 K=rbac:api-map:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN8 K=rbac:api-map:default): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN9 K=rbac:snapshot:default:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LN9 K=rbac:snapshot:default:u_smoke_001): [MC] removing data (from memory)
+dbug: Rbac.Infrastructure.Redis.RbacFusionCacheEvictionHandler[0]
+      L1 eviction event project=default userid=u_smoke_001 resourceType=all
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNA K=rbac:snapshot:default:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNA K=rbac:snapshot:default:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNB K=rbac:user-projects:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNB K=rbac:user-projects:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNC K=rbac:menu-tree:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNC K=rbac:menu-tree:default): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LND K=rbac:api-map:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LND K=rbac:api-map:default): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNE K=rbac:snapshot:default:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNE K=rbac:snapshot:default:u_smoke_001): [MC] removing data (from memory)
+dbug: Rbac.Infrastructure.Redis.RbacFusionCacheEvictionHandler[0]
+      L1 eviction event project=default userid=u_smoke_001 resourceType=all
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNF K=rbac:snapshot:default:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNF K=rbac:snapshot:default:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNG K=rbac:user-projects:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNG K=rbac:user-projects:u_smoke_001): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNH K=rbac:menu-tree:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNH K=rbac:menu-tree:default): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNI K=rbac:api-map:default): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNI K=rbac:api-map:default): [MC] removing data (from memory)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNJ K=rbac:snapshot:default:u_smoke_001): calling RemoveAsync FEO[LKTO=/ DUR=30s SKM=N SKD=N SKDRWS=N DDUR=/ JIT=0 PR=N SZ=/ FS=N FSMAX=1.00:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNJ K=rbac:snapshot:default:u_smoke_001): [MC] removing data (from memory)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/api/admin/list?page=1&pageSize=5 - -
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNK K=rbac:user-projects:system_admin): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNK K=rbac:user-projects:system_admin): [MC] memory entry found FE[FFS=N, LEXP=12s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=89129852a519466c9df187d44bc65033] (O=0HNLF1CI00LNK K=rbac:user-projects:system_admin): return FE[FFS=N, LEXP=12s, EEXP=/, LM=/, ET=/]
+warn: Rbac.Infrastructure.Redis.RbacProjectGrantCache[0]
+      No grants found userid=system_admin
+warn: Rbac.Application.Security.RbacProjectResolver[0]
+      Unauthorized userid=system_admin project=default traceId=0HNLF1CNILOOB:00000002
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=system_admin project=default authorized=False traceId=0HNLF1CNILOOB:00000002
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.AdminController.List (Rbac.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "List", controller = "Admin", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[Rbac.Application.Contracts.Common.PagedData`1[Rbac.Application.Search.UserSearchResult]]] List(Rbac.Application.Search.UserSearchQuery, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.AdminController (Rbac.Api).
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=4345712b19c44b86ac3acdee8a5bc8d6 type=AuthorizationAuditEvent
+dbug: Rbac.Api.Filters.RbacAuthorizationFilter[0]
+      Allowlist hit path=/api/admin/list
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[Rbac.Application.Contracts.Common.PagedData`1[[Rbac.Application.Search.UserSearchResult, Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.AdminController.List (Rbac.Api) in 163.9112ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.AdminController.List (Rbac.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/api/admin/list?page=1&pageSize=5 - - - 200 - application/json;+charset=utf-8 229.1127ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/ - -
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid= project= authorized=False traceId=0HNLF1CNILOOC:00000002
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint '/Index'
+info: Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure.PageActionInvoker[3]
+      Route matched with {page = "/Index", action = "", controller = ""}. Executing page /Index
+info: Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure.PageActionInvoker[105]
+      Executing handler method router.Pages.IndexModel.OnGet - ModelState is Valid
+info: Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure.PageActionInvoker[108]
+      Executed handler method OnGet, returned result .
+info: Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure.PageActionInvoker[107]
+      Executing an implicit handler method - ModelState is Valid
+info: Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure.PageActionInvoker[109]
+      Executed an implicit handler method, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult.
+info: Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure.PageActionInvoker[4]
+      Executed page /Index in 94.0481ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint '/Index'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/ - - - 200 - text/html;+charset=utf-8 178.5325ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/lib/bootstrap/dist/css/bootstrap.min.css - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/css/site.css?v=AKvNjO3dCPPS0eSU1Ez8T2wI280i08yGycV9ndytL-c - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/router.styles.css - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/lib/bootstrap/dist/js/bootstrap.bundle.min.js - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/lib/jquery/dist/jquery.min.js - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/js/site.js?v=4q1jwFhaPaZgr8WAUSrux6hAuh0XDg9kPS3xIVq36I0 - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/js/site.js'. Physical path: 'E:\router\router\Rbac.Api\wwwroot\js\site.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/js/site.js?v=4q1jwFhaPaZgr8WAUSrux6hAuh0XDg9kPS3xIVq36I0 - - - 200 230 application/javascript 2.8955ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/css/site.css'. Physical path: 'E:\router\router\Rbac.Api\wwwroot\css\site.css'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/css/site.css?v=AKvNjO3dCPPS0eSU1Ez8T2wI280i08yGycV9ndytL-c - - - 200 194 text/css 5.8204ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib/bootstrap/dist/js/bootstrap.bundle.min.js'. Physical path: 'E:\router\router\Rbac.Api\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/lib/bootstrap/dist/js/bootstrap.bundle.min.js - - - 200 78468 application/javascript 4.6883ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib/jquery/dist/jquery.min.js'. Physical path: 'E:\router\router\Rbac.Api\wwwroot\lib\jquery\dist\jquery.min.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/lib/jquery/dist/jquery.min.js - - - 200 89476 application/javascript 6.7016ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib/bootstrap/dist/css/bootstrap.min.css'. Physical path: 'E:\router\router\Rbac.Api\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/lib/bootstrap/dist/css/bootstrap.min.css - - - 200 162720 text/css 10.0387ms
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid= project= authorized=False traceId=0HNLF1CNILOOE:00000002
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/router.styles.css - - - 404 0 - 57.4341ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/favicon.ico - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/favicon.ico'. Physical path: 'E:\router\router\Rbac.Api\wwwroot\favicon.ico'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/favicon.ico - - - 200 5430 image/x-icon 0.4956ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/swagger - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/swagger - - - 301 0 - 0.6861ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/swagger/index.html - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/swagger/index.html - - - 200 - text/html;charset=utf-8 41.1156ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/swagger/swagger-ui.css - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/swagger/swagger-ui-bundle.js - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/swagger/swagger-ui-standalone-preset.js - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/swagger/swagger-ui.css - - - 200 144929 text/css 2.9033ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/swagger/swagger-ui-standalone-preset.js - - - 200 312163 application/javascript 3.7986ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/swagger/swagger-ui-bundle.js - - - 200 1061536 application/javascript 10.3831ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/swagger/v1/swagger.json - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5263/swagger/favicon-32x32.png - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/favicon-32x32.png'. Physical path: 'N/A'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/swagger/favicon-32x32.png - - - 200 628 image/png 0.3921ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5263/swagger/v1/swagger.json - - - 200 - application/json;charset=utf-8 96.1042ms
