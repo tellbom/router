@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 using Rbac.Application.Contracts.Common;
 using Rbac.Application.Identity;
 using Rbac.Application.Management;
@@ -45,6 +46,38 @@ public sealed partial class GroupController : ControllerBase
     }
 
     // ── 列表 ──────────────────────────────────────────────────────
+
+    /// <summary>GET /api/group/index - BuildAdmin-compatible group tree/options.</summary>
+    [HttpGet("index")]
+    public async Task<ApiResponse<object>> Index(
+        [FromQuery] GroupIndexQuery query, CancellationToken ct)
+    {
+        var ctx = RequireContext();
+        var groups = await _groupRepo.FindByProjectAsync(new ProjectCode(ctx.Project), ct);
+        var filtered = FilterGroups(groups, query.QuickSearch);
+        var rows = filtered
+            .Select(ToGroupRow)
+            .ToDictionary(r => r.GroupCode, StringComparer.OrdinalIgnoreCase);
+
+        var roots = BuildGroupTree(rows);
+        var currentGroupIds = await GetCurrentGroupIdsAsync(ctx.Userid, ctx.Project, rows, ct);
+
+        if (query.Select)
+        {
+            return ApiResponse<object>.Ok(new
+            {
+                options = FlattenGroupOptions(roots)
+            });
+        }
+
+        return ApiResponse<object>.Ok(new
+        {
+            list = roots,
+            total = rows.Count,
+            group = currentGroupIds,
+            remark = GroupIndexRemark
+        });
+    }
 
     /// <summary>GET /api/group/list — ES 分页查询权限组列表。</summary>
     [HttpGet("list")]
@@ -216,6 +249,125 @@ public sealed partial class GroupController : ControllerBase
 
     private static ApiResponse<object> Fail(int code, string msg) =>
         ApiResponse<object>.Fail(code, msg);
+
+    private const string GroupIndexRemark =
+        "Group hierarchy is for display. Effective access is determined by permission codes.";
+
+    private static IReadOnlyList<RbacGroup> FilterGroups(
+        IReadOnlyList<RbacGroup> groups, string? quickSearch)
+    {
+        if (string.IsNullOrWhiteSpace(quickSearch))
+            return groups;
+
+        var keyword = quickSearch.Trim();
+        return groups.Where(g =>
+            g.GroupName.Contains(keyword, StringComparison.OrdinalIgnoreCase)
+            || g.GroupCode.Value.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    private static GroupIndexRowDto ToGroupRow(RbacGroup group)
+    {
+        return new GroupIndexRowDto
+        {
+            Id = group.DxEId.Value,
+            Pid = "0",
+            GroupCode = group.GroupCode.Value,
+            ParentGroupCode = group.ParentGroupCode?.Value,
+            Name = group.GroupName,
+            Rules = FormatRules(group),
+            Status = group.Status == GroupStatus.Active ? "1" : "0",
+            UpdateTime = group.UpdatedAt.ToUnixTimeSeconds(),
+            CreateTime = group.CreatedAt.ToUnixTimeSeconds(),
+            Children = new List<GroupIndexRowDto>()
+        };
+    }
+
+    private static string FormatRules(RbacGroup group)
+    {
+        if (group.PermissionCodes.Any(p => p.Value == "*")
+            || group.RuleCodes.Any(r => r.Value == "*"))
+        {
+            return "All permissions";
+        }
+
+        var count = group.RuleCodes.Count > 0
+            ? group.RuleCodes.Count
+            : group.PermissionCodes.Count;
+        return count == 0 ? "0 permissions" : $"{count} permissions";
+    }
+
+    private static IReadOnlyList<GroupIndexRowDto> BuildGroupTree(
+        Dictionary<string, GroupIndexRowDto> rows)
+    {
+        foreach (var row in rows.Values)
+        {
+            if (string.IsNullOrWhiteSpace(row.ParentGroupCode)
+                || !rows.TryGetValue(row.ParentGroupCode, out var parent))
+            {
+                row.Pid = "0";
+                continue;
+            }
+
+            row.Pid = parent.Id;
+            parent.Children.Add(row);
+        }
+
+        return rows.Values
+            .Where(r => r.Pid == "0")
+            .OrderBy(r => r.CreateTime)
+            .ThenBy(r => r.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    private async Task<IReadOnlyList<string>> GetCurrentGroupIdsAsync(
+        string userid,
+        string project,
+        Dictionary<string, GroupIndexRowDto> rows,
+        CancellationToken ct)
+    {
+        var memberRepo = HttpContext.RequestServices.GetRequiredService<IGroupMemberRepository>();
+        var memberships = await memberRepo.FindByUseridAndProjectAsync(userid, project, ct);
+        return memberships
+            .Select(m => m.GroupCode.Value)
+            .Where(rows.ContainsKey)
+            .Select(code => rows[code].Id)
+            .ToList();
+    }
+
+    private static IReadOnlyList<GroupIndexOptionDto> FlattenGroupOptions(
+        IReadOnlyList<GroupIndexRowDto> roots)
+    {
+        var result = new List<GroupIndexOptionDto>();
+        foreach (var root in roots)
+        {
+            AppendOption(root, depth: 0, result);
+        }
+        return result;
+    }
+
+    private static void AppendOption(
+        GroupIndexRowDto row,
+        int depth,
+        List<GroupIndexOptionDto> result)
+    {
+        result.Add(GroupIndexOptionDto.FromRow(row, FormatOptionName(row.Name, depth)));
+
+        foreach (var child in row.Children
+            .OrderBy(c => c.CreateTime)
+            .ThenBy(c => c.Name, StringComparer.OrdinalIgnoreCase))
+        {
+            AppendOption(child, depth + 1, result);
+        }
+    }
+
+    private static string FormatOptionName(string name, int depth)
+    {
+        if (depth <= 0)
+            return name;
+
+        return new string(' ', depth * 4) + "└" + name;
+    }
 }
 
 // ── Request DTOs ───────────────────────────────────────────────────
@@ -235,3 +387,84 @@ public sealed record ChangeGroupStatusRequest(
     string[]? AffectedUserids);
 
 public sealed record GroupMemberRequest(string Userid);
+
+public sealed class GroupIndexQuery
+{
+    [JsonPropertyName("select")]
+    public bool Select { get; init; }
+
+    [JsonPropertyName("isTree")]
+    public bool IsTree { get; init; }
+
+    [JsonPropertyName("quickSearch")]
+    public string? QuickSearch { get; init; }
+}
+
+public sealed class GroupIndexRowDto
+{
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = string.Empty;
+
+    [JsonIgnore]
+    public string GroupCode { get; init; } = string.Empty;
+
+    [JsonIgnore]
+    public string? ParentGroupCode { get; init; }
+
+    [JsonPropertyName("pid")]
+    public string Pid { get; set; } = "0";
+
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = string.Empty;
+
+    [JsonPropertyName("rules")]
+    public string Rules { get; init; } = string.Empty;
+
+    [JsonPropertyName("status")]
+    public string Status { get; init; } = string.Empty;
+
+    [JsonPropertyName("update_time")]
+    public long UpdateTime { get; init; }
+
+    [JsonPropertyName("create_time")]
+    public long CreateTime { get; init; }
+
+    [JsonPropertyName("children")]
+    public List<GroupIndexRowDto> Children { get; init; } = new();
+}
+
+public sealed class GroupIndexOptionDto
+{
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = string.Empty;
+
+    [JsonPropertyName("pid")]
+    public string Pid { get; init; } = "0";
+
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = string.Empty;
+
+    [JsonPropertyName("rules")]
+    public string Rules { get; init; } = string.Empty;
+
+    [JsonPropertyName("status")]
+    public string Status { get; init; } = string.Empty;
+
+    [JsonPropertyName("update_time")]
+    public long UpdateTime { get; init; }
+
+    [JsonPropertyName("create_time")]
+    public long CreateTime { get; init; }
+
+    public static GroupIndexOptionDto FromRow(GroupIndexRowDto row, string name) =>
+        new()
+        {
+            Id = row.Id,
+            Pid = row.Pid,
+            Name = name,
+            Rules = row.Rules,
+            Status = row.Status,
+            UpdateTime = row.UpdateTime,
+            CreateTime = row.CreateTime
+        };
+}
