@@ -31,7 +31,26 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+Document the result for each project gate below. Any violation MUST be listed in
+Complexity Tracking with an explicit mitigation or the plan cannot proceed.
+
+- Layer boundaries: Domain remains dependency-free; Application does not
+  reference Infrastructure; Infrastructure projects do not reference each other;
+  Api/Worker only compose dependencies and do not contain business rules.
+- Truth sources: MySQL remains RBAC management truth; Casbin policy is loaded
+  from MySQL-derived relations; Redis permset and Elasticsearch indexes remain
+  derived, rebuildable state.
+- Authorization context: JWT userid, project extraction, project authorization,
+  CurrentRbacContext, route allowlist, and deny-by-default behavior are
+  preserved.
+- Compatibility contracts: `code/msg/data/time`, `data.list/data.total`,
+  string DxEId/DxE_id, `permissionCode`, `ruleCode`, `userid`, and `project`
+  semantics are not broken.
+- Runtime state: Outbox, cache invalidation/versioning, ES full reindex, audit
+  emission, and no all-user Redis keys are accounted for when touched.
+- Dependency constraints: .NET 6/C# 10, central package management, NEST 7.17.x,
+  no ABP Framework, no EF migration generation, and RBAC-with-domains Casbin are
+  respected.
 
 ## Project Structure
 
@@ -92,7 +111,11 @@ ios/ or android/
 ```
 
 **Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+directories captured above. For this repository, default to the root projects
+`Rbac.Api`, `Rbac.Application`, `Rbac.Domain`, `Rbac.Infrastructure.MySql`,
+`Rbac.Infrastructure.Redis`, `Rbac.Infrastructure.Elasticsearch`,
+`Rbac.Infrastructure.Casbin`, and `Rbac.Worker` unless the feature explicitly
+requires a new project.]
 
 ## Complexity Tracking
 

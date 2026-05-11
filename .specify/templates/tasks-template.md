@@ -20,10 +20,18 @@ description: "Task list template for feature implementation"
 
 ## Path Conventions
 
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
-- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- Paths shown below assume single project - adjust based on plan.md structure
+- **This repository**: production code lives in root-level .NET projects:
+  `Rbac.Api/`, `Rbac.Application/`, `Rbac.Domain/`,
+  `Rbac.Infrastructure.MySql/`, `Rbac.Infrastructure.Redis/`,
+  `Rbac.Infrastructure.Elasticsearch/`, `Rbac.Infrastructure.Casbin/`, and
+  `Rbac.Worker/`.
+- **Shared build files**: `Directory.Build.props` and
+  `Directory.Packages.props`.
+- **Design and handoff docs**: `spec/main/`, `spec/main/plan/`, and `docs/`.
+- **Tests and smoke assets**: `test/` unless a feature plan creates a dedicated
+  test project.
+- Tasks MUST use the real paths above unless the implementation plan explicitly
+  introduces a new path.
 
 <!-- 
   ============================================================================
@@ -68,6 +76,14 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T007 Create base models/entities that all stories depend on
 - [ ] T008 Configure error handling and logging infrastructure
 - [ ] T009 Setup environment configuration management
+
+Constitution-driven foundational checks to include when applicable:
+
+- [ ] TXXX Verify project references preserve Domain/Application/Infrastructure/Api/Worker boundaries
+- [ ] TXXX Verify MySQL/Casbin truth source is not bypassed by Redis or Elasticsearch write paths
+- [ ] TXXX Verify protected API routes use CurrentRbacContext and deny-by-default authorization
+- [ ] TXXX Verify public DTOs keep `DxEId`/`DxE_id` as string and list responses keep `data.list`/`data.total`
+- [ ] TXXX Verify touched cache, Outbox, Elasticsearch, and audit paths remain rebuildable and observable
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -183,6 +199,8 @@ Examples of foundational tasks (adjust based on your project):
 - Services before endpoints
 - Core implementation before integration
 - Story complete before moving to next priority
+- Authorization, cache, Outbox, Elasticsearch, DTO, or public API changes MUST
+  include a matching verification task tied to the constitution.
 
 ### Parallel Opportunities
 

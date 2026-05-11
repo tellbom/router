@@ -95,6 +95,20 @@
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
 - **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
 
+### Constitution Alignment *(mandatory)*
+
+- **CA-001**: Feature MUST preserve RBAC layer boundaries: Domain has no
+  external dependencies; Application owns contracts and orchestration;
+  Infrastructure implements one technology boundary; Api/Worker compose only.
+- **CA-002**: Feature MUST keep MySQL/Casbin as permission truth and treat Redis
+  permset and Elasticsearch data as derived, rebuildable runtime state.
+- **CA-003**: Feature MUST preserve centralized project context and
+  deny-by-default authorization for protected APIs.
+- **CA-004**: Feature MUST preserve compatibility contracts including response
+  envelope, pagination shape, and string DxEId/DxE_id behavior.
+- **CA-005**: Feature MUST state whether it touches Outbox, cache invalidation,
+  Elasticsearch reindexing, audit logging, package versions, or database schema.
+
 ### Key Entities *(include if feature involves data)*
 
 - **[Entity 1]**: [What it represents, key attributes without implementation]
