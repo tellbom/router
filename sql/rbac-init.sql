@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS `rbac_group` (
     `project`           VARCHAR(64)   NOT NULL                  COMMENT '所属 project',
     `group_name`        VARCHAR(128)  NOT NULL                  COMMENT '权限组显示名称',
     `parent_group_code` VARCHAR(128)  NULL                      COMMENT '父级权限组编码（根组为 NULL）',
-    `rule_codes`        TEXT          NOT NULL DEFAULT '[]'     COMMENT '规则码列表（JSON 数组，如 ["system.user","system.group"]）',
-    `permission_codes`  TEXT          NOT NULL DEFAULT '[]'     COMMENT '权限码列表（JSON 数组，Casbin p policy 来源）',
+    `rule_codes`        TEXT          NOT NULL                  COMMENT '规则码列表（JSON 数组，如 ["system.user","system.group"]）',
+    `permission_codes`  TEXT          NOT NULL                  COMMENT '权限码列表（JSON 数组，Casbin p policy 来源）',
     `status`            VARCHAR(16)   NOT NULL DEFAULT 'Active' COMMENT '状态：Active / Disabled',
     `created_at`        DATETIME(6)   NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     `updated_at`        DATETIME(6)   NOT NULL DEFAULT CURRENT_TIMESTAMP(6)

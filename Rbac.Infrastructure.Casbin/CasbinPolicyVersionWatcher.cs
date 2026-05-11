@@ -1,5 +1,6 @@
 using Casbin;
 using StackExchange.Redis;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rbac.Application.Repositories;
 using Rbac.Domain.ValueObjects;
@@ -22,7 +23,7 @@ namespace Rbac.Infrastructure.Casbin;
 public sealed class CasbinPolicyVersionWatcher : IDisposable
 {
     private readonly IDatabase _redisDb;
-    private readonly ICasbinPolicyRepository _policyRepository;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly RbacCasbinModelProvider _modelProvider;
     private readonly ILogger<CasbinPolicyVersionWatcher> _logger;
 
@@ -31,12 +32,12 @@ public sealed class CasbinPolicyVersionWatcher : IDisposable
 
     public CasbinPolicyVersionWatcher(
         IDatabase redisDb,
-        ICasbinPolicyRepository policyRepository,
+        IServiceScopeFactory scopeFactory,
         RbacCasbinModelProvider modelProvider,
         ILogger<CasbinPolicyVersionWatcher> logger)
     {
         _redisDb = redisDb;
-        _policyRepository = policyRepository;
+        _scopeFactory = scopeFactory;
         _modelProvider = modelProvider;
         _logger = logger;
     }
@@ -97,8 +98,11 @@ public sealed class CasbinPolicyVersionWatcher : IDisposable
             var projectCode = new ProjectCode(project);
 
             // 从 MySQL 读取 g / p policy（唯一合法来源）
-            var grouping = await _policyRepository.GetGroupingPoliciesAsync(projectCode, ct);
-            var permission = await _policyRepository.GetPermissionPoliciesAsync(projectCode, ct);
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var policyRepository = scope.ServiceProvider.GetRequiredService<ICasbinPolicyRepository>();
+
+            var grouping = await policyRepository.GetGroupingPoliciesAsync(projectCode, ct);
+            var permission = await policyRepository.GetPermissionPoliciesAsync(projectCode, ct);
 
             // 构建新 Enforcer
             var newEnforcer = _modelProvider.BuildEnforcer(grouping, permission);

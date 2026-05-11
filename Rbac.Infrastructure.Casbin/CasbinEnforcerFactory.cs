@@ -1,4 +1,5 @@
 using Casbin;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rbac.Application.Policies;
 using Rbac.Domain.ValueObjects;
@@ -17,19 +18,16 @@ namespace Rbac.Infrastructure.Casbin;
 public sealed class CasbinEnforcerFactory
 {
     private readonly RbacCasbinModelProvider _modelProvider;
-    private readonly ICasbinGroupingPolicyReader _groupingReader;
-    private readonly ICasbinPermissionPolicyReader _permissionReader;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<CasbinEnforcerFactory> _logger;
 
     public CasbinEnforcerFactory(
         RbacCasbinModelProvider modelProvider,
-        ICasbinGroupingPolicyReader groupingReader,
-        ICasbinPermissionPolicyReader permissionReader,
+        IServiceScopeFactory scopeFactory,
         ILogger<CasbinEnforcerFactory> logger)
     {
         _modelProvider = modelProvider;
-        _groupingReader = groupingReader;
-        _permissionReader = permissionReader;
+        _scopeFactory = scopeFactory;
         _logger = logger;
     }
 
@@ -42,8 +40,12 @@ public sealed class CasbinEnforcerFactory
         _logger.LogDebug("Building new Enforcer for project={P}", project.Value);
 
         // 从 MySQL 加载 g / p policy（唯一合法数据来源）
-        var grouping = await _groupingReader.LoadAsync(project, ct);
-        var permission = await _permissionReader.LoadAsync(project, ct);
+        await using var scope = _scopeFactory.CreateAsyncScope();
+        var groupingReader = scope.ServiceProvider.GetRequiredService<ICasbinGroupingPolicyReader>();
+        var permissionReader = scope.ServiceProvider.GetRequiredService<ICasbinPermissionPolicyReader>();
+
+        var grouping = await groupingReader.LoadAsync(project, ct);
+        var permission = await permissionReader.LoadAsync(project, ct);
 
         // 构建 Enforcer（不污染任何共享实例）
         var enforcer = _modelProvider.BuildEnforcer(grouping, permission);

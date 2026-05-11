@@ -1,8 +1,9 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Nest;
 using System.Text.Json;
 using Rbac.Application.Outbox;
 using Rbac.Application.Repositories;
+using Rbac.Application.Serialization;
 using Rbac.Domain.ValueObjects;
 using Rbac.Infrastructure.Elasticsearch.Documents;
 using Rbac.Infrastructure.Elasticsearch.Indexes;
@@ -11,19 +12,16 @@ using Rbac.Infrastructure.MySql.Outbox;
 namespace Rbac.Worker.Outbox;
 
 /// <summary>
-/// ES 增量同步 Outbox 处理器。
-///
-/// 消费 Outbox 事件后，从 MySQL 重新读取聚合根数据并写入 ES 对应索引。
-/// 原则：不直接信任 Outbox payload 作为 ES 写入数据，需回读 MySQL 真相。
-///
-/// 删除场景（ChangeKind=Deleted）直接按 DxEId 从 ES 删除文档。
-/// 写入失败时不影响 MySQL 真相，Outbox 标记 Failed 后进入重试队列。
-/// </summary>
+/// ES 澧為噺鍚屾 Outbox 澶勭悊鍣ㄣ€?///
+/// 娑堣垂 Outbox 浜嬩欢鍚庯紝浠?MySQL 閲嶆柊璇诲彇鑱氬悎鏍规暟鎹苟鍐欏叆 ES 瀵瑰簲绱㈠紩銆?/// 鍘熷垯锛氫笉鐩存帴淇′换 Outbox payload 浣滀负 ES 鍐欏叆鏁版嵁锛岄渶鍥炶 MySQL 鐪熺浉銆?///
+/// 鍒犻櫎鍦烘櫙锛圕hangeKind=Deleted锛夌洿鎺ユ寜 DxEId 浠?ES 鍒犻櫎鏂囨。銆?/// 鍐欏叆澶辫触鏃朵笉褰卞搷 MySQL 鐪熺浉锛孫utbox 鏍囪 Failed 鍚庤繘鍏ラ噸璇曢槦鍒椼€?/// </summary>
 public sealed class RbacElasticsearchOutboxProcessor
 {
     private readonly IElasticClient _esClient;
     private readonly IAdministratorRepository _adminRepo;
     private readonly IGroupRepository _groupRepo;
+    private readonly IGroupMemberRepository _groupMemberRepo;
+    private readonly IProjectGrantRepository _projectGrantRepo;
     private readonly IRuleRepository _ruleRepo;
     private readonly ILogger<RbacElasticsearchOutboxProcessor> _logger;
 
@@ -31,12 +29,16 @@ public sealed class RbacElasticsearchOutboxProcessor
         IElasticClient esClient,
         IAdministratorRepository adminRepo,
         IGroupRepository groupRepo,
+        IGroupMemberRepository groupMemberRepo,
+        IProjectGrantRepository projectGrantRepo,
         IRuleRepository ruleRepo,
         ILogger<RbacElasticsearchOutboxProcessor> logger)
     {
         _esClient = esClient;
         _adminRepo = adminRepo;
         _groupRepo = groupRepo;
+        _groupMemberRepo = groupMemberRepo;
+        _projectGrantRepo = projectGrantRepo;
         _ruleRepo = ruleRepo;
         _logger = logger;
     }
@@ -59,14 +61,14 @@ public sealed class RbacElasticsearchOutboxProcessor
                 await HandleMenuChangedAsync(entity, ct);
                 break;
             default:
-                // PolicyChanged / ApiMapChanged / ProjectGrantChanged 触发用户文档更新
+                // PolicyChanged / ApiMapChanged / ProjectGrantChanged 瑙﹀彂鐢ㄦ埛鏂囨。鏇存柊
                 if (entity.Userid is not null)
                     await HandleUserChangedAsync(entity, ct);
                 break;
         }
     }
 
-    // ── 用户文档更新 ──────────────────────────────────────────────
+    // 鈹€鈹€ 鐢ㄦ埛鏂囨。鏇存柊 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
     private async Task HandleUserChangedAsync(OutboxEventEntity entity, CancellationToken ct)
     {
@@ -76,25 +78,61 @@ public sealed class RbacElasticsearchOutboxProcessor
         var admin = await _adminRepo.FindByUseridAsync(new UserId(payload.Userid), ct);
         if (admin is null)
         {
-            // 用户已删除：从 ES 移除
+            // 鐢ㄦ埛宸插垹闄わ細浠?ES 绉婚櫎
             await DeleteDocumentAsync<UserDocument>(
                 RbacUserIndexMapping.IndexName, payload.Userid, ct);
             return;
         }
 
-        var doc = new UserDocument
-        {
-            Id = admin.Id.ToString(),
-            DxEId = admin.DxEId.Value,    // string，不为 number
-            Userid = admin.Userid.Value,
-            Username = admin.Username,
-            Status = admin.Status.ToString(),
-        };
-
+        var doc = await BuildUserDocumentAsync(admin, ct);
         await IndexDocumentAsync(RbacUserIndexMapping.IndexName, admin.Id.ToString(), doc, ct);
     }
 
-    // ── 权限组文档更新 ────────────────────────────────────────────
+    // 鈹€鈹€ 鏉冮檺缁勬枃妗ｆ洿鏂?鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    private async Task<UserDocument> BuildUserDocumentAsync(Rbac.Domain.Users.RbacAdministrator admin, CancellationToken ct)
+    {
+        var grants = await _projectGrantRepo.FindByUseridAsync(admin.Userid, ct);
+        var projectCodes = grants.Select(g => g.Project.Value)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        var superProjects = grants.Where(g => g.IsSuper)
+            .Select(g => g.Project.Value)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var groupCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var groupNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var project in projectCodes)
+        {
+            var memberships = await _groupMemberRepo.FindByUseridAndProjectAsync(admin.Userid.Value, project, ct);
+            foreach (var membership in memberships)
+            {
+                groupCodes.Add(membership.GroupCode.Value);
+
+                var group = await _groupRepo.FindByGroupCodeAsync(
+                    membership.GroupCode, membership.Project, ct);
+                if (group is not null)
+                    groupNames.Add(group.GroupName);
+            }
+        }
+
+        return new UserDocument
+        {
+            Id = admin.Id.ToString(),
+            DxEId = admin.DxEId.Value,
+            Userid = admin.Userid.Value,
+            Username = admin.Username,
+            ProjectCodes = projectCodes,
+            GroupCodes = groupCodes.ToList(),
+            GroupNames = groupNames.ToList(),
+            Status = admin.Status.ToString(),
+            SuperProjects = superProjects,
+            CreatedAt = admin.CreatedAt,
+            UpdatedAt = admin.UpdatedAt,
+        };
+    }
 
     private async Task HandleGroupChangedAsync(OutboxEventEntity entity, CancellationToken ct)
     {
@@ -127,7 +165,7 @@ public sealed class RbacElasticsearchOutboxProcessor
         await IndexDocumentAsync(RbacGroupIndexMapping.IndexName, group.Id.ToString(), doc, ct);
     }
 
-    // ── 规则文档更新 ──────────────────────────────────────────────
+    // 鈹€鈹€ 瑙勫垯鏂囨。鏇存柊 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
     private async Task HandleMenuChangedAsync(OutboxEventEntity entity, CancellationToken ct)
     {
@@ -164,7 +202,7 @@ public sealed class RbacElasticsearchOutboxProcessor
         await IndexDocumentAsync(RbacRuleIndexMapping.IndexName, rule.Id.ToString(), doc, ct);
     }
 
-    // ── 辅助 ──────────────────────────────────────────────────────
+    // 鈹€鈹€ 杈呭姪 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
     private async Task IndexDocumentAsync<T>(string index, string id, T doc, CancellationToken ct)
         where T : class
@@ -198,7 +236,7 @@ public sealed class RbacElasticsearchOutboxProcessor
     private T? Deserialize<T>(string? payload) where T : class
     {
         if (string.IsNullOrWhiteSpace(payload)) return null;
-        try { return JsonSerializer.Deserialize<T>(payload); }
+        try { return JsonSerializer.Deserialize<T>(payload, RbacSerializationRules.InternalOptions); }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Payload deserialize failed type={T}", typeof(T).Name);

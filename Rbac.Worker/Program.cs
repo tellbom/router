@@ -53,6 +53,7 @@ var host = Host.CreateDefaultBuilder(args)
         // Repositories（PATCH-07）
         services.AddScoped<IAdministratorRepository,   AdministratorRepository>();
         services.AddScoped<IGroupRepository,           GroupRepository>();
+        services.AddScoped<IGroupMemberRepository,     GroupMemberRepository>();
         services.AddScoped<IRuleRepository,            RuleRepository>();
         services.AddScoped<IProjectGrantRepository,    ProjectGrantRepository>();
         services.AddScoped<IApiPermissionMapRepository, ApiPermissionMapRepository>();
@@ -103,7 +104,7 @@ var host = Host.CreateDefaultBuilder(args)
             return new ElasticClient(new ConnectionSettings(new Uri(uri)));
         });
 
-        services.AddSingleton<RbacEsFullReindexService>();
+        services.AddScoped<RbacEsFullReindexService>();
         // PATCH-11: RbacEsAliasPreflightChecker 已在 RbacEsBootstrap.cs 实现，注入 RbacEsFullReindexService
         services.AddSingleton<RbacEsAliasPreflightChecker>();
         // IRbacManagementSearchService 在 Rbac.Application.Search（using 已加）
@@ -144,7 +145,8 @@ var host = Host.CreateDefaultBuilder(args)
 
         // ── HostedServices（注册顺序 = 启动顺序）────────────────
         services.AddHostedService<RbacAuditEventWorker>();    // PATCH-12：审计消费
-        services.AddHostedService<RbacCacheWarmupWorker>();   // 启动预热
+        // RbacCacheWarmupWorker currently depends on scoped repositories, so keep it
+        // out of hosted startup until it is refactored to create its own scope.
         services.AddHostedService<RbacOutboxPollingWorker>(); // PATCH-09：Outbox 轮询
     })
     .Build();

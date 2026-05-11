@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Rbac.Application.Repositories;
 using Rbac.Domain.Groups;
+using Rbac.Domain.ValueObjects;
 using Rbac.Infrastructure.MySql.Mapping;
 
 namespace Rbac.Infrastructure.MySql.Repositories;
@@ -19,16 +20,22 @@ public sealed class GroupMemberRepository : IGroupMemberRepository
     public async Task<IReadOnlyList<RbacGroupMember>> FindByUseridAndProjectAsync(
         string userid, string project, CancellationToken ct = default)
     {
+        var userId = new UserId(userid);
+        var projectCode = new ProjectCode(project);
+
         return await _db.GroupMembers
-            .Where(m => m.Userid.Value == userid && m.Project.Value == project)
+            .Where(m => m.Userid == userId && m.Project == projectCode)
             .ToListAsync(ct);
     }
 
     public async Task<IReadOnlyList<RbacGroupMember>> FindByGroupCodeAndProjectAsync(
         string groupCode, string project, CancellationToken ct = default)
     {
+        var group = new GroupCode(groupCode);
+        var projectCode = new ProjectCode(project);
+
         return await _db.GroupMembers
-            .Where(m => m.GroupCode.Value == groupCode && m.Project.Value == project)
+            .Where(m => m.GroupCode == group && m.Project == projectCode)
             .ToListAsync(ct);
     }
 }

@@ -108,9 +108,9 @@ public sealed class RbacMetrics : IDisposable
     /// <summary>project 校验失败次数（未授权/伪造）。</summary>
     public readonly Counter<long> ProjectAuthorizationFailures;
 
-    public RbacMetrics(IMeterFactory meterFactory)
+    public RbacMetrics()
     {
-        _meter = meterFactory.Create(MeterName);
+        _meter = new Meter(MeterName);
 
         PermsetHits = _meter.CreateCounter<long>("rbac.permset.hits", "hits",
             "Number of Redis permset SISMEMBER cache hits");

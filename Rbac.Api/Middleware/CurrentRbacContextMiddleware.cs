@@ -35,7 +35,9 @@ public sealed class CurrentRbacContextMiddleware
         var traceId = context.TraceIdentifier;
 
         // 1. 提取 userid（匿名路由此处可能为 null，由 allowlist filter 决定是否拒绝）
-        var userid = userResolver.ResolveUserId(context.User) ?? string.Empty;
+        var userid = userResolver.ResolveUserId(context.User)
+            ?? ResolveDevelopmentFakeUserId(context)
+            ?? string.Empty;
 
         // 2. 读取原始 project
         var requestedProject = projectReader.ReadProject(context) ?? string.Empty;
@@ -68,6 +70,21 @@ public sealed class CurrentRbacContextMiddleware
             rbacContext.Userid, rbacContext.Project, rbacContext.IsProjectAuthorized, traceId);
 
         await _next(context);
+    }
+
+    private static string? ResolveDevelopmentFakeUserId(HttpContext context)
+    {
+        var headerUserid = context.Request.Headers["X-Test-Userid"].FirstOrDefault();
+        if (!string.IsNullOrWhiteSpace(headerUserid))
+            return headerUserid;
+
+        var value = context.Request.Headers.Authorization.FirstOrDefault();
+        const string prefix = "Bearer fake:";
+        if (value is null || !value.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            return null;
+
+        var userid = value[prefix.Length..].Trim();
+        return string.IsNullOrWhiteSpace(userid) ? null : userid;
     }
 }
 

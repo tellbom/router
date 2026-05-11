@@ -145,7 +145,7 @@ builder.Services.AddSingleton<IElasticClient>(_ =>
 
 // RbacManagementSearchService 在 Infrastructure.Elasticsearch（不在 Application）
 builder.Services.AddScoped<IRbacManagementSearchService, RbacManagementSearchService>();
-builder.Services.AddSingleton<RbacEsFullReindexService>();
+builder.Services.AddScoped<RbacEsFullReindexService>();
 // PATCH-11: RbacEsAliasPreflightChecker 已在 RbacEsBootstrap.cs 实现，注入 RbacEsFullReindexService
 builder.Services.AddSingleton<RbacEsAliasPreflightChecker>();
 

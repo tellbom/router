@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Rbac.Application.Cache;
 using Rbac.Application.Outbox;
+using Rbac.Application.Serialization;
 using Rbac.Infrastructure.MySql.Outbox;
 
 namespace Rbac.Worker.Outbox;
@@ -177,7 +178,7 @@ public sealed class RbacRedisOutboxProcessor
 
         try
         {
-            return JsonSerializer.Deserialize<T>(entity.Payload);
+            return JsonSerializer.Deserialize<T>(entity.Payload, RbacSerializationRules.InternalOptions);
         }
         catch (Exception ex)
         {

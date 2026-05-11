@@ -1,6 +1,7 @@
 using Nest;
 using Rbac.Application.Search;
 using Rbac.Infrastructure.Elasticsearch.Documents;
+using Rbac.Infrastructure.Elasticsearch.Indexes;
 
 namespace Rbac.Infrastructure.Elasticsearch.Search;
 
@@ -11,7 +12,7 @@ namespace Rbac.Infrastructure.Elasticsearch.Search;
 public static class RbacElasticQueryBuilder
 {
     public static SearchDescriptor<UserDocument> BuildUserSearch(UserSearchQuery q) =>
-        new SearchDescriptor<UserDocument>().From(q.Offset).Size(q.PageSize)
+        new SearchDescriptor<UserDocument>().Index(RbacUserIndexMapping.IndexName).From(q.Offset).Size(q.PageSize)
             .Query(qc => qc.Bool(b =>
             {
                 if (!string.IsNullOrWhiteSpace(q.Keyword))
@@ -20,7 +21,7 @@ public static class RbacElasticQueryBuilder
             }));
 
     public static SearchDescriptor<GroupDocument> BuildGroupSearch(GroupSearchQuery q) =>
-        new SearchDescriptor<GroupDocument>().From(q.Offset).Size(q.PageSize)
+        new SearchDescriptor<GroupDocument>().Index(RbacGroupIndexMapping.IndexName).From(q.Offset).Size(q.PageSize)
             .Query(qc => qc.Bool(b =>
             {
                 if (!string.IsNullOrWhiteSpace(q.Keyword))
@@ -29,7 +30,7 @@ public static class RbacElasticQueryBuilder
             }));
 
     public static SearchDescriptor<RuleDocument> BuildRuleSearch(RuleSearchQuery q) =>
-        new SearchDescriptor<RuleDocument>().From(q.Offset).Size(q.PageSize)
+        new SearchDescriptor<RuleDocument>().Index(RbacRuleIndexMapping.IndexName).From(q.Offset).Size(q.PageSize)
             .Query(qc => qc.Bool(b =>
             {
                 if (!string.IsNullOrWhiteSpace(q.Keyword))
@@ -38,7 +39,7 @@ public static class RbacElasticQueryBuilder
             }));
 
     public static SearchDescriptor<PermissionViewDocument> BuildPermissionViewSearch(PermissionViewSearchQuery q) =>
-        new SearchDescriptor<PermissionViewDocument>().From(q.Offset).Size(q.PageSize)
+        new SearchDescriptor<PermissionViewDocument>().Index(RbacPermissionViewIndexMapping.IndexName).From(q.Offset).Size(q.PageSize)
             .Query(qc => qc.Bool(b =>
             {
                 if (!string.IsNullOrWhiteSpace(q.Keyword))
@@ -47,7 +48,7 @@ public static class RbacElasticQueryBuilder
             }));
 
     public static SearchDescriptor<AuditLogDocument> BuildAuditLogSearch(AuditLogSearchQuery q) =>
-        new SearchDescriptor<AuditLogDocument>().From(q.Offset).Size(q.PageSize)
+        new SearchDescriptor<AuditLogDocument>().Index(RbacAuditLogIndexMapping.IndexName).From(q.Offset).Size(q.PageSize)
             .Sort(s => s.Descending(f => f.CreatedAt))
             .Query(qc => qc.Bool(b =>
             {
