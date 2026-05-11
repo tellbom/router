@@ -1,7 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rbac.Application.Menus;
-using Rbac.Application.Policies;
 using Rbac.Application.Repositories;
 using Rbac.Application.Snapshots;
 using Rbac.Domain.ValueObjects;
@@ -27,30 +27,30 @@ namespace Rbac.Worker.Warmup;
 /// - 预热不阻塞服务启动，全部 fire-and-forget。
 /// - 预热失败只记录日志，不影响服务可用性。
 /// - 不预热已禁用用户或已移除 project 授权的用户。
+///
+/// 生命周期修正（smoke test 发现）：
+/// IHostedService 由 DI 以 Singleton 生命周期托管。
+/// 原实现直接在构造函数注入 Scoped 服务（IProjectGrantRepository 等），
+/// 导致 .NET DI 生命周期校验报错（Singleton 持有 Scoped）。
+/// 修正方案：只注入 IServiceScopeFactory，每次 WarmupAsync 执行时
+/// 创建独立 Scope，从 Scope 中解析 Scoped 依赖，用完即释放。
+/// 模式与 RbacOutboxPollingWorker.ProcessBatchAsync 完全一致。
 /// </summary>
 public sealed class RbacCacheWarmupWorker : IHostedService
 {
-    private readonly IProjectGrantRepository _grantRepo;
-    private readonly IRuleRepository _ruleRepo;
-    private readonly IRbacSnapshotService _snapshotService;
-    private readonly RbacProjectMenuTreeService _menuTreeService;
+    private readonly IServiceScopeFactory _scopeFactory;
+    // CasbinEnforcerProvider 是 Singleton，可以直接持有
     private readonly CasbinEnforcerProvider _casbinProvider;
     private readonly ILogger<RbacCacheWarmupWorker> _logger;
 
     public RbacCacheWarmupWorker(
-        IProjectGrantRepository grantRepo,
-        IRuleRepository ruleRepo,
-        IRbacSnapshotService snapshotService,
-        RbacProjectMenuTreeService menuTreeService,
+        IServiceScopeFactory scopeFactory,
         CasbinEnforcerProvider casbinProvider,
         ILogger<RbacCacheWarmupWorker> logger)
     {
-        _grantRepo = grantRepo;
-        _ruleRepo = ruleRepo;
-        _snapshotService = snapshotService;
-        _menuTreeService = menuTreeService;
+        _scopeFactory  = scopeFactory;
         _casbinProvider = casbinProvider;
-        _logger = logger;
+        _logger        = logger;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -62,19 +62,32 @@ public sealed class RbacCacheWarmupWorker : IHostedService
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
-    /// <summary>执行完整预热流程。</summary>
+    /// <summary>
+    /// 执行完整预热流程。
+    /// 每次调用创建独立 Scope，保证 DbContext / Repository 等 Scoped 服务
+    /// 在预热结束后正确释放，不跨请求持有连接。
+    /// </summary>
     public async Task WarmupAsync(CancellationToken ct = default)
     {
         _logger.LogInformation("Cache warmup started.");
         var sw = System.Diagnostics.Stopwatch.StartNew();
 
-        // 1. 获取所有活跃 project（通过授权记录推断）
-        var activeProjects = await GetActiveProjectsAsync(ct);
+        // 每次预热使用独立 Scope，Scoped 服务（DbContext 等）在 using 结束时释放
+        await using var scope = _scopeFactory.CreateAsyncScope();
+        var sp = scope.ServiceProvider;
+
+        var grantRepo       = sp.GetRequiredService<IProjectGrantRepository>();
+        var ruleRepo        = sp.GetRequiredService<IRuleRepository>();
+        var snapshotService = sp.GetRequiredService<IRbacSnapshotService>();
+        var menuTreeService = sp.GetRequiredService<RbacProjectMenuTreeService>();
+
+        var activeProjects = await GetActiveProjectsAsync(ruleRepo, ct);
 
         foreach (var project in activeProjects)
         {
             if (ct.IsCancellationRequested) break;
-            await WarmupProjectAsync(project, ct);
+            await WarmupProjectAsync(
+                project, grantRepo, snapshotService, menuTreeService, ct);
         }
 
         sw.Stop();
@@ -85,41 +98,44 @@ public sealed class RbacCacheWarmupWorker : IHostedService
 
     // ── 按 project 预热 ───────────────────────────────────────────
 
-    private async Task WarmupProjectAsync(string project, CancellationToken ct)
+    private async Task WarmupProjectAsync(
+        string project,
+        IProjectGrantRepository grantRepo,
+        IRbacSnapshotService snapshotService,
+        RbacProjectMenuTreeService menuTreeService,
+        CancellationToken ct)
     {
         _logger.LogDebug("Warming up project={P}", project);
 
         // 1. menu-tree（project 级，所有用户共享）
-        await SafeAsync(() =>
-            _menuTreeService.GetProjectMenuTreeAsync(project, ct),
+        await SafeAsync(
+            () => menuTreeService.GetProjectMenuTreeAsync(project, ct),
             $"menu-tree project={project}");
 
-        // 2. Casbin Enforcer（project 级）
-        await SafeAsync(() =>
-            _casbinProvider.SyncAsync(new ProjectCode(project), ct),
+        // 2. Casbin Enforcer（Singleton，直接调用）
+        await SafeAsync(
+            () => _casbinProvider.SyncAsync(new ProjectCode(project), ct),
             $"casbin-enforcer project={project}");
 
-        // 3. 热点用户 snapshot（最近有授权记录的用户，不预热禁用用户）
-        var grants = await _grantRepo.FindByProjectAsync(new ProjectCode(project), ct);
-        foreach (var grant in grants.Take(100)) // 最多预热 100 个用户
+        // 3. 热点用户 snapshot（最多预热 100 个用户）
+        var grants = await grantRepo.FindByProjectAsync(new ProjectCode(project), ct);
+        foreach (var grant in grants.Take(100))
         {
             if (ct.IsCancellationRequested) break;
-            await SafeAsync(() =>
-                _snapshotService.GetSnapshotAsync(grant.Userid.Value, project, ct),
+            await SafeAsync(
+                () => snapshotService.GetSnapshotAsync(grant.Userid.Value, project, ct),
                 $"snapshot userid={grant.Userid.Value} project={project}");
         }
     }
 
     // ── 获取活跃 project 列表 ─────────────────────────────────────
 
-    private async Task<IReadOnlyList<string>> GetActiveProjectsAsync(CancellationToken ct)
+    private async Task<IReadOnlyList<string>> GetActiveProjectsAsync(
+        IRuleRepository ruleRepo, CancellationToken ct)
     {
-        // 通过规则表推断活跃 project（有规则记录的 project 为活跃）
-        // 实际实现可维护 project 注册表；此处通过规则表 project 字段去重
         try
         {
-            // 临时用通配符查询，具体实现由 IRuleRepository 扩展
-            var rules = await _ruleRepo.FindActiveByProjectAsync(new ProjectCode("*"), ct);
+            var rules = await ruleRepo.FindActiveByProjectAsync(new ProjectCode("*"), ct);
             return rules.Select(r => r.Project.Value).Distinct().ToList();
         }
         catch (Exception ex)
@@ -129,9 +145,11 @@ public sealed class RbacCacheWarmupWorker : IHostedService
         }
     }
 
+    // ── SafeAsync 辅助 ────────────────────────────────────────────
+
     private async Task SafeAsync(Func<Task> action, string label)
     {
-        try { await action(); }
+        try   { await action(); }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Warmup failed for {Label}", label);
@@ -140,7 +158,7 @@ public sealed class RbacCacheWarmupWorker : IHostedService
 
     private async Task SafeAsync<T>(Func<Task<T>> action, string label)
     {
-        try { await action(); }
+        try   { await action(); }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Warmup failed for {Label}", label);

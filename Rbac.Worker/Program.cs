@@ -145,8 +145,7 @@ var host = Host.CreateDefaultBuilder(args)
 
         // ── HostedServices（注册顺序 = 启动顺序）────────────────
         services.AddHostedService<RbacAuditEventWorker>();    // PATCH-12：审计消费
-        // RbacCacheWarmupWorker currently depends on scoped repositories, so keep it
-        // out of hosted startup until it is refactored to create its own scope.
+        services.AddHostedService<RbacCacheWarmupWorker>();   // 启动预热（内部创建 Scope）
         services.AddHostedService<RbacOutboxPollingWorker>(); // PATCH-09：Outbox 轮询
     })
     .Build();
