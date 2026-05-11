@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rbac.Application.Security;
 
@@ -30,13 +31,14 @@ public sealed class CurrentRbacContextMiddleware
         IUserIdentityResolver userResolver,
         IProjectRequestReader projectReader,
         IRbacProjectResolver projectResolver,
-        ICurrentRbacContextAccessor contextAccessor)
+        ICurrentRbacContextAccessor contextAccessor,
+        IHostEnvironment env)
     {
         var traceId = context.TraceIdentifier;
 
         // 1. 提取 userid（匿名路由此处可能为 null，由 allowlist filter 决定是否拒绝）
         var userid = userResolver.ResolveUserId(context.User)
-            ?? ResolveDevelopmentFakeUserId(context)
+            ?? ResolveDevelopmentFakeUserId(context, env)
             ?? string.Empty;
 
         // 2. 读取原始 project
@@ -72,8 +74,11 @@ public sealed class CurrentRbacContextMiddleware
         await _next(context);
     }
 
-    private static string? ResolveDevelopmentFakeUserId(HttpContext context)
+    private static string? ResolveDevelopmentFakeUserId(HttpContext context, IHostEnvironment env)
     {
+        if (!env.IsDevelopment())
+            return null;
+
         var headerUserid = context.Request.Headers["X-Test-Userid"].FirstOrDefault();
         if (!string.IsNullOrWhiteSpace(headerUserid))
             return headerUserid;

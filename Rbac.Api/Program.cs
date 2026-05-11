@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Nest;
@@ -51,14 +52,24 @@ builder.Services.Configure<RbacDxEIdGenerationOptions>(
     builder.Configuration.GetSection(RbacDxEIdGenerationOptions.SectionName));
 
 // ── Authentication (JWT) ──────────────────────────────────────────
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+var jwtSection = builder.Configuration.GetSection(RbacJwtOptions.SectionName);
+var jwtMode = jwtSection["Mode"] ?? "Oidc";
+var authBuilder = builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+
+if (string.Equals(jwtMode, "TrustedJwt", StringComparison.OrdinalIgnoreCase))
+{
+    authBuilder.AddScheme<AuthenticationSchemeOptions, TrustedJwtAuthenticationHandler>(
+        JwtBearerDefaults.AuthenticationScheme, _ => { });
+}
+else
+{
+    authBuilder.AddJwtBearer(options =>
     {
-        var jwtSection = builder.Configuration.GetSection(RbacJwtOptions.SectionName);
         options.Authority            = jwtSection["Authority"];
         options.Audience             = jwtSection["Audience"];
         options.RequireHttpsMetadata = bool.Parse(jwtSection["RequireHttpsMetadata"] ?? "true");
     });
+}
 
 // ── Controllers + Global Filter + JSON ───────────────────────────
 builder.Services.AddControllers(opt =>

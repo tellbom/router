@@ -8,6 +8,9 @@ public sealed class RbacJwtOptions
 {
     public const string SectionName = "Jwt";
 
+    /// <summary>Authentication mode: TrustedJwt or Oidc.</summary>
+    public string Mode { get; set; } = "Oidc";
+
     /// <summary>JWT 签发方（验证 iss claim）。</summary>
     public string Issuer { get; set; } = string.Empty;
 
