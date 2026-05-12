@@ -30,6 +30,8 @@ public sealed class RbacEsFullReindexService
     private readonly IElasticClient _esClient;
     private readonly IAdministratorRepository _adminRepo;
     private readonly IGroupRepository _groupRepo;
+    private readonly IGroupMemberRepository _groupMemberRepo;
+    private readonly IProjectGrantRepository _projectGrantRepo;
     private readonly IRuleRepository _ruleRepo;
     private readonly IApiPermissionMapRepository _apiMapRepo; // PATCH-10: permission_view 数据来源
     private readonly RbacEsAliasPreflightChecker _preflight;  // PATCH-11: 已有类，仅接入
@@ -39,6 +41,8 @@ public sealed class RbacEsFullReindexService
         IElasticClient esClient,
         IAdministratorRepository adminRepo,
         IGroupRepository groupRepo,
+        IGroupMemberRepository groupMemberRepo,
+        IProjectGrantRepository projectGrantRepo,
         IRuleRepository ruleRepo,
         IApiPermissionMapRepository apiMapRepo,
         RbacEsAliasPreflightChecker preflight,
@@ -47,6 +51,8 @@ public sealed class RbacEsFullReindexService
         _esClient   = esClient;
         _adminRepo  = adminRepo;
         _groupRepo  = groupRepo;
+        _groupMemberRepo = groupMemberRepo;
+        _projectGrantRepo = projectGrantRepo;
         _ruleRepo   = ruleRepo;
         _apiMapRepo = apiMapRepo;
         _preflight  = preflight;
@@ -68,14 +74,11 @@ public sealed class RbacEsFullReindexService
                 ? await _adminRepo.FindByProjectAsync(new ProjectCode(project), ct)
                 : await _adminRepo.FindByProjectAsync(new ProjectCode("*"), ct);
 
-            var docs = admins.Select(a => new UserDocument
+            var docs = new List<UserDocument>();
+            foreach (var admin in admins)
             {
-                Id       = a.Id.ToString(),
-                DxEId    = a.DxEId.Value,
-                Userid   = a.Userid.Value,
-                Username = a.Username,
-                Status   = a.Status.ToString(),
-            }).ToList();
+                docs.Add(await BuildUserDocumentAsync(admin, ct));
+            }
 
             await BulkIndexAsync<UserDocument>(newIndex, docs, ct);
             return docs.Count;
@@ -83,6 +86,53 @@ public sealed class RbacEsFullReindexService
     }
 
     /// <summary>重建权限组索引。</summary>
+    private async Task<UserDocument> BuildUserDocumentAsync(
+        Rbac.Domain.Users.RbacAdministrator admin,
+        CancellationToken ct)
+    {
+        var grants = await _projectGrantRepo.FindByUseridAsync(admin.Userid, ct);
+        var projectCodes = grants.Select(g => g.Project.Value)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        var superProjects = grants.Where(g => g.IsSuper)
+            .Select(g => g.Project.Value)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var groupCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var groupNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var project in projectCodes)
+        {
+            var memberships = await _groupMemberRepo.FindByUseridAndProjectAsync(
+                admin.Userid.Value, project, ct);
+            foreach (var membership in memberships)
+            {
+                groupCodes.Add(membership.GroupCode.Value);
+
+                var group = await _groupRepo.FindByGroupCodeAsync(
+                    membership.GroupCode, membership.Project, ct);
+                if (group is not null)
+                    groupNames.Add(group.GroupName);
+            }
+        }
+
+        return new UserDocument
+        {
+            Id = admin.Id.ToString(),
+            DxEId = admin.DxEId.Value,
+            Userid = admin.Userid.Value,
+            Username = admin.Username,
+            ProjectCodes = projectCodes,
+            GroupCodes = groupCodes.ToList(),
+            GroupNames = groupNames.ToList(),
+            Status = admin.Status.ToString(),
+            SuperProjects = superProjects,
+            CreatedAt = admin.CreatedAt,
+            UpdatedAt = admin.UpdatedAt,
+        };
+    }
+
     public async Task<ReindexResult> ReindexGroupsAsync(
         string? project = null, CancellationToken ct = default)
     {

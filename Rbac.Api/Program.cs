@@ -16,6 +16,7 @@ using Rbac.Application.Cache;
 using Rbac.Application.Identity;
 using Rbac.Application.Management;
 using Rbac.Application.Menus;
+using Rbac.Application.Outbox;
 using Rbac.Application.Policies;
 using Rbac.Application.Repositories;
 using Rbac.Application.Search;
@@ -50,6 +51,8 @@ builder.Services.Configure<RbacAllowlistOptions>(
     builder.Configuration.GetSection(RbacAllowlistOptions.SectionName));
 builder.Services.Configure<RbacProjectAccessAllowlistOptions>(
     builder.Configuration.GetSection(RbacProjectAccessAllowlistOptions.SectionName));
+builder.Services.Configure<RbacOpsOptions>(
+    builder.Configuration.GetSection(RbacOpsOptions.SectionName));
 // RbacDxEIdGenerationOptions 在 Rbac.Infrastructure.MySql.Identity
 builder.Services.Configure<RbacDxEIdGenerationOptions>(
     builder.Configuration.GetSection(RbacDxEIdGenerationOptions.SectionName));
@@ -99,6 +102,7 @@ builder.Services.AddDbContext<RbacDbContext>(opt =>
 builder.Services.AddScoped<OutboxReaderWriter>();
 builder.Services.AddScoped<IOutboxWriter>(sp => sp.GetRequiredService<OutboxReaderWriter>());
 builder.Services.AddScoped<IOutboxReader>(sp => sp.GetRequiredService<OutboxReaderWriter>());
+builder.Services.AddScoped<IOutboxAdminService, OutboxAdminService>();
 
 // Repositories（PATCH-07）
 builder.Services.AddScoped<IAdministratorRepository,   AdministratorRepository>();
@@ -197,6 +201,7 @@ builder.Services.AddScoped<RbacProjectMenuTreeService>();
 
 // ── Observability ─────────────────────────────────────────────────
 builder.Services.AddSingleton<Rbac.Application.Observability.RbacMetrics>();
+builder.Services.AddScoped<OpsAuthorizationFilter>();
 
 
 // —— Controller
