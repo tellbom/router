@@ -188,10 +188,9 @@ public sealed partial class GroupController
         var oldRuleCodes  = group.RuleCodes.Select(r => r.Value).ToList();
         var oldPermCodes  = group.PermissionCodes.Select(p => p.Value).ToList();
 
-        var groupName = req.GroupName ?? req.Name;
-        if (groupName is not null && groupName != group.GroupName)
+        if (req.GroupName is not null && req.GroupName != group.GroupName)
         {
-            group.UpdateName(groupName);
+            group.UpdateName(req.GroupName);
             changedFields.Add("groupName");
         }
 
@@ -217,33 +216,31 @@ public sealed partial class GroupController
             var ruleRepo = HttpContext.RequestServices
                 .GetRequiredService<IRuleRepository>();
 
+            var newRuleCodes = req.RuleCodes
+                .Select(r => new RuleCode(r)).ToList();
+
+            // 从 rbac_rule 批量推导对应 permissionCodes
             var allRules = await ruleRepo.FindActiveByProjectAsync(
                 new ProjectCode(ctx.Project), ct);
-            var requestedRuleCodes = req.RuleCodes;
-            var ruleCodeSet = requestedRuleCodes
+            var ruleCodeSet = req.RuleCodes
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-            var selectedRules = allRules
+            var derivedPermCodes = allRules
                 .Where(r => ruleCodeSet.Contains(r.RuleCode.Value))
-                .ToList();
-            var newRuleCodes = ruleCodeSet.Contains("*")
-                ? new List<RuleCode> { new("*") }
-                : selectedRules.Select(r => r.RuleCode).ToList();
-            var derivedPermCodes = ruleCodeSet.Contains("*")
-                ? new List<string> { "*" }
-                : selectedRules
                 .Select(r => r.PermissionCode.Value)
                 .ToList();
 
+            // 合并旧有 permissionCodes（不移除已有的）
             var mergedPermCodes = oldPermCodes
                 .Union(derivedPermCodes, StringComparer.OrdinalIgnoreCase)
-                .Select(p => new PermissionCode(p)).ToList();
+                .Select(p => new PermissionCode(p))
+                .ToList();
 
             group.UpdateRules(newRuleCodes, mergedPermCodes);
             changedFields.Add("ruleCodes");
             changedFields.Add("permissionCodes");
         }
 
+        // 从 DB 查该组当前成员，用于 Outbox 事件的 permset 失效路由
         var memberRepo = HttpContext.RequestServices
             .GetRequiredService<IGroupMemberRepository>();
         var groupMembers = await memberRepo.FindByGroupCodeAndProjectAsync(
@@ -276,9 +273,9 @@ public sealed partial class RuleController
 
         var oldPermCode = rule.PermissionCode.Value;
 
-        MenuType? menuType = null;
+        Rules.MenuType? menuType = null;
         if (req.MenuType is not null &&
-            Enum.TryParse<MenuType>(req.MenuType, ignoreCase: true, out var mt))
+            Enum.TryParse<Rules.MenuType>(req.MenuType, ignoreCase: true, out var mt))
             menuType = mt;
 
         RuleStatus? status = null;
@@ -306,8 +303,7 @@ public sealed partial class RuleController
             keepalive: req.Keepalive,
             weigh: req.Weigh,
             status: status,
-            permissionCode: permCode,
-            parentRuleCodeSpecified: req.ParentRuleCode is not null);
+            permissionCode: permCode);
 
         // 新旧 permCode 均加入受影响列表（可能两值相同，用 HashSet 去重）
         var affected = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -322,7 +318,6 @@ public sealed partial class RuleController
 
         return ApiResponse<object>.Ok(null!);
     }
-
 }
 
 // ── Request DTOs ──────────────────────────────────────────────────
@@ -336,7 +331,6 @@ public sealed record UpdateAdminRequest(
 /// <summary>权限组完整编辑请求。null 字段表示不修改。</summary>
 public sealed record UpdateGroupRequest(
     string? GroupName,
-    string? Name,
     string? ParentGroupCode,   // 空字符串表示提升为根组
     string? Status,
     string[]? RuleCodes);
