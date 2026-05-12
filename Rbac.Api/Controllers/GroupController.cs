@@ -28,6 +28,7 @@ public sealed partial class GroupController : ControllerBase
     private readonly RbacManagementWriteGuard _guard;
     private readonly IRbacDxEIdGenerator _idGen;
     private readonly IGroupRepository _groupRepo;
+    private readonly IRuleRepository _ruleRepo;
 
     public GroupController(
         ICurrentRbacContextAccessor ctx,
@@ -35,7 +36,8 @@ public sealed partial class GroupController : ControllerBase
         IRbacManagementWriteService write,
         RbacManagementWriteGuard guard,
         IRbacDxEIdGenerator idGen,
-        IGroupRepository groupRepo)
+        IGroupRepository groupRepo,
+        IRuleRepository ruleRepo)
     {
         _ctx = ctx;
         _search = search;
@@ -43,6 +45,7 @@ public sealed partial class GroupController : ControllerBase
         _guard = guard;
         _idGen = idGen;
         _groupRepo = groupRepo;
+        _ruleRepo = ruleRepo;
     }
 
     // ── 列表 ──────────────────────────────────────────────────────
@@ -136,12 +139,30 @@ public sealed partial class GroupController : ControllerBase
         var oldRuleCodes = group.RuleCodes.Select(r => r.Value).ToList();
         var oldPermCodes = group.PermissionCodes.Select(p => p.Value).ToList();
 
-        var newRuleCodes = (req.RuleCodes ?? Array.Empty<string>())
-            .Select(r => new RuleCode(r)).ToList();
-        var newPermCodes = (req.PermissionCodes ?? Array.Empty<string>())
-            .Select(p => new PermissionCode(p)).ToList();
+        var allRules = await _ruleRepo.FindActiveByProjectAsync(
+            new ProjectCode(ctx.Project), ct);
+        var requestedRuleCodes = req.RuleCodes ?? Array.Empty<string>();
+        var ruleCodeSet = requestedRuleCodes
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        group.UpdateRules(newRuleCodes, newPermCodes);
+        var selectedRules = allRules
+            .Where(r => ruleCodeSet.Contains(r.RuleCode.Value))
+            .ToList();
+        var newRuleCodes = ruleCodeSet.Contains("*")
+            ? new List<RuleCode> { new("*") }
+            : selectedRules.Select(r => r.RuleCode).ToList();
+        var derivedPermCodes = ruleCodeSet.Contains("*")
+            ? new List<string> { "*" }
+            : selectedRules
+            .Select(r => r.PermissionCode.Value)
+            .ToList();
+
+        var mergedPermCodes = oldPermCodes
+            .Union(derivedPermCodes, StringComparer.OrdinalIgnoreCase)
+            .Select(p => new PermissionCode(p))
+            .ToList();
+
+        group.UpdateRules(newRuleCodes, mergedPermCodes);
 
         // affectedUserids 由调用方提供；如未提供则从 MySQL 查询
         var affectedUserids = req.AffectedUserids ?? Array.Empty<string>();
@@ -379,7 +400,6 @@ public sealed record CreateGroupRequest(
 
 public sealed record UpdateGroupRulesRequest(
     string[]? RuleCodes,
-    string[]? PermissionCodes,
     string[]? AffectedUserids);
 
 public sealed record ChangeGroupStatusRequest(

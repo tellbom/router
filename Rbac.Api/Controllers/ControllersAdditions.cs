@@ -188,9 +188,10 @@ public sealed partial class GroupController
         var oldRuleCodes  = group.RuleCodes.Select(r => r.Value).ToList();
         var oldPermCodes  = group.PermissionCodes.Select(p => p.Value).ToList();
 
-        if (req.GroupName is not null && req.GroupName != group.GroupName)
+        var groupName = req.GroupName ?? req.Name;
+        if (groupName is not null && groupName != group.GroupName)
         {
-            group.UpdateName(req.GroupName);
+            group.UpdateName(groupName);
             changedFields.Add("groupName");
         }
 
@@ -211,13 +212,34 @@ public sealed partial class GroupController
             changedFields.Add("status");
         }
 
-        if (req.RuleCodes is not null || req.PermissionCodes is not null)
+        if (req.RuleCodes is not null)
         {
-            var newRuleCodes = (req.RuleCodes ?? oldRuleCodes.ToArray())
-                .Select(r => new RuleCode(r)).ToList();
-            var newPermCodes = (req.PermissionCodes ?? oldPermCodes.ToArray())
+            var ruleRepo = HttpContext.RequestServices
+                .GetRequiredService<IRuleRepository>();
+
+            var allRules = await ruleRepo.FindActiveByProjectAsync(
+                new ProjectCode(ctx.Project), ct);
+            var requestedRuleCodes = req.RuleCodes;
+            var ruleCodeSet = requestedRuleCodes
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var selectedRules = allRules
+                .Where(r => ruleCodeSet.Contains(r.RuleCode.Value))
+                .ToList();
+            var newRuleCodes = ruleCodeSet.Contains("*")
+                ? new List<RuleCode> { new("*") }
+                : selectedRules.Select(r => r.RuleCode).ToList();
+            var derivedPermCodes = ruleCodeSet.Contains("*")
+                ? new List<string> { "*" }
+                : selectedRules
+                .Select(r => r.PermissionCode.Value)
+                .ToList();
+
+            var mergedPermCodes = oldPermCodes
+                .Union(derivedPermCodes, StringComparer.OrdinalIgnoreCase)
                 .Select(p => new PermissionCode(p)).ToList();
-            group.UpdateRules(newRuleCodes, newPermCodes);
+
+            group.UpdateRules(newRuleCodes, mergedPermCodes);
             changedFields.Add("ruleCodes");
             changedFields.Add("permissionCodes");
         }
@@ -308,10 +330,10 @@ public sealed record UpdateAdminRequest(
 /// <summary>权限组完整编辑请求。null 字段表示不修改。</summary>
 public sealed record UpdateGroupRequest(
     string? GroupName,
+    string? Name,
     string? ParentGroupCode,   // 空字符串表示提升为根组
     string? Status,
     string[]? RuleCodes,
-    string[]? PermissionCodes,
     string[]? AffectedUserids);
 
 /// <summary>规则完整编辑请求。null 字段表示不修改。</summary>
