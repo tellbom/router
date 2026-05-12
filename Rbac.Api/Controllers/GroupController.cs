@@ -115,16 +115,52 @@ public sealed partial class GroupController : ControllerBase
             parentGroupCode: string.IsNullOrWhiteSpace(req.ParentGroupCode)
                 ? null : new GroupCode(req.ParentGroupCode));
 
+        var changedFields = new List<string> { "created" };
+
+        if (req.Status is not null)
+        {
+            if (req.Status == "Disabled" || req.Status == "0") group.Disable();
+            else group.Enable();
+            changedFields.Add("status");
+        }
+
+        if (req.RuleCodes is not null)
+        {
+            var allRules = await _ruleRepo.FindActiveByProjectAsync(
+                new ProjectCode(ctx.Project), ct);
+            var ruleCodeSet = req.RuleCodes
+                .Where(r => !string.IsNullOrWhiteSpace(r))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var selectedRules = allRules
+                .Where(r => ruleCodeSet.Contains(r.RuleCode.Value))
+                .ToList();
+            var newRuleCodes = ruleCodeSet.Contains("*")
+                ? new List<RuleCode> { new("*") }
+                : selectedRules.Select(r => r.RuleCode).ToList();
+            var derivedPermCodes = ruleCodeSet.Contains("*")
+                ? new List<PermissionCode> { new("*") }
+                : selectedRules.Select(r => r.PermissionCode).ToList();
+
+            group.UpdateRules(newRuleCodes, derivedPermCodes);
+            changedFields.Add("ruleCodes");
+            changedFields.Add("permissionCodes");
+        }
+
         await _write.SaveGroupAsync(
             group,
-            changedFields: new[] { "created" },
+            changedFields,
             oldRuleCodes: Array.Empty<string>(),
             oldPermissionCodes: Array.Empty<string>(),
             affectedUserids: Array.Empty<string>(),
             operatorUserid: ctx.Userid,
             ct);
 
-        return ApiResponse<object>.Ok(new { dxeId = group.DxEId.Value });
+        return ApiResponse<object>.Ok(new
+        {
+            dxeId = group.DxEId.Value,
+            groupCode = group.GroupCode.Value
+        });
     }
 
     // ── 更新规则/权限码 ────────────────────────────────────────────
@@ -402,10 +438,18 @@ public sealed partial class GroupController : ControllerBase
 
 // ── Request DTOs ───────────────────────────────────────────────────
 
-public sealed record CreateGroupRequest(
-    string GroupCode,
-    string GroupName,
-    string? ParentGroupCode);
+public sealed class CreateGroupRequest
+{
+    public string GroupCode { get; init; } = $"group_{Guid.NewGuid():N}";
+
+    public string GroupName { get; init; } = string.Empty;
+
+    public string? ParentGroupCode { get; init; }
+
+    public string? Status { get; init; }
+
+    public string[]? RuleCodes { get; init; }
+}
 
 public sealed record UpdateGroupRulesRequest(
     string[]? RuleCodes);
