@@ -97,6 +97,8 @@ public sealed partial class RuleController : ControllerBase
                 req.Title,
                 req.Name ?? req.RuleCode,
                 new RuleCode(req.ParentRuleCode),
+                icon: req.Icon,
+                remark: req.Remark,
                 weigh: req.Weigh);
         }
         else
@@ -123,6 +125,8 @@ public sealed partial class RuleController : ControllerBase
                 url: req.Url,
                 component: req.Component,
                 extend: req.Extend,
+                icon: req.Icon,
+                remark: req.Remark,
                 keepalive: req.Keepalive,
                 weigh: req.Weigh);
         }
@@ -224,11 +228,13 @@ public sealed record CreateRuleRequest(
     string Type,
     string? Name = null,
     string? Path = null,
+    string? Icon = null,
     string? ParentRuleCode = null,
     string? MenuType = null,
     string? Url = null,
     string? Component = null,
     string? Extend = null,
+    string? Remark = null,
     bool Keepalive = false,
     int Weigh = 0);
 

@@ -193,10 +193,18 @@ public sealed class RbacElasticsearchOutboxProcessor
             Title = rule.Title,
             Name = rule.Name,
             Path = rule.Path,
+            Icon = rule.Icon,
             Type = rule.Type.ToString().ToLowerInvariant(),
             MenuType = rule.MenuType?.ToString().ToLowerInvariant() ?? string.Empty,
+            Component = rule.Component,
+            Url = rule.Url,
+            Extend = rule.Extend,
+            Remark = rule.Remark,
+            Keepalive = rule.Keepalive.ToString().ToLowerInvariant(),
             Status = rule.Status.ToString(),
             Weigh = rule.Weigh,
+            CreatedAt = rule.CreatedAt,
+            UpdatedAt = rule.UpdatedAt,
         };
 
         await IndexDocumentAsync(RbacRuleIndexMapping.IndexName, rule.Id.ToString(), doc, ct);

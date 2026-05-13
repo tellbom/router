@@ -69,6 +69,8 @@ public sealed class RbacManagementSearchService : IRbacManagementSearchService
                 Title = doc.Title,
                 Type = doc.Type,
                 Status = doc.Status,
+                Icon = doc.Icon ?? string.Empty,
+                Remark = doc.Remark ?? string.Empty,
             });
     }
 

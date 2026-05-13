@@ -185,10 +185,18 @@ public sealed class RbacEsFullReindexService
                 Title         = r.Title,
                 Name          = r.Name,
                 Path          = r.Path,
+                Icon          = r.Icon,
                 Type          = r.Type.ToString().ToLowerInvariant(),
                 MenuType      = r.MenuType?.ToString().ToLowerInvariant() ?? string.Empty,
+                Component     = r.Component,
+                Url           = r.Url,
+                Extend        = r.Extend,
+                Remark        = r.Remark,
+                Keepalive     = r.Keepalive.ToString().ToLowerInvariant(),
                 Status        = r.Status.ToString(),
                 Weigh         = r.Weigh,
+                CreatedAt     = r.CreatedAt,
+                UpdatedAt     = r.UpdatedAt,
             }).ToList();
 
             await BulkIndexAsync<RuleDocument>(newIndex, docs, ct);

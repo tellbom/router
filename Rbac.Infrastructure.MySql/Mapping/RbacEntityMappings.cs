@@ -188,11 +188,13 @@ internal sealed class RuleMapping : IEntityTypeConfiguration<RbacRule>
         b.Property(x => x.Title).HasColumnName("title").HasMaxLength(128).IsRequired();
         b.Property(x => x.Name).HasColumnName("name").HasMaxLength(128).IsRequired(false);
         b.Property(x => x.Path).HasColumnName("path").HasMaxLength(256).IsRequired(false);
+        b.Property(x => x.Icon).HasColumnName("icon").HasMaxLength(128).IsRequired(false);
         b.Property(x => x.MenuType)
             .HasColumnName("menu_type").HasConversion<string>().HasMaxLength(16).IsRequired(false);
         b.Property(x => x.Url).HasColumnName("url").HasMaxLength(512).IsRequired(false);
         b.Property(x => x.Component).HasColumnName("component").HasMaxLength(256).IsRequired(false);
         b.Property(x => x.Extend).HasColumnName("extend").HasMaxLength(64).IsRequired(false);
+        b.Property(x => x.Remark).HasColumnName("remark").HasMaxLength(512).IsRequired(false);
         b.Property(x => x.Keepalive).HasColumnName("keepalive");
         b.Property(x => x.Weigh).HasColumnName("weigh");
         b.Property(x => x.Status)

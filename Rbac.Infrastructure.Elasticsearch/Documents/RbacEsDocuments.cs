@@ -126,6 +126,9 @@ public sealed class RuleDocument
     [Text(Name = "path")]
     public string Path { get; set; } = string.Empty;
 
+    [Keyword(Name = "icon")]
+    public string? Icon { get; set; }
+
     [Keyword(Name = "type")]
     public string Type { get; set; } = string.Empty;
 
@@ -140,6 +143,9 @@ public sealed class RuleDocument
 
     [Keyword(Name = "extend")]
     public string? Extend { get; set; }
+
+    [Text(Name = "remark")]
+    public string? Remark { get; set; }
 
     [Keyword(Name = "keepalive")]
     public string Keepalive { get; set; } = "false";

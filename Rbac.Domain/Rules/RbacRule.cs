@@ -77,6 +77,7 @@ public sealed class RbacRule
 
     /// <summary>前端路由 path。</summary>
     public string Path { get; private set; } = string.Empty;
+    public string? Icon { get; private set; }
 
     /// <summary>菜单渲染类型（Tab / Link / Iframe），Button 节点为 null。</summary>
     public MenuType? MenuType { get; private set; }
@@ -89,6 +90,7 @@ public sealed class RbacRule
 
     /// <summary>扩展行为标记。</summary>
     public string? Extend { get; private set; }
+    public string? Remark { get; private set; }
 
     /// <summary>是否开启路由缓存（keep-alive）。</summary>
     public bool Keepalive { get; private set; }
@@ -112,7 +114,8 @@ public sealed class RbacRule
         RuleCode? parentRuleCode = null,
         Rules.MenuType? menuType = null,
         string? url = null, string? component = null,
-        string? extend = null, bool keepalive = false, int weigh = 0)
+        string? extend = null, string? icon = null, string? remark = null,
+        bool keepalive = false, int weigh = 0)
     {
         if (type == RuleType.Button)
             throw new ArgumentException("Use CreateButton for button rules.", nameof(type));
@@ -126,7 +129,8 @@ public sealed class RbacRule
             ParentRuleCode = parentRuleCode,
             Type = type, Title = title.Trim(), Name = name.Trim(), Path = path.Trim(),
             MenuType = menuType, Url = url, Component = component,
-            Extend = extend, Keepalive = keepalive, Weigh = weigh,
+            Extend = extend, Icon = icon, Remark = remark,
+            Keepalive = keepalive, Weigh = weigh,
             Status = RuleStatus.Active,
             CreatedAt = DateTimeOffset.UtcNow, UpdatedAt = DateTimeOffset.UtcNow,
         };
@@ -136,7 +140,8 @@ public sealed class RbacRule
     public static RbacRule CreateButton(
         Guid id, DxEId dxeId, ProjectCode project,
         RuleCode ruleCode, PermissionCode permissionCode,
-        string title, string name, RuleCode parentRuleCode, int weigh = 0)
+        string title, string name, RuleCode parentRuleCode,
+        string? icon = null, string? remark = null, int weigh = 0)
     {
         if (string.IsNullOrWhiteSpace(title))
             throw new ArgumentException("Title cannot be empty.", nameof(title));
@@ -147,7 +152,7 @@ public sealed class RbacRule
             RuleCode = ruleCode, PermissionCode = permissionCode,
             ParentRuleCode = parentRuleCode,
             Type = RuleType.Button, Title = title.Trim(), Name = name.Trim(),
-            Path = string.Empty, Weigh = weigh,
+            Path = string.Empty, Icon = icon, Remark = remark, Weigh = weigh,
             Status = RuleStatus.Active,
             CreatedAt = DateTimeOffset.UtcNow, UpdatedAt = DateTimeOffset.UtcNow,
         };
@@ -168,11 +173,13 @@ public sealed class RbacRule
         string? title = null,
         string? name = null,
         string? path = null,
+        string? icon = null,
         RuleCode? parentRuleCode = null,
         Rules.MenuType? menuType = null,
         string? url = null,
         string? component = null,
         string? extend = null,
+        string? remark = null,
         bool? keepalive = null,
         int? weigh = null,
         RuleStatus? status = null,
@@ -188,11 +195,13 @@ public sealed class RbacRule
 
         if (name is not null)      Name          = name.Trim();
         if (path is not null)      Path          = path.Trim();
+        if (icon is not null)      Icon          = icon.Trim();
         if (parentRuleCodeSpecified) ParentRuleCode = parentRuleCode;
         if (menuType is not null)  MenuType      = menuType;
         if (url is not null)       Url           = url;
         if (component is not null) Component     = component;
         if (extend is not null)    Extend        = extend;
+        if (remark is not null)    Remark        = remark.Trim();
         if (keepalive is not null) Keepalive     = keepalive.Value;
         if (weigh is not null)     Weigh         = weigh.Value;
         if (permissionCode is not null) PermissionCode = permissionCode;

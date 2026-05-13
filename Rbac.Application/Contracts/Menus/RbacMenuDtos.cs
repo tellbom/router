@@ -43,6 +43,9 @@ public sealed class MenuNodeDto
     [JsonPropertyName("path")]
     public string Path { get; init; } = string.Empty;
 
+    [JsonPropertyName("icon")]
+    public string Icon { get; init; } = string.Empty;
+
     /// <summary>节点类型：menu_dir / menu / button。小写。</summary>
     [JsonPropertyName("type")]
     public string Type { get; init; } = string.Empty;
@@ -65,6 +68,9 @@ public sealed class MenuNodeDto
     /// <summary>扩展行为标记（前端自定义扩展字段）。</summary>
     [JsonPropertyName("extend")]
     public string Extend { get; init; } = string.Empty;
+
+    [JsonPropertyName("remark")]
+    public string Remark { get; init; } = string.Empty;
 
     /// <summary>是否开启路由缓存（keep-alive）。</summary>
     [JsonPropertyName("keepalive")]
