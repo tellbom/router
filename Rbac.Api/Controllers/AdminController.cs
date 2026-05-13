@@ -4,8 +4,10 @@ using Rbac.Application.Contracts.Common;
 using Rbac.Application.Contracts.Compatibility;
 using Rbac.Application.Identity;
 using Rbac.Application.Management;
+using Rbac.Application.Repositories;
 using Rbac.Application.Search;
 using Rbac.Application.Security;
+using Rbac.Domain.Groups;
 using Rbac.Domain.Users;
 using Rbac.Domain.ValueObjects;
 
@@ -93,9 +95,37 @@ public sealed partial class AdminController : ControllerBase
             admin,
             changedFields: new[] { "created" },
             oldStatus: null,
-            affectedGroupCodes: Array.Empty<string>(),
+            affectedGroupCodes: req.GroupCode ?? Array.Empty<string>(),
             operatorUserid: ctx.Userid,
             ct);
+
+        if (req.GroupCode is not null)
+        {
+            var groupRepo = HttpContext.RequestServices
+                .GetRequiredService<IGroupRepository>();
+
+            var targetCodes = req.GroupCode
+                .Where(g => !string.IsNullOrWhiteSpace(g))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var code in targetCodes)
+            {
+                var group = await groupRepo.FindByGroupCodeAsync(
+                    new GroupCode(code), new ProjectCode(ctx.Project), ct);
+                if (group is null) continue;
+
+                var member = RbacGroupMember.Create(
+                    Guid.NewGuid(), admin.Userid, group.GroupCode, group.Project,
+                    grantedBy: ctx.Userid);
+
+                await _write.SaveGroupMemberAsync(
+                    member,
+                    affectedUserids: new[] { admin.Userid.Value },
+                    groupPermissionCodes: group.PermissionCodes.Select(p => p.Value).ToList(),
+                    operatorUserid: ctx.Userid,
+                    ct);
+            }
+        }
 
         return ApiResponse<object>.Ok(new { dxeId = admin.DxEId.Value });
     }
@@ -165,6 +195,6 @@ public sealed partial class AdminController : ControllerBase
 
 // ── Request DTOs ───────────────────────────────────────────────────
 
-public sealed record CreateAdminRequest(string Userid, string Username);
+public sealed record CreateAdminRequest(string Userid, string Username, string[]? GroupCode);
 public sealed record ChangeStatusRequest(string Status);
 public sealed record UpdateUsernameRequest(string Username);

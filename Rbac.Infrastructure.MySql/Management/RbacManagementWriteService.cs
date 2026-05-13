@@ -86,7 +86,7 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
         // 1. 查出该用户所有 GroupMember 记录，逐条产生 PolicyChanged + GroupChanged，
         //    然后批量删除（同一事务）
         var members = await _db.GroupMembers
-            .Where(m => m.Userid.Value == admin.Userid.Value)
+            .Where(m => m.Userid == admin.Userid)
             .ToListAsync(ct);
 
         foreach (var member in members)
