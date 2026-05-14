@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Rbac.Application.Backend;
 using Rbac.Application.Contracts.Common;
 using Rbac.Application.Contracts.Compatibility;
-using Rbac.Application.Identity;
 using Rbac.Application.Management;
 using Rbac.Application.Repositories;
 using Rbac.Application.Search;
@@ -19,7 +18,6 @@ namespace Rbac.Api.Controllers;
 /// 约束：
 /// - 所有写操作先通过 RbacManagementWriteGuard 从 MySQL 重新加载聚合根。
 /// - project 来自 CurrentRbacContext，不从 Request body 读取。
-/// - DxEId 对外必须为 string（由 LongToStringConverter 全局保证）。
 /// </summary>
 [ApiController]
 [Route("api/admin")]
@@ -30,22 +28,18 @@ public sealed partial class AdminController : ControllerBase
     private readonly IRbacManagementSearchService _search;
     private readonly IRbacManagementWriteService _write;
     private readonly RbacManagementWriteGuard _guard;
-    private readonly IRbacDxEIdGenerator _idGen;
-
     public AdminController(
         ICurrentRbacContextAccessor ctx,
         RbacBackendIndexService indexService,
         IRbacManagementSearchService search,
         IRbacManagementWriteService write,
-        RbacManagementWriteGuard guard,
-        IRbacDxEIdGenerator idGen)
+        RbacManagementWriteGuard guard)
     {
         _ctx = ctx;
         _indexService = indexService;
         _search = search;
         _write = write;
         _guard = guard;
-        _idGen = idGen;
     }
 
     // ── 后台首页初始化 ─────────────────────────────────────────────
@@ -87,7 +81,6 @@ public sealed partial class AdminController : ControllerBase
 
         var admin = RbacAdministrator.Create(
             Guid.NewGuid(),
-            new DxEId(_idGen.Generate()),
             new UserId(req.Userid),
             req.Username);
 
@@ -127,19 +120,19 @@ public sealed partial class AdminController : ControllerBase
             }
         }
 
-        return ApiResponse<object>.Ok(new { dxeId = admin.DxEId.Value });
+        return ApiResponse<object>.Ok(new { userid = admin.Userid.Value });
     }
 
     // ── 禁用/启用 ──────────────────────────────────────────────────
 
-    /// <summary>PUT /api/admin/{dxeId}/status — 变更管理员状态（Active / Disabled）。</summary>
-    [HttpPut("{dxeId}/status")]
+    /// <summary>PUT /api/admin/{userid}/status — 变更管理员状态（Active / Disabled）。</summary>
+    [HttpPut("{userid}/status")]
     public async Task<ApiResponse<object>> ChangeStatus(
-        string dxeId, [FromBody] ChangeStatusRequest req, CancellationToken ct)
+        string userid, [FromBody] ChangeStatusRequest req, CancellationToken ct)
     {
         var ctx = RequireContext();
 
-        var admin = await _guard.LoadAdminByDxEIdAsync(dxeId, ct);
+        var admin = await _guard.LoadAdminByUseridAsync(userid, ct);
         if (admin is null) return Fail(40400, "管理员不存在");
 
         var oldStatus = admin.Status.ToString();
@@ -159,16 +152,16 @@ public sealed partial class AdminController : ControllerBase
 
     // ── 更新用户名 ─────────────────────────────────────────────────
 
-    /// <summary>PUT /api/admin/{dxeId}/username — 更新管理员显示名称。</summary>
-    [HttpPut("{dxeId}/username")]
+    /// <summary>PUT /api/admin/{userid}/username — 更新管理员显示名称。</summary>
+    [HttpPut("{userid}/username")]
     public async Task<ApiResponse<object>> UpdateUsername(
-        string dxeId, [FromBody] UpdateUsernameRequest req, CancellationToken ct)
+        string userid, [FromBody] UpdateUsernameRequest req, CancellationToken ct)
     {
         var ctx = RequireContext();
         if (string.IsNullOrWhiteSpace(req.Username))
             return Fail(40001, "username 不能为空");
 
-        var admin = await _guard.LoadAdminByDxEIdAsync(dxeId, ct);
+        var admin = await _guard.LoadAdminByUseridAsync(userid, ct);
         if (admin is null) return Fail(40400, "管理员不存在");
 
         admin.UpdateUsername(req.Username);

@@ -13,11 +13,11 @@ namespace Rbac.Application.Management;
 ///
 /// 约束（设计文档 §3.1）：
 /// ES 搜索结果不能直接作为编辑/删除的真相。
-/// 任何写操作前必须从 MySQL 重新加载聚合根（按 project + DxEId 或 Guid），
+/// 任何写操作前必须从 MySQL 重新加载聚合根（按自然业务键或 Guid），
 /// 确认记录存在后才允许继续。
 ///
 /// 防止以下危险模式：
-/// - 前端将 ES 返回的 DxEId 直接用于删除，但 ES 数据已过期（记录已被删）。
+/// - 前端将 ES 返回的数据直接用于删除，但 ES 数据已过期（记录已被删）。
 /// - 前端修改了 ES 返回的字段值直接保存，绕过 MySQL 真相校验。
 /// </summary>
 public sealed class RbacManagementWriteGuard
@@ -45,14 +45,14 @@ public sealed class RbacManagementWriteGuard
     // ── 管理员 ────────────────────────────────────────────────────
 
     /// <summary>
-    /// 按 DxEId 加载管理员，确认记录存在。
+    /// 按 userid 加载管理员，确认记录存在。
     /// 不存在时返回 null（调用方应返回 404）。
     /// </summary>
-    public async Task<RbacAdministrator?> LoadAdminByDxEIdAsync(
-        string dxeId, CancellationToken ct = default)
+    public async Task<RbacAdministrator?> LoadAdminByUseridAsync(
+        string userid, CancellationToken ct = default)
     {
-        var admin = await _adminRepo.FindByDxEIdAsync(new DxEId(dxeId), ct);
-        LogIfNotFound("Administrator", dxeId, admin is null);
+        var admin = await _adminRepo.FindByUseridAsync(new UserId(userid), ct);
+        LogIfNotFound("Administrator", userid, admin is null);
         return admin;
     }
 
@@ -66,18 +66,18 @@ public sealed class RbacManagementWriteGuard
 
     // ── 权限组 ────────────────────────────────────────────────────
 
-    /// <summary>按 DxEId 加载权限组，校验其 project 与请求 project 一致。</summary>
-    public async Task<RbacGroup?> LoadGroupByDxEIdAsync(
-        string dxeId, string project, CancellationToken ct = default)
+    /// <summary>按 groupCode 加载权限组，校验其 project 与请求 project 一致。</summary>
+    public async Task<RbacGroup?> LoadGroupByCodeAsync(
+        string groupCode, string project, CancellationToken ct = default)
     {
-        var group = await _groupRepo.FindByDxEIdAsync(new DxEId(dxeId), ct);
-        if (group is null) { LogIfNotFound("Group", dxeId, true); return null; }
+        var group = await _groupRepo.FindByGroupCodeAsync(new GroupCode(groupCode), new ProjectCode(project), ct);
+        if (group is null) { LogIfNotFound("Group", groupCode, true); return null; }
 
         if (!string.Equals(group.Project.Value, project, StringComparison.OrdinalIgnoreCase))
         {
             _logger.LogWarning(
-                "Group project mismatch dxeId={DxEId} groupProject={GP} requestProject={RP}",
-                dxeId, group.Project.Value, project);
+                "Group project mismatch groupCode={GroupCode} groupProject={GP} requestProject={RP}",
+                groupCode, group.Project.Value, project);
             return null;
         }
 
@@ -94,18 +94,18 @@ public sealed class RbacManagementWriteGuard
 
     // ── 规则 ──────────────────────────────────────────────────────
 
-    /// <summary>按 DxEId 加载规则，校验 project 一致。</summary>
-    public async Task<RbacRule?> LoadRuleByDxEIdAsync(
-        string dxeId, string project, CancellationToken ct = default)
+    /// <summary>按 ruleCode 加载规则，校验 project 一致。</summary>
+    public async Task<RbacRule?> LoadRuleByCodeAsync(
+        string ruleCode, string project, CancellationToken ct = default)
     {
-        var rule = await _ruleRepo.FindByDxEIdAsync(new DxEId(dxeId), ct);
-        if (rule is null) { LogIfNotFound("Rule", dxeId, true); return null; }
+        var rule = await _ruleRepo.FindByRuleCodeAsync(new RuleCode(ruleCode), new ProjectCode(project), ct);
+        if (rule is null) { LogIfNotFound("Rule", ruleCode, true); return null; }
 
         if (!string.Equals(rule.Project.Value, project, StringComparison.OrdinalIgnoreCase))
         {
             _logger.LogWarning(
-                "Rule project mismatch dxeId={DxEId} ruleProject={RP} requestProject={ReqP}",
-                dxeId, rule.Project.Value, project);
+                "Rule project mismatch ruleCode={RuleCode} ruleProject={RP} requestProject={ReqP}",
+                ruleCode, rule.Project.Value, project);
             return null;
         }
 

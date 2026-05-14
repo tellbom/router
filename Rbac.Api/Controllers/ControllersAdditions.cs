@@ -20,27 +20,27 @@ namespace Rbac.Api.Controllers;
 
 public sealed partial class AdminController
 {
-    // DELETE /api/admin/{dxeId} — 物理删除管理员
-    [HttpDelete("{dxeId}")]
-    public async Task<ApiResponse<object>> Delete(string dxeId, CancellationToken ct)
+    // DELETE /api/admin/{userid} — 物理删除管理员
+    [HttpDelete("{userid}")]
+    public async Task<ApiResponse<object>> Delete(string userid, CancellationToken ct)
     {
         var ctx = RequireContext();
 
-        var admin = await _guard.LoadAdminByDxEIdAsync(dxeId, ct);
+        var admin = await _guard.LoadAdminByUseridAsync(userid, ct);
         if (admin is null) return ApiResponse<object>.Fail(40400, "管理员不存在");
 
         await _write.DeleteAdministratorAsync(admin, operatorUserid: ctx.Userid, ct);
         return ApiResponse<object>.Ok(null!);
     }
 
-    // PUT /api/admin/{dxeId} — 完整编辑（username / status / group_arr）
-    [HttpPut("{dxeId}")]
+    // PUT /api/admin/{userid} — 完整编辑（username / status / group_arr）
+    [HttpPut("{userid}")]
     public async Task<ApiResponse<object>> Update(
-        string dxeId, [FromBody] UpdateAdminRequest req, CancellationToken ct)
+        string userid, [FromBody] UpdateAdminRequest req, CancellationToken ct)
     {
         var ctx = RequireContext();
 
-        var admin = await _guard.LoadAdminByDxEIdAsync(dxeId, ct);
+        var admin = await _guard.LoadAdminByUseridAsync(userid, ct);
         if (admin is null) return ApiResponse<object>.Fail(40400, "管理员不存在");
 
         var changedFields = new List<string>();
@@ -136,13 +136,13 @@ public sealed partial class AdminController
 
 public sealed partial class GroupController
 {
-    // DELETE /api/group/{dxeId} — 物理删除权限组（三项前置校验）
-    [HttpDelete("{dxeId}")]
-    public async Task<ApiResponse<object>> Delete(string dxeId, CancellationToken ct)
+    // DELETE /api/group/{groupCode} — 物理删除权限组（三项前置校验）
+    [HttpDelete("{groupCode}")]
+    public async Task<ApiResponse<object>> Delete(string groupCode, CancellationToken ct)
     {
         var ctx = RequireContext();
 
-        var group = await _guard.LoadGroupByDxEIdAsync(dxeId, ctx.Project, ct);
+        var group = await _guard.LoadGroupByCodeAsync(groupCode, ctx.Project, ct);
         if (group is null) return ApiResponse<object>.Fail(40400, "权限组不存在");
 
         // 校验 1：是否存在子组（_groupRepo 已在原始 GroupController 注入）
@@ -174,14 +174,14 @@ public sealed partial class GroupController
         return ApiResponse<object>.Ok(null!);
     }
 
-    // PUT /api/group/{dxeId} — 完整编辑权限组
-    [HttpPut("{dxeId}")]
+    // PUT /api/group/{groupCode} — 完整编辑权限组
+    [HttpPut("{groupCode}")]
     public async Task<ApiResponse<object>> Update(
-        string dxeId, [FromBody] UpdateGroupRequest req, CancellationToken ct)
+        string groupCode, [FromBody] UpdateGroupRequest req, CancellationToken ct)
     {
         var ctx = RequireContext();
 
-        var group = await _guard.LoadGroupByDxEIdAsync(dxeId, ctx.Project, ct);
+        var group = await _guard.LoadGroupByCodeAsync(groupCode, ctx.Project, ct);
         if (group is null) return ApiResponse<object>.Fail(40400, "权限组不存在");
 
         var changedFields = new List<string>();
@@ -264,14 +264,14 @@ public sealed partial class GroupController
 
 public sealed partial class RuleController
 {
-    // PUT /api/rule/{dxeId} — 完整编辑规则元数据
-    [HttpPut("{dxeId}")]
+    // PUT /api/rule/{ruleCode} — 完整编辑规则元数据
+    [HttpPut("{ruleCode}")]
     public async Task<ApiResponse<object>> Update(
-        string dxeId, [FromBody] UpdateRuleRequest req, CancellationToken ct)
+        string ruleCode, [FromBody] UpdateRuleRequest req, CancellationToken ct)
     {
         var ctx = RequireContext();
 
-        var rule = await _guard.LoadRuleByDxEIdAsync(dxeId, ctx.Project, ct);
+        var rule = await _guard.LoadRuleByCodeAsync(ruleCode, ctx.Project, ct);
         if (rule is null) return ApiResponse<object>.Fail(40400, "规则不存在");
 
         var oldPermCode = rule.PermissionCode.Value;

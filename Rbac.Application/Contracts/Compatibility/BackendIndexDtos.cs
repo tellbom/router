@@ -8,7 +8,7 @@ namespace Rbac.Application.Contracts.Compatibility;
 ///
 /// 约束：
 /// - 不包含 refreshToken、siteConfig、terminal。
-/// - menus 使用 MenuNodeDto，DxEId 为 string。
+/// - menus 使用 MenuNodeDto。
 /// - routePath 为前端初始跳转路径。
 /// </summary>
 public sealed class BackendIndexDto

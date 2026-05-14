@@ -524,7 +524,6 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
             {
                 RuleCode                = rule.RuleCode.Value,
                 RuleGuid                = rule.Id.ToString(),
-                DxEId                   = rule.DxEId.Value,
                 Project                 = rule.Project.Value,
                 ChangeKind              = changeKind,
                 ParentRuleCode          = rule.ParentRuleCode?.Value,

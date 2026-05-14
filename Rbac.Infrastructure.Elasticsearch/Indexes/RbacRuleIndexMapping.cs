@@ -7,10 +7,10 @@ namespace Rbac.Infrastructure.Elasticsearch.Indexes;
 /// rbac_rule_index 索引 mapping 定义。
 ///
 /// 用途：菜单规则和按钮规则查询。
-/// 精确过滤：project, permissionCode, ruleCode, type, menu_type, status, dxe_id。
+/// 精确过滤：project, permissionCode, ruleCode, type, menu_type, status。
 /// 模糊搜索：title, name, path, allText。
 /// allText copy_to 来源：ruleCode, permissionCode, parentRuleCode, title, name, path,
-///   type, menu_type, component, url, project, status, dxe_id。
+///   type, menu_type, component, url, project, status。
 /// </summary>
 public static class RbacRuleIndexMapping
 {
@@ -29,8 +29,6 @@ public static class RbacRuleIndexMapping
                 .AutoMap()
                 .Properties(p => p
                     .Keyword(k => k.Name(n => n.Id))
-                    .Keyword(k => k.Name(n => n.DxEId)
-                        .CopyTo(c => c.Field(f => f.AllText)))
                     .Keyword(k => k.Name(n => n.Project)
                         .CopyTo(c => c.Field(f => f.AllText)))
                     .Keyword(k => k.Name(n => n.RuleCode)

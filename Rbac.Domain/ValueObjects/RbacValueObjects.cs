@@ -39,25 +39,6 @@ public sealed record UserId
 }
 
 /// <summary>
-/// 前端兼容业务 ID。API 永远返回 string，不允许序列化为 number。
-/// 底层可以是雪花 long 字符串形式，但对外始终为 string。
-/// </summary>
-public sealed record DxEId
-{
-    public string Value { get; }
-
-    public DxEId(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("DxEId cannot be empty.", nameof(value));
-        Value = value.Trim();
-    }
-
-    public override string ToString() => Value;
-    public static implicit operator string(DxEId id) => id.Value;
-}
-
-/// <summary>
 /// 权限码。格式约定：{resourceType}:{scope}.{action}，例如 api:system.user.create。
 /// 长期权限判断依赖此值，不使用 DxE_id。
 /// </summary>

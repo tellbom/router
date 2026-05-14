@@ -10,9 +10,6 @@ namespace Rbac.Application.Mapping;
 
 /// <summary>
 /// 领域聚合根 → 前端兼容 DTO 的映射器。
-///
-/// 核心约束：所有对外 DTO 中的 DxEId 字段类型必须为 string。
-/// 禁止将 DxEId 底层的 long/Guid 直接序列化为 JSON number。
 /// </summary>
 public static class RbacCompatibilityMappers
 {
@@ -22,7 +19,6 @@ public static class RbacCompatibilityMappers
     public static AdminInfoDto ToAdminInfoDto(this RbacAdministrator admin, string project, bool isSuper) =>
         new()
         {
-            DxEId = admin.DxEId.Value,        // string，不得为 number
             Userid = admin.Userid.Value,
             Username = admin.Username,
             Project = project,
@@ -35,7 +31,6 @@ public static class RbacCompatibilityMappers
     public static GroupSummaryDto ToGroupSummaryDto(this RbacGroup group) =>
         new()
         {
-            DxEId = group.DxEId.Value,        // string
             GroupCode = group.GroupCode.Value,
             Project = group.Project.Value,
             GroupName = group.GroupName,
@@ -67,7 +62,6 @@ public static class RbacCompatibilityMappers
     public static MenuNodeDto ToMenuNodeDto(this RbacRule rule, IReadOnlyList<RbacRule> allRules) =>
         new()
         {
-            DxEId = rule.DxEId.Value,             // string，不得为 number
             Pid = rule.ParentRuleCode?.Value ?? "0",
             Title = rule.Title,
             Name = rule.Name,
@@ -105,7 +99,6 @@ public static class RbacCompatibilityMappers
 /// <summary>权限组列表 DTO。</summary>
 public sealed class GroupSummaryDto
 {
-    public string DxEId { get; init; } = string.Empty;         // 必须为 string
     public string GroupCode { get; init; } = string.Empty;
     public string Project { get; init; } = string.Empty;
     public string GroupName { get; init; } = string.Empty;

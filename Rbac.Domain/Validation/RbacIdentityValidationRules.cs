@@ -5,40 +5,10 @@ namespace Rbac.Domain.Validation;
 /// <summary>
 /// RBAC 身份标识验证规则。
 ///
-/// 核心规则：DxEId 只用于前端兼容、编辑、删除、排序和迁移追踪。
-/// 权限判断必须使用 PermissionCode / RuleCode，不允许以 DxEId 作为权限依据。
+/// 权限判断必须使用 PermissionCode / RuleCode。
 /// </summary>
 public static class RbacIdentityValidationRules
 {
-    // ── DxEId 验证 ────────────────────────────────────────────────
-
-    /// <summary>
-    /// 验证 DxEId 格式。必须为非空字符串，不允许纯数字以外的格式（视底层生成策略）。
-    /// </summary>
-    public static ValidationResult ValidateDxEId(string? raw)
-    {
-        if (string.IsNullOrWhiteSpace(raw))
-            return ValidationResult.Fail("DxEId cannot be empty.");
-
-        if (raw.Length > 64)
-            return ValidationResult.Fail($"DxEId exceeds max length 64: '{raw}'.");
-
-        return ValidationResult.Ok();
-    }
-
-    /// <summary>
-    /// 断言 DxEId 不能作为权限判断的依据。
-    /// 任何将 DxEId 用于 permset / Casbin policy 判断的代码路径必须在此处抛出异常。
-    /// </summary>
-    public static void AssertNotUsedForAuthorization(DxEId dxeId, string context)
-    {
-        // 此方法作为编译期约束调用点，运行时抛出 InvalidOperationException
-        // 以防止意外将 DxEId 混入鉴权链路。
-        throw new InvalidOperationException(
-            $"DxEId '{dxeId.Value}' must NOT be used for authorization decisions in '{context}'. " +
-            $"Use PermissionCode or RuleCode instead.");
-    }
-
     // ── PermissionCode 验证 ───────────────────────────────────────
 
     /// <summary>

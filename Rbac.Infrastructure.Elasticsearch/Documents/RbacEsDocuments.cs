@@ -5,15 +5,12 @@ namespace Rbac.Infrastructure.Elasticsearch.Documents;
 // 鈹€鈹€ rbac_user_index 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// ES 鐢ㄦ埛鏂囨。銆傚搴?rbac_user_index銆?/// DxEId 蹇呴』涓?keyword锛坰tring锛夛紝涓嶅厑璁?long銆?/// allText copy_to 鏉ユ簮锛歶serid, username, groupNames, projectCodes, groupCodes, status, DxEId銆?/// </summary>
+/// ES 鐢ㄦ埛鏂囨。銆傚搴?rbac_user_index銆?/// allText copy_to 鏉ユ簮锛歶serid, username, groupNames, projectCodes, groupCodes, status銆?/// </summary>
 [ElasticsearchType(RelationName = "rbac_user")]
 public sealed class UserDocument
 {
     [Keyword(Name = "id")]
     public string Id { get; set; } = string.Empty;
-
-    [Keyword(Name = "dxe_id")]
-    public string DxEId { get; set; } = string.Empty;
 
     [Keyword(Name = "userid")]
     public string Userid { get; set; } = string.Empty;
@@ -50,15 +47,12 @@ public sealed class UserDocument
 
 /// <summary>
 /// ES 鏉冮檺缁勬枃妗ｃ€傚搴?rbac_group_index銆?/// allText copy_to 鏉ユ簮锛歡roupCode, groupName, parentGroupCode, ruleCodes,
-///   permissionCodes, project, status, DxEId銆?/// </summary>
+///   permissionCodes, project, status銆?/// </summary>
 [ElasticsearchType(RelationName = "rbac_group")]
 public sealed class GroupDocument
 {
     [Keyword(Name = "id")]
     public string Id { get; set; } = string.Empty;
-
-    [Keyword(Name = "dxe_id")]
-    public string DxEId { get; set; } = string.Empty;
 
     [Keyword(Name = "project")]
     public string Project { get; set; } = string.Empty;
@@ -95,15 +89,12 @@ public sealed class GroupDocument
 
 /// <summary>
 /// ES 瑙勫垯鏂囨。銆傚搴?rbac_rule_index銆?/// allText copy_to 鏉ユ簮锛歳uleCode, permissionCode, parentRuleCode, title, name,
-///   path, type, menu_type, component, url, project, status, DxEId銆?/// </summary>
+///   path, type, menu_type, component, url, project, status銆?/// </summary>
 [ElasticsearchType(RelationName = "rbac_rule")]
 public sealed class RuleDocument
 {
     [Keyword(Name = "id")]
     public string Id { get; set; } = string.Empty;
-
-    [Keyword(Name = "dxe_id")]
-    public string DxEId { get; set; } = string.Empty;
 
     [Keyword(Name = "project")]
     public string Project { get; set; } = string.Empty;

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Rbac.Application.Contracts.Common;
-using Rbac.Application.Identity;
 using Rbac.Application.Management;
 using Rbac.Application.Menus;
 using Rbac.Application.Search;
@@ -25,7 +24,6 @@ public sealed partial class RuleController : ControllerBase
     private readonly IRbacManagementSearchService _search;
     private readonly IRbacManagementWriteService _write;
     private readonly RbacManagementWriteGuard _guard;
-    private readonly IRbacDxEIdGenerator _idGen;
     private readonly RbacProjectMenuTreeService _menuTree;
 
     public RuleController(
@@ -33,14 +31,12 @@ public sealed partial class RuleController : ControllerBase
         IRbacManagementSearchService search,
         IRbacManagementWriteService write,
         RbacManagementWriteGuard guard,
-        IRbacDxEIdGenerator idGen,
         RbacProjectMenuTreeService menuTree)
     {
         _ctx = ctx;
         _search = search;
         _write = write;
         _guard = guard;
-        _idGen = idGen;
         _menuTree = menuTree;
     }
 
@@ -90,7 +86,6 @@ public sealed partial class RuleController : ControllerBase
 
             rule = RbacRule.CreateButton(
                 Guid.NewGuid(),
-                new DxEId(_idGen.Generate()),
                 new ProjectCode(ctx.Project),
                 new RuleCode(req.RuleCode),
                 new PermissionCode(req.PermissionCode),
@@ -111,7 +106,6 @@ public sealed partial class RuleController : ControllerBase
 
             rule = RbacRule.CreateMenu(
                 Guid.NewGuid(),
-                new DxEId(_idGen.Generate()),
                 new ProjectCode(ctx.Project),
                 new RuleCode(req.RuleCode),
                 new PermissionCode(req.PermissionCode),
@@ -138,19 +132,19 @@ public sealed partial class RuleController : ControllerBase
             operatorUserid: ctx.Userid,
             ct);
 
-        return ApiResponse<object>.Ok(new { dxeId = rule.DxEId.Value });
+        return ApiResponse<object>.Ok(new { ruleCode = rule.RuleCode.Value });
     }
 
     // ── 状态变更 ──────────────────────────────────────────────────
 
-    /// <summary>PUT /api/rule/{dxeId}/status — 启用/禁用规则。</summary>
-    [HttpPut("{dxeId}/status")]
+    /// <summary>PUT /api/rule/{ruleCode}/status — 启用/禁用规则。</summary>
+    [HttpPut("{ruleCode}/status")]
     public async Task<ApiResponse<object>> ChangeStatus(
-        string dxeId, [FromBody] ChangeRuleStatusRequest req, CancellationToken ct)
+        string ruleCode, [FromBody] ChangeRuleStatusRequest req, CancellationToken ct)
     {
         var ctx = RequireContext();
 
-        var rule = await _guard.LoadRuleByDxEIdAsync(dxeId, ctx.Project, ct);
+        var rule = await _guard.LoadRuleByCodeAsync(ruleCode, ctx.Project, ct);
         if (rule is null) return Fail(40400, "规则不存在");
 
         if (req.Status == "Disabled") rule.Disable();
@@ -168,14 +162,14 @@ public sealed partial class RuleController : ControllerBase
 
     // ── 排序 ──────────────────────────────────────────────────────
 
-    /// <summary>PUT /api/rule/{dxeId}/weigh — 更新规则排序权重。</summary>
-    [HttpPut("{dxeId}/weigh")]
+    /// <summary>PUT /api/rule/{ruleCode}/weigh — 更新规则排序权重。</summary>
+    [HttpPut("{ruleCode}/weigh")]
     public async Task<ApiResponse<object>> UpdateWeigh(
-        string dxeId, [FromBody] UpdateWeighRequest req, CancellationToken ct)
+        string ruleCode, [FromBody] UpdateWeighRequest req, CancellationToken ct)
     {
         var ctx = RequireContext();
 
-        var rule = await _guard.LoadRuleByDxEIdAsync(dxeId, ctx.Project, ct);
+        var rule = await _guard.LoadRuleByCodeAsync(ruleCode, ctx.Project, ct);
         if (rule is null) return Fail(40400, "规则不存在");
 
         rule.UpdateWeigh(req.Weigh);
@@ -192,13 +186,13 @@ public sealed partial class RuleController : ControllerBase
 
     // ── 删除 ──────────────────────────────────────────────────────
 
-    /// <summary>DELETE /api/rule/{dxeId} — 删除规则。</summary>
-    [HttpDelete("{dxeId}")]
-    public async Task<ApiResponse<object>> Delete(string dxeId, CancellationToken ct)
+    /// <summary>DELETE /api/rule/{ruleCode} — 删除规则。</summary>
+    [HttpDelete("{ruleCode}")]
+    public async Task<ApiResponse<object>> Delete(string ruleCode, CancellationToken ct)
     {
         var ctx = RequireContext();
 
-        var rule = await _guard.LoadRuleByDxEIdAsync(dxeId, ctx.Project, ct);
+        var rule = await _guard.LoadRuleByCodeAsync(ruleCode, ctx.Project, ct);
         if (rule is null) return Fail(40400, "规则不存在");
 
         await _write.DeleteRuleAsync(

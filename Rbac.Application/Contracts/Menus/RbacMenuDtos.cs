@@ -10,7 +10,6 @@ namespace Rbac.Application.Contracts.Menus;
 /// 用于编辑、删除、排序等管理操作。
 ///
 /// 约束：
-/// - DxEId 必须为 JSON string（不得为 number），前端用于 edit/delete/sort 操作。
 /// - children 递归，前端从树结构生成 authNode。
 /// - 按钮节点（type=button）的 children 为空数组。
 /// - 前端 auth("name") / v-auth="name" 匹配 name 字段。
@@ -21,10 +20,7 @@ public sealed class MenuNodeDto
     /// 前端兼容业务 ID。JSON 字段固定为 "id"，类型必须为 string。
     /// 用于前端 edit/delete/sort 操作，不作为权限判断依据。
     /// </summary>
-    [JsonPropertyName("id")]
-    public string DxEId { get; init; } = string.Empty;
-
-    /// <summary>父节点 DxEId，根节点为 "0" 或空字符串。</summary>
+    /// <summary>父节点规则编码，根节点为 "0" 或空字符串。</summary>
     [JsonPropertyName("pid")]
     public string Pid { get; init; } = "0";
 

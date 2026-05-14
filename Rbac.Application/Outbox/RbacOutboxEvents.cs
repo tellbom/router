@@ -103,7 +103,7 @@ public sealed class GroupChangedPayload
 /// <summary>
 /// MenuChanged payload。菜单规则新增/编辑/删除/排序/状态变更时使用。
 /// Redis 处理器读：project。
-/// ES 处理器读：ruleCode, ruleGuid, DxEId。
+/// ES 处理器读：ruleCode, ruleGuid。
 /// </summary>
 public sealed class MenuChangedPayload
 {
@@ -111,8 +111,6 @@ public sealed class MenuChangedPayload
     public string RuleGuid { get; init; } = string.Empty;
 
     /// <summary>前端兼容 ID，必须为 string。</summary>
-    public string DxEId { get; init; } = string.Empty;
-
     public string Project { get; init; } = string.Empty;
 
     /// <summary>变更类型：Created / Updated / Deleted / StatusChanged / Reordered。</summary>

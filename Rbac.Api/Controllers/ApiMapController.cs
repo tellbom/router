@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Rbac.Application.Contracts.Common;
-using Rbac.Application.Identity;
 using Rbac.Application.Management;
 using Rbac.Application.Search;
 using Rbac.Application.Security;
@@ -24,20 +23,16 @@ public sealed class ApiMapController : ControllerBase
     private readonly IRbacManagementSearchService _search;
     private readonly IRbacManagementWriteService _write;
     private readonly RbacManagementWriteGuard _guard;
-    private readonly IRbacDxEIdGenerator _idGen;
-
     public ApiMapController(
         ICurrentRbacContextAccessor ctx,
         IRbacManagementSearchService search,
         IRbacManagementWriteService write,
-        RbacManagementWriteGuard guard,
-        IRbacDxEIdGenerator idGen)
+        RbacManagementWriteGuard guard)
     {
         _ctx = ctx;
         _search = search;
         _write = write;
         _guard = guard;
-        _idGen = idGen;
     }
 
     // ── 权限视图列表（ES）──────────────────────────────────────────

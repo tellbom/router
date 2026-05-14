@@ -21,9 +21,6 @@ public sealed class RbacGroup
     /// <summary>内部数据库主键（Guid）。</summary>
     public Guid Id { get; private set; }
 
-    /// <summary>前端兼容业务 ID（string）。不作为权限判断依据。</summary>
-    public DxEId DxEId { get; private set; } = new DxEId("0");
-
     /// <summary>权限组编码。唯一标识，用于 Casbin policy 中的 role/group。</summary>
     public GroupCode GroupCode { get; private set; } = new GroupCode("_");
 
@@ -53,7 +50,6 @@ public sealed class RbacGroup
     /// <summary>创建新权限组。</summary>
     public static RbacGroup Create(
         Guid id,
-        DxEId dxeId,
         GroupCode groupCode,
         ProjectCode project,
         string groupName,
@@ -65,7 +61,6 @@ public sealed class RbacGroup
         return new RbacGroup
         {
             Id = id,
-            DxEId = dxeId,
             GroupCode = groupCode,
             Project = project,
             GroupName = groupName.Trim(),

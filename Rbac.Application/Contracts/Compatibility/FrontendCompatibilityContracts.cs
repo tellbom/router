@@ -10,9 +10,6 @@ namespace Rbac.Application.Contracts.Compatibility;
 public sealed class AdminInfoDto
 {
     /// <summary>前端兼容业务 ID，JSON 字段名为 "id"，必须为 string。</summary>
-    [JsonPropertyName("id")]
-    public string DxEId { get; init; } = string.Empty;
-
     [JsonPropertyName("userid")]
     public string Userid { get; init; } = string.Empty;
 

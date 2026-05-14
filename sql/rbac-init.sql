@@ -21,7 +21,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- =============================================================
 CREATE TABLE IF NOT EXISTS `rbac_administrator` (
     `id`         CHAR(36)     NOT NULL                 COMMENT '内部主键 (Guid，不对外暴露)',
-    `dxe_id`     VARCHAR(64)  NOT NULL                 COMMENT '前端兼容业务 ID（雪花 ID，始终作为 string 返回）',
     `userid`     VARCHAR(128) NOT NULL                 COMMENT '用户业务 ID（来自 JWT / 公司门户）',
     `username`   VARCHAR(128) NOT NULL                 COMMENT '显示名称',
     `status`     VARCHAR(16)  NOT NULL DEFAULT 'Active' COMMENT '账号状态：Active / Disabled',
@@ -30,7 +29,6 @@ CREATE TABLE IF NOT EXISTS `rbac_administrator` (
                               ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最近更新时间（UTC）',
 
     PRIMARY KEY (`id`),
-    UNIQUE KEY `ux_admin_dxe_id` (`dxe_id`),
     UNIQUE KEY `ux_admin_userid` (`userid`)
 
 ) ENGINE = InnoDB
@@ -47,7 +45,6 @@ CREATE TABLE IF NOT EXISTS `rbac_administrator` (
 -- =============================================================
 CREATE TABLE IF NOT EXISTS `rbac_group` (
     `id`                CHAR(36)      NOT NULL                  COMMENT '内部主键 (Guid)',
-    `dxe_id`            VARCHAR(64)   NOT NULL                  COMMENT '前端兼容业务 ID',
     `group_code`        VARCHAR(128)  NOT NULL                  COMMENT '权限组编码（project 内唯一）',
     `project`           VARCHAR(64)   NOT NULL                  COMMENT '所属 project',
     `group_name`        VARCHAR(128)  NOT NULL                  COMMENT '权限组显示名称',
@@ -60,7 +57,6 @@ CREATE TABLE IF NOT EXISTS `rbac_group` (
                                       ON UPDATE CURRENT_TIMESTAMP(6),
 
     PRIMARY KEY (`id`),
-    UNIQUE KEY `ux_group_dxe_id` (`dxe_id`),
     UNIQUE KEY `ux_group_code_project` (`group_code`, `project`)
 
 ) ENGINE = InnoDB
@@ -105,7 +101,6 @@ CREATE TABLE IF NOT EXISTS `rbac_group_member` (
 -- =============================================================
 CREATE TABLE IF NOT EXISTS `rbac_rule` (
     `id`               CHAR(36)     NOT NULL                  COMMENT '内部主键 (Guid)',
-    `dxe_id`           VARCHAR(64)  NOT NULL                  COMMENT '前端兼容业务 ID',
     `project`          VARCHAR(64)  NOT NULL                  COMMENT '所属 project',
     `rule_code`        VARCHAR(128) NOT NULL                  COMMENT '规则码（project 内唯一）',
     `permission_code`  VARCHAR(256) NOT NULL                  COMMENT '权限码（服务端鉴权依据）',
@@ -128,7 +123,6 @@ CREATE TABLE IF NOT EXISTS `rbac_rule` (
                                     ON UPDATE CURRENT_TIMESTAMP(6),
 
     PRIMARY KEY (`id`),
-    UNIQUE KEY `ux_rule_dxe_id` (`dxe_id`),
     UNIQUE KEY `ux_rule_code_project` (`rule_code`, `project`),
     -- 菜单树构建按 project + status 查询
     KEY `ix_rule_project_status` (`project`, `status`),

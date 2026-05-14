@@ -118,7 +118,6 @@ public sealed class AuthController : ControllerBase
         {
             return new AdminInfoDto
             {
-                DxEId = string.Empty,
                 Userid = context.Userid,
                 Username = context.Userid,
                 Project = context.Project,
@@ -128,7 +127,6 @@ public sealed class AuthController : ControllerBase
 
         return new AdminInfoDto
         {
-            DxEId = admin.DxEId.Value,
             Userid = admin.Userid.Value,
             Username = admin.Username,
             Project = context.Project,

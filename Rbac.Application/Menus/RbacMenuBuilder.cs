@@ -13,7 +13,7 @@ namespace Rbac.Application.Menus;
 /// 约束：
 /// - 不调用 ES（ES 不参与实时链路）。
 /// - 不暴露 Casbin 结构（前端只感知 menus，不感知策略引擎）。
-/// - 菜单裁剪只依赖 permissionCode，不依赖 DxEId。
+/// - 菜单裁剪只依赖 permissionCode。
 /// - super 用户返回完整菜单树（不裁剪）。
 /// </summary>
 public sealed class RbacMenuBuilder
@@ -112,7 +112,6 @@ public sealed class RbacMenuBuilder
                 // 重建节点，替换子节点为裁剪后的列表
                 result.Add(new MenuNodeDto
                 {
-                    DxEId = node.DxEId,
                     Pid = node.Pid,
                     Title = node.Title,
                     Name = node.Name,

@@ -52,9 +52,6 @@ internal sealed class AdministratorMapping : IEntityTypeConfiguration<RbacAdmini
         b.ToTable("rbac_administrator");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
-        b.Property(x => x.DxEId)
-            .HasColumnName("dxe_id").HasMaxLength(64)
-            .HasConversion(v => v.Value, s => new DxEId(s)).IsRequired();
         b.Property(x => x.Userid)
             .HasColumnName("userid").HasMaxLength(128)
             .HasConversion(v => v.Value, s => new UserId(s)).IsRequired();
@@ -63,7 +60,6 @@ internal sealed class AdministratorMapping : IEntityTypeConfiguration<RbacAdmini
             .HasColumnName("status").HasConversion<string>().HasMaxLength(16).IsRequired();
         b.Property(x => x.CreatedAt).HasColumnName("created_at");
         b.Property(x => x.UpdatedAt).HasColumnName("updated_at");
-        b.HasIndex(x => x.DxEId).IsUnique().HasDatabaseName("ux_admin_dxe_id");
         b.HasIndex(x => x.Userid).IsUnique().HasDatabaseName("ux_admin_userid");
     }
 }
@@ -77,9 +73,6 @@ internal sealed class GroupMapping : IEntityTypeConfiguration<RbacGroup>
         b.ToTable("rbac_group");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
-        b.Property(x => x.DxEId)
-            .HasColumnName("dxe_id").HasMaxLength(64)
-            .HasConversion(v => v.Value, s => new DxEId(s)).IsRequired();
         b.Property(x => x.GroupCode)
             .HasColumnName("group_code").HasMaxLength(128)
             .HasConversion(v => v.Value, s => new GroupCode(s)).IsRequired();
@@ -113,7 +106,6 @@ internal sealed class GroupMapping : IEntityTypeConfiguration<RbacGroup>
         b.Property(x => x.CreatedAt).HasColumnName("created_at");
         b.Property(x => x.UpdatedAt).HasColumnName("updated_at");
         b.HasIndex(new[] { "GroupCode", "Project" }).IsUnique().HasDatabaseName("ux_group_code_project");
-        b.HasIndex(x => x.DxEId).IsUnique().HasDatabaseName("ux_group_dxe_id");
     }
 }
 
@@ -166,9 +158,6 @@ internal sealed class RuleMapping : IEntityTypeConfiguration<RbacRule>
         b.ToTable("rbac_rule");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
-        b.Property(x => x.DxEId)
-            .HasColumnName("dxe_id").HasMaxLength(64)
-            .HasConversion(v => v.Value, s => new DxEId(s)).IsRequired();
         b.Property(x => x.Project)
             .HasColumnName("project").HasMaxLength(64)
             .HasConversion(v => v.Value, s => new ProjectCode(s)).IsRequired();
@@ -202,7 +191,6 @@ internal sealed class RuleMapping : IEntityTypeConfiguration<RbacRule>
         b.Property(x => x.CreatedAt).HasColumnName("created_at");
         b.Property(x => x.UpdatedAt).HasColumnName("updated_at");
         b.HasIndex(new[] { "RuleCode", "Project" }).IsUnique().HasDatabaseName("ux_rule_code_project");
-        b.HasIndex(x => x.DxEId).IsUnique().HasDatabaseName("ux_rule_dxe_id");
     }
 }
 

@@ -87,7 +87,6 @@ public sealed class RbacBackendIndexService
         {
             return new AdminInfoDto
             {
-                DxEId = string.Empty,
                 Userid = ctx.Userid,
                 Username = ctx.Userid,
                 Project = ctx.Project,
@@ -97,7 +96,6 @@ public sealed class RbacBackendIndexService
 
         return new AdminInfoDto
         {
-            DxEId = admin.DxEId.Value,   // 必须为 string
             Userid = admin.Userid.Value,
             Username = admin.Username,
             Project = ctx.Project,

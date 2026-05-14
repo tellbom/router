@@ -30,7 +30,6 @@ public sealed class RbacManagementSearchService : IRbacManagementSearchService
         return Map(response, query, RbacUserIndexMapping.IndexName,
             doc => new UserSearchResult
             {
-                DxEId = doc.DxEId,
                 Userid = doc.Userid,
                 Username = doc.Username,
                 Status = doc.Status,
@@ -47,7 +46,6 @@ public sealed class RbacManagementSearchService : IRbacManagementSearchService
         return Map(response, query, RbacGroupIndexMapping.IndexName,
             doc => new GroupSearchResult
             {
-                DxEId = doc.DxEId,
                 GroupCode = doc.GroupCode,
                 GroupName = doc.GroupName,
                 Project = doc.Project,
@@ -63,7 +61,6 @@ public sealed class RbacManagementSearchService : IRbacManagementSearchService
         return Map(response, query, RbacRuleIndexMapping.IndexName,
             doc => new RuleSearchResult
             {
-                DxEId = doc.DxEId,
                 RuleCode = doc.RuleCode,
                 PermissionCode = doc.PermissionCode,
                 Title = doc.Title,

@@ -34,9 +34,6 @@ public sealed class AdministratorRepository : IAdministratorRepository
     public Task<RbacAdministrator?> FindByUseridAsync(UserId userid, CancellationToken ct = default)
         => _db.Administrators.FirstOrDefaultAsync(a => a.Userid == userid, ct);
 
-    public Task<RbacAdministrator?> FindByDxEIdAsync(DxEId dxeId, CancellationToken ct = default)
-        => _db.Administrators.FirstOrDefaultAsync(a => a.DxEId == dxeId, ct);
-
     public async Task<IReadOnlyList<RbacAdministrator>> FindByProjectAsync(
         ProjectCode project, CancellationToken ct = default)
     {
@@ -86,9 +83,6 @@ public sealed class GroupRepository : IGroupRepository
     public Task<RbacGroup?> FindByGroupCodeAsync(GroupCode groupCode, ProjectCode project, CancellationToken ct = default)
         => _db.Groups.FirstOrDefaultAsync(g => g.GroupCode == groupCode && g.Project == project, ct);
 
-    public Task<RbacGroup?> FindByDxEIdAsync(DxEId dxeId, CancellationToken ct = default)
-        => _db.Groups.FirstOrDefaultAsync(g => g.DxEId == dxeId, ct);
-
     public async Task<IReadOnlyList<RbacGroup>> FindByProjectAsync(
         ProjectCode project, CancellationToken ct = default)
     {
@@ -135,9 +129,6 @@ public sealed class RuleRepository : IRuleRepository
 
     public Task<RbacRule?> FindByRuleCodeAsync(RuleCode ruleCode, ProjectCode project, CancellationToken ct = default)
         => _db.Rules.FirstOrDefaultAsync(r => r.RuleCode == ruleCode && r.Project == project, ct);
-
-    public Task<RbacRule?> FindByDxEIdAsync(DxEId dxeId, CancellationToken ct = default)
-        => _db.Rules.FirstOrDefaultAsync(r => r.DxEId == dxeId, ct);
 
     public async Task<IReadOnlyList<RbacRule>> FindActiveByProjectAsync(
         ProjectCode project, CancellationToken ct = default)

@@ -5,7 +5,6 @@ using ZiggyCreatures.Caching.Fusion;
 using Rbac.Application.Auditing;
 using Rbac.Application.Authorization;
 using Rbac.Application.Cache;
-using Rbac.Application.Identity;
 using Rbac.Application.Management;
 using Rbac.Application.Menus;
 using Rbac.Application.Policies;
@@ -17,7 +16,6 @@ using Rbac.Infrastructure.Casbin;
 using Rbac.Infrastructure.Elasticsearch.Bootstrap;
 using Rbac.Infrastructure.Elasticsearch.Reindex;
 using Rbac.Infrastructure.Elasticsearch.Services;
-using Rbac.Infrastructure.MySql.Identity;   // RbacDxEIdGenerationOptions + SnowflakeDxEIdGenerator
 using Rbac.Infrastructure.MySql.Management;
 using Rbac.Infrastructure.MySql.Mapping;
 using Rbac.Infrastructure.MySql.Outbox;
@@ -35,10 +33,6 @@ var host = Host.CreateDefaultBuilder(args)
         var config = ctx.Configuration;
 
         // ── Options ───────────────────────────────────────────────
-        // RbacDxEIdGenerationOptions 在 Rbac.Infrastructure.MySql.Identity，不在 Rbac.Api.Options
-        services.Configure<RbacDxEIdGenerationOptions>(
-            config.GetSection(RbacDxEIdGenerationOptions.SectionName));
-
         // ── Infrastructure: MySQL ─────────────────────────────────
         services.AddDbContext<RbacDbContext>(opt =>
             opt.UseMySql(
@@ -65,13 +59,6 @@ var host = Host.CreateDefaultBuilder(args)
         // Casbin policy readers（PATCH-06）
         services.AddScoped<ICasbinGroupingPolicyReader,   CasbinMySqlGroupingPolicyReader>();
         services.AddScoped<ICasbinPermissionPolicyReader, CasbinMySqlPermissionPolicyReader>();
-
-        // DxEId generator（RbacDxEIdGenerationOptions 在 Infrastructure.MySql.Identity）
-        services.AddSingleton<IRbacDxEIdGenerator>(sp =>
-        {
-            var opts = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<RbacDxEIdGenerationOptions>>().Value;
-            return new SnowflakeDxEIdGenerator(opts);
-        });
 
         // ── Infrastructure: Redis + FusionCache ───────────────────
         services.AddSingleton<IConnectionMultiplexer>(_ =>

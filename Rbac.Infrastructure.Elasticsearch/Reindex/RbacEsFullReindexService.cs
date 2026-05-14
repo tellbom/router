@@ -120,7 +120,6 @@ public sealed class RbacEsFullReindexService
         return new UserDocument
         {
             Id = admin.Id.ToString(),
-            DxEId = admin.DxEId.Value,
             Userid = admin.Userid.Value,
             Username = admin.Username,
             ProjectCodes = projectCodes,
@@ -147,7 +146,6 @@ public sealed class RbacEsFullReindexService
             var docs = groups.Select(g => new GroupDocument
             {
                 Id              = g.Id.ToString(),
-                DxEId           = g.DxEId.Value,
                 Project         = g.Project.Value,
                 GroupCode       = g.GroupCode.Value,
                 GroupName       = g.GroupName,
@@ -177,7 +175,6 @@ public sealed class RbacEsFullReindexService
             var docs = rules.Select(r => new RuleDocument
             {
                 Id            = r.Id.ToString(),
-                DxEId         = r.DxEId.Value,
                 Project       = r.Project.Value,
                 RuleCode      = r.RuleCode.Value,
                 PermissionCode = r.PermissionCode.Value,

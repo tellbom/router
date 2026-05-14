@@ -10,7 +10,7 @@ namespace Rbac.Infrastructure.Elasticsearch.Indexes;
 /// 精确过滤：project, groupCode, status, permissionCodes。
 /// 模糊搜索：groupName, allText。
 /// allText copy_to 来源：groupCode, groupName, parentGroupCode, ruleCodes,
-///   permissionCodes, project, status, dxe_id。
+///   permissionCodes, project, status。
 /// </summary>
 public static class RbacGroupIndexMapping
 {
@@ -29,8 +29,6 @@ public static class RbacGroupIndexMapping
                 .AutoMap()
                 .Properties(p => p
                     .Keyword(k => k.Name(n => n.Id))
-                    .Keyword(k => k.Name(n => n.DxEId)
-                        .CopyTo(c => c.Field(f => f.AllText)))
                     .Keyword(k => k.Name(n => n.Project)
                         .CopyTo(c => c.Field(f => f.AllText)))
                     .Keyword(k => k.Name(n => n.GroupCode)

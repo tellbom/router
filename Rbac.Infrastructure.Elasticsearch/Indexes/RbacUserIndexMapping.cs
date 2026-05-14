@@ -9,9 +9,9 @@ namespace Rbac.Infrastructure.Elasticsearch.Indexes;
 /// 用途：管理员用户查询（列表、搜索、过滤）。
 /// 不参与实时鉴权，不作为编辑真相（写入前必须回读 MySQL）。
 ///
-/// 精确过滤字段：userid, projectCodes, groupCodes, status, dxe_id。
+/// 精确过滤字段：userid, projectCodes, groupCodes, status。
 /// 模糊搜索字段：username, groupNames, allText。
-/// allText copy_to 来源：userid, username, groupNames, projectCodes, groupCodes, status, dxe_id。
+/// allText copy_to 来源：userid, username, groupNames, projectCodes, groupCodes, status。
 /// </summary>
 public static class RbacUserIndexMapping
 {
@@ -36,8 +36,6 @@ public static class RbacUserIndexMapping
                 .AutoMap()
                 .Properties(p => p
                     .Keyword(k => k.Name(n => n.Id))
-                    // DxEId 必须为 keyword（string），禁止 long
-                    .Keyword(k => k.Name(n => n.DxEId))
                     .Keyword(k => k.Name(n => n.Userid))
                     .Text(t => t
                         .Name(n => n.Username)

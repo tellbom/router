@@ -13,7 +13,6 @@ using Rbac.Application.Authentication;
 using Rbac.Application.Auditing;
 using Rbac.Application.Authorization;
 using Rbac.Application.Cache;
-using Rbac.Application.Identity;
 using Rbac.Application.Management;
 using Rbac.Application.Menus;
 using Rbac.Application.Outbox;
@@ -27,7 +26,6 @@ using Rbac.Infrastructure.Casbin;
 using Rbac.Infrastructure.Elasticsearch.Bootstrap;
 using Rbac.Infrastructure.Elasticsearch.Reindex;
 using Rbac.Infrastructure.Elasticsearch.Services;
-using Rbac.Infrastructure.MySql.Identity;
 using Rbac.Infrastructure.MySql.Management;
 using Rbac.Infrastructure.MySql.Mapping;
 using Rbac.Infrastructure.MySql.Outbox;
@@ -53,10 +51,6 @@ builder.Services.Configure<RbacProjectAccessAllowlistOptions>(
     builder.Configuration.GetSection(RbacProjectAccessAllowlistOptions.SectionName));
 builder.Services.Configure<RbacOpsOptions>(
     builder.Configuration.GetSection(RbacOpsOptions.SectionName));
-// RbacDxEIdGenerationOptions 在 Rbac.Infrastructure.MySql.Identity
-builder.Services.Configure<RbacDxEIdGenerationOptions>(
-    builder.Configuration.GetSection(RbacDxEIdGenerationOptions.SectionName));
-
 // ── Authentication (JWT) ──────────────────────────────────────────
 var jwtSection = builder.Configuration.GetSection(RbacJwtOptions.SectionName);
 var jwtMode = jwtSection["Mode"] ?? "Oidc";
@@ -81,10 +75,6 @@ else
 builder.Services.AddControllers(opt =>
 {
     opt.Filters.Add<RbacAuthorizationFilter>(); // deny-by-default
-})
-.AddJsonOptions(opt =>
-{
-    opt.JsonSerializerOptions.Converters.Add(new LongToStringConverter());
 });
 
 builder.Services.AddRazorPages();
@@ -119,13 +109,6 @@ builder.Services.AddScoped<IRbacManagementWriteService, RbacManagementWriteServi
 // Casbin policy readers（PATCH-06）
 builder.Services.AddScoped<ICasbinGroupingPolicyReader,   CasbinMySqlGroupingPolicyReader>();
 builder.Services.AddScoped<ICasbinPermissionPolicyReader, CasbinMySqlPermissionPolicyReader>();
-
-// DxEId generator（RbacDxEIdGenerationOptions 在 Infrastructure.MySql.Identity）
-builder.Services.AddSingleton<IRbacDxEIdGenerator>(sp =>
-{
-    var opts = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<RbacDxEIdGenerationOptions>>().Value;
-    return new SnowflakeDxEIdGenerator(opts);
-});
 
 // ── Infrastructure: Redis + FusionCache ───────────────────────────
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>

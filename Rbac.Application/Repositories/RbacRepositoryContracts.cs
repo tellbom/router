@@ -14,7 +14,6 @@ public interface IAdministratorRepository
 {
     Task<RbacAdministrator?> FindByGuidAsync(Guid id, CancellationToken ct = default);
     Task<RbacAdministrator?> FindByUseridAsync(UserId userid, CancellationToken ct = default);
-    Task<RbacAdministrator?> FindByDxEIdAsync(DxEId dxeId, CancellationToken ct = default);
     Task<IReadOnlyList<RbacAdministrator>> FindByProjectAsync(ProjectCode project, CancellationToken ct = default);
     Task SaveAsync(RbacAdministrator admin, CancellationToken ct = default);
     Task DeleteAsync(Guid id, CancellationToken ct = default);
@@ -27,7 +26,6 @@ public interface IGroupRepository
 {
     Task<RbacGroup?> FindByGuidAsync(Guid id, CancellationToken ct = default);
     Task<RbacGroup?> FindByGroupCodeAsync(GroupCode groupCode, ProjectCode project, CancellationToken ct = default);
-    Task<RbacGroup?> FindByDxEIdAsync(DxEId dxeId, CancellationToken ct = default);
     Task<IReadOnlyList<RbacGroup>> FindByProjectAsync(ProjectCode project, CancellationToken ct = default);
     Task SaveAsync(RbacGroup group, CancellationToken ct = default);
     Task DeleteAsync(Guid id, CancellationToken ct = default);
@@ -59,7 +57,6 @@ public interface IRuleRepository
 {
     Task<RbacRule?> FindByGuidAsync(Guid id, CancellationToken ct = default);
     Task<RbacRule?> FindByRuleCodeAsync(RuleCode ruleCode, ProjectCode project, CancellationToken ct = default);
-    Task<RbacRule?> FindByDxEIdAsync(DxEId dxeId, CancellationToken ct = default);
 
     /// <summary>获取 project 下所有启用的规则，用于构建菜单树。</summary>
     Task<IReadOnlyList<RbacRule>> FindActiveByProjectAsync(ProjectCode project, CancellationToken ct = default);

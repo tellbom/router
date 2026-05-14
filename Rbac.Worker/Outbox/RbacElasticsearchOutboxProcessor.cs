@@ -14,7 +14,7 @@ namespace Rbac.Worker.Outbox;
 /// <summary>
 /// ES 澧為噺鍚屾 Outbox 澶勭悊鍣ㄣ€?///
 /// 娑堣垂 Outbox 浜嬩欢鍚庯紝浠?MySQL 閲嶆柊璇诲彇鑱氬悎鏍规暟鎹苟鍐欏叆 ES 瀵瑰簲绱㈠紩銆?/// 鍘熷垯锛氫笉鐩存帴淇′换 Outbox payload 浣滀负 ES 鍐欏叆鏁版嵁锛岄渶鍥炶 MySQL 鐪熺浉銆?///
-/// 鍒犻櫎鍦烘櫙锛圕hangeKind=Deleted锛夌洿鎺ユ寜 DxEId 浠?ES 鍒犻櫎鏂囨。銆?/// 鍐欏叆澶辫触鏃朵笉褰卞搷 MySQL 鐪熺浉锛孫utbox 鏍囪 Failed 鍚庤繘鍏ラ噸璇曢槦鍒椼€?/// </summary>
+/// 鍒犻櫎鍦烘櫙锛圕hangeKind=Deleted锛夌洿鎺ヤ粠 ES 鍒犻櫎鏂囨。銆?/// 鍐欏叆澶辫触鏃朵笉褰卞搷 MySQL 鐪熺浉锛孫utbox 鏍囪 Failed 鍚庤繘鍏ラ噸璇曢槦鍒椼€?/// </summary>
 public sealed class RbacElasticsearchOutboxProcessor
 {
     private readonly IElasticClient _esClient;
@@ -121,7 +121,6 @@ public sealed class RbacElasticsearchOutboxProcessor
         return new UserDocument
         {
             Id = admin.Id.ToString(),
-            DxEId = admin.DxEId.Value,
             Userid = admin.Userid.Value,
             Username = admin.Username,
             ProjectCodes = projectCodes,
@@ -152,7 +151,6 @@ public sealed class RbacElasticsearchOutboxProcessor
         var doc = new GroupDocument
         {
             Id = group.Id.ToString(),
-            DxEId = group.DxEId.Value,
             Project = group.Project.Value,
             GroupCode = group.GroupCode.Value,
             GroupName = group.GroupName,
@@ -185,7 +183,6 @@ public sealed class RbacElasticsearchOutboxProcessor
         var doc = new RuleDocument
         {
             Id = rule.Id.ToString(),
-            DxEId = rule.DxEId.Value,
             Project = rule.Project.Value,
             RuleCode = rule.RuleCode.Value,
             PermissionCode = rule.PermissionCode.Value,

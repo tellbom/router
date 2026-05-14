@@ -1,0 +1,2140 @@
+info: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[63]
+      User profile is available. Using 'C:\Users\24203\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+dbug: Microsoft.Extensions.Hosting.Internal.Host[1]
+      Hosting starting
+info: Rbac.Infrastructure.Redis.RbacCacheInvalidationSubscriber[0]
+      Subscribed to Redis channel: rbac.cache.invalidate
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      RbacAuditEventWorker started.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:5088
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: E:\router\router\Rbac.Api\
+dbug: Microsoft.Extensions.Hosting.Internal.Host[2]
+      Hosting started
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:5088/ops/health?project=oversia - -
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[9]
+      AuthenticationScheme: Bearer was not authenticated.
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10401]
+      An 'IServiceProvider' was created for internal use by Entity Framework.
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid= project=oversia authorized=False traceId=0HNLHAKFKHBLC:00000002
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.OpsController.Health (Rbac.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "Health", controller = "Ops", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Health(System.String, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.OpsController (Rbac.Api).
+dbug: Rbac.Api.Filters.RbacAuthorizationFilter[0]
+      Allowlist hit path=/ops/health
+warn: Microsoft.EntityFrameworkCore.Model.Validation[10620]
+      The property 'RbacGroup.PermissionCodes' is a collection or enumeration type with a value converter but with no value comparer. Set a value comparer to ensure the collection/enumeration elements are compared correctly.
+warn: Microsoft.EntityFrameworkCore.Model.Validation[10620]
+      The property 'RbacGroup.RuleCodes' is a collection or enumeration type with a value converter but with no value comparer. Set a value comparer to ensure the collection/enumeration elements are compared correctly.
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<OutboxEventEntity>()
+          .Where(e => e.Project == __project_0)
+          .GroupBy(e => e.Status)
+          .Select(g => new { 
+              Status = g.Key, 
+              Count = g
+                  .LongCount()
+           })'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => new SingleQueryingEnumerable<<>f__AnonymousType0<string, long>>(
+          (RelationalQueryContext)queryContext, 
+          RelationalCommandCache.SelectExpression(
+              Projection Mapping:
+                  Status -> 0
+                  Count -> 1
+              SELECT r.status AS Status, COUNT(*) AS Count
+              FROM rbac_outbox AS r
+              WHERE r.project == @__project_0
+              GROUP BY r.status), 
+          Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, <>f__AnonymousType0<string, long>>, 
+          Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+          False, 
+          False, 
+          True
+      )'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (28ms) [Parameters=[@__project_0='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`status` AS `Status`, COUNT(*) AS `Count`
+      FROM `rbac_outbox` AS `r`
+      WHERE `r`.`project` = @__project_0
+      GROUP BY `r`.`status`
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing OkObjectResult, writing value of type '<>f__AnonymousType5`3[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[<>f__AnonymousType10`4[[System.String, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[Rbac.Application.Outbox.OutboxStatusCounts, Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int64, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], Rbac.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.OpsController.Health (Rbac.Api) in 2038.76ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.OpsController.Health (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:5088/ops/health?project=oversia - - - 200 - application/json;+charset=utf-8 3615.5888ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:5088/api/auth/login application/x-www-form-urlencoded 0
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HA K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HA K=rbac:user-projects:196045): [MC] memory entry not found
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HA K=rbac:user-projects:196045): [MC] memory entry not found
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HA K=rbac:user-projects:196045): calling the factory (timeout=/)
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HA K=rbac:user-projects:196045): [MC] saving entry in memory FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HA K=rbac:user-projects:196045): return FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:00000003
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:00000003
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.AuthController.Login (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=e5470c87c28d4c72b513c89ce911ad9e type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "Login", controller = "Auth", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Rbac.Application.Contracts.Common.ApiResponse`1[Rbac.Application.Contracts.Compatibility.LoginResponseDto]]] Login(System.Threading.CancellationToken) on controller Rbac.Api.Controllers.AuthController (Rbac.Api).
+dbug: Rbac.Api.Filters.RbacAuthorizationFilter[0]
+      Allowlist hit path=/api/auth/login
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HB K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HB K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HB K=rbac:user-projects:196045): return FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:00000003
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=d1ae9cb316154d988bc7386ba7b925fd type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacAdministrator>()
+          .FirstOrDefault(a => a.Userid == __userid_0)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync<RbacAdministrator>(
+          asyncEnumerable: new SingleQueryingEnumerable<RbacAdministrator>(
+              (RelationalQueryContext)queryContext, 
+              RelationalCommandCache.SelectExpression(
+                  Projection Mapping:
+                      EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacAdministrator.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacAdministrator.CreatedAt (DateTimeOffset) Required, 1], [Property: RbacAdministrator.Status (AdminStatus) Required MaxLength(16), 2], [Property: RbacAdministrator.UpdatedAt (DateTimeOffset) Required, 3], [Property: RbacAdministrator.Userid (UserId) Required Index MaxLength(128), 4], [Property: RbacAdministrator.Username (string) Required MaxLength(128), 5] }
+                  SELECT TOP(1) r.id, r.created_at, r.status, r.updated_at, r.userid, r.username
+                  FROM rbac_administrator AS r
+                  WHERE r.userid == @__userid_0), 
+              Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacAdministrator>, 
+              Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+              False, 
+              False, 
+              True
+          ), 
+          cancellationToken: queryContext.CancellationToken)'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[@__userid_0='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`status`, `r`.`updated_at`, `r`.`userid`, `r`.`username`
+      FROM `rbac_administrator` AS `r`
+      WHERE `r`.`userid` = @__userid_0
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacAdministrator' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[Rbac.Application.Contracts.Compatibility.LoginResponseDto, Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.AuthController.Login (Rbac.Api) in 135.0201ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.AuthController.Login (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:5088/api/auth/login application/x-www-form-urlencoded 0 - 200 - application/json;+charset=utf-8 262.3155ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:5088/api/admin/index - -
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HC K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HC K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HC K=rbac:user-projects:196045): return FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:00000004
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:00000004
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.AdminController.Index (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=e7f71d0dfccc4bfb9af64d1d7a91c0ac type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "Index", controller = "Admin", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[Rbac.Application.Contracts.Compatibility.BackendIndexDto]] Index(System.Threading.CancellationToken) on controller Rbac.Api.Controllers.AdminController (Rbac.Api).
+dbug: Rbac.Api.Filters.RbacAuthorizationFilter[0]
+      ProjectAccessAllowlist hit path=/api/admin/index
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@__userid_0='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`status`, `r`.`updated_at`, `r`.`userid`, `r`.`username`
+      FROM `rbac_administrator` AS `r`
+      WHERE `r`.`userid` = @__userid_0
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacAdministrator' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HD K=rbac:menu-tree:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HD K=rbac:menu-tree:oversia): [MC] memory entry not found
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HD K=rbac:menu-tree:oversia): [MC] memory entry not found
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HD K=rbac:menu-tree:oversia): calling the factory (timeout=3s)
+dbug: Rbac.Application.Menus.RbacProjectMenuTreeService[0]
+      MenuTree cache miss, loading from MySQL project=oversia
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacRule>()
+          .Where(r => r.Project == __project_0 && (int)r.Status == 0)
+          .OrderBy(r => r.Weigh)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => new SingleQueryingEnumerable<RbacRule>(
+          (RelationalQueryContext)queryContext, 
+          RelationalCommandCache.SelectExpression(
+              Projection Mapping:
+                  EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacRule.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacRule.Component (string) MaxLength(256), 1], [Property: RbacRule.CreatedAt (DateTimeOffset) Required, 2], [Property: RbacRule.Extend (string) MaxLength(64), 3], [Property: RbacRule.Icon (string) MaxLength(128), 4], [Property: RbacRule.Keepalive (bool) Required, 5], [Property: RbacRule.MenuType (MenuType?) MaxLength(16), 6], [Property: RbacRule.Name (string) MaxLength(128), 7], [Property: RbacRule.ParentRuleCode (RuleCode) MaxLength(128), 8], [Property: RbacRule.Path (string) MaxLength(256), 9], [Property: RbacRule.PermissionCode (PermissionCode) Required MaxLength(256), 10], [Property: RbacRule.Project (ProjectCode) Required Index MaxLength(64), 11], [Property: RbacRule.Remark (string) MaxLength(512), 12], [Property: RbacRule.RuleCode (RuleCode) Required Index MaxLength(128), 13], [Property: RbacRule.Status (RuleStatus) Required MaxLength(16), 14], [Property: RbacRule.Title (string) Required MaxLength(128), 15], [Property: RbacRule.Type (RuleType) Required MaxLength(16), 16], [Property: RbacRule.UpdatedAt (DateTimeOffset) Required, 17], [Property: RbacRule.Url (string) MaxLength(512), 18], [Property: RbacRule.Weigh (int) Required, 19] }
+              SELECT r.id, r.component, r.created_at, r.extend, r.icon, r.keepalive, r.menu_type, r.name, r.parent_rule_code, r.path, r.permission_code, r.project, r.remark, r.rule_code, r.status, r.title, r.type, r.updated_at, r.url, r.weigh
+              FROM rbac_rule AS r
+              WHERE (r.project == @__project_0) && (r.status == 'Active')
+              ORDER BY r.weigh ASC), 
+          Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacRule>, 
+          Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+          False, 
+          False, 
+          True
+      )'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (6ms) [Parameters=[@__project_0='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`component`, `r`.`created_at`, `r`.`extend`, `r`.`icon`, `r`.`keepalive`, `r`.`menu_type`, `r`.`name`, `r`.`parent_rule_code`, `r`.`path`, `r`.`permission_code`, `r`.`project`, `r`.`remark`, `r`.`rule_code`, `r`.`status`, `r`.`title`, `r`.`type`, `r`.`updated_at`, `r`.`url`, `r`.`weigh`
+      FROM `rbac_rule` AS `r`
+      WHERE (`r`.`project` = @__project_0) AND (`r`.`status` = 'Active')
+      ORDER BY `r`.`weigh`
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Rbac.Application.Menus.RbacProjectMenuTreeService[0]
+      MenuTree built project=oversia rootNodes=10
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HD K=rbac:menu-tree:oversia): [MC] saving entry in memory FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HD K=rbac:menu-tree:oversia): return FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Menus.RbacMenuBuilder[0]
+      SuperUser full menu tree userid=196045 project=oversia
+dbug: Rbac.Application.Backend.RbacBackendIndexService[0]
+      BackendIndex built userid=196045 project=oversia menuRootCount=10 routePath=talentpool/pool
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[Rbac.Application.Contracts.Compatibility.BackendIndexDto, Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.AdminController.Index (Rbac.Api) in 164.3451ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.AdminController.Index (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:5088/api/admin/index - - - 200 - application/json;+charset=utf-8 225.7045ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:5088/api/admin/list?page=1&pageSize=5 - -
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HE K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HE K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HE K=rbac:user-projects:196045): return FE[FFS=N, LEXP=60s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:00000005
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:00000005
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.AdminController.List (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=8a6b87157ccf4347b3b29add8750b85e type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "List", controller = "Admin", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[Rbac.Application.Contracts.Common.PagedData`1[Rbac.Application.Search.UserSearchResult]]] List(Rbac.Application.Search.UserSearchQuery, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.AdminController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HF K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HF K=rbac:api-map:oversia): [MC] memory entry not found
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HF K=rbac:api-map:oversia): [MC] memory entry not found
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HF K=rbac:api-map:oversia): calling the factory (timeout=3s)
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacApiPermissionMap>()
+          .Where(m => m.Project == __project_0 && (int)m.Status == 0)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => new SingleQueryingEnumerable<RbacApiPermissionMap>(
+          (RelationalQueryContext)queryContext, 
+          RelationalCommandCache.SelectExpression(
+              Projection Mapping:
+                  EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacApiPermissionMap.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacApiPermissionMap.Action (string) Required MaxLength(16), 1], [Property: RbacApiPermissionMap.CreatedAt (DateTimeOffset) Required, 2], [Property: RbacApiPermissionMap.HttpMethod (string) Required Index MaxLength(8), 3], [Property: RbacApiPermissionMap.PermissionCode (PermissionCode) Required MaxLength(256), 4], [Property: RbacApiPermissionMap.Project (ProjectCode) Required Index MaxLength(64), 5], [Property: RbacApiPermissionMap.RoutePattern (string) Required Index MaxLength(512), 6], [Property: RbacApiPermissionMap.Status (ApiMapStatus) Required MaxLength(16), 7], [Property: RbacApiPermissionMap.UpdatedAt (DateTimeOffset) Required, 8] }
+              SELECT r.id, r.action, r.created_at, r.http_method, r.permission_code, r.project, r.route_pattern, r.status, r.updated_at
+              FROM rbac_api_permission_map AS r
+              WHERE (r.project == @__project_0) && (r.status == 'Active')), 
+          Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacApiPermissionMap>, 
+          Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+          False, 
+          False, 
+          True
+      )'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (13ms) [Parameters=[@__project_0='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`action`, `r`.`created_at`, `r`.`http_method`, `r`.`permission_code`, `r`.`project`, `r`.`route_pattern`, `r`.`status`, `r`.`updated_at`
+      FROM `rbac_api_permission_map` AS `r`
+      WHERE (`r`.`project` = @__project_0) AND (`r`.`status` = 'Active')
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacApiPermissionMap' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HF K=rbac:api-map:oversia): [MC] saving entry in memory FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HF K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/admin/list permCode=menu:admin.list action=read
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=2c82693e73be4fa19366a82d92e0e2cd type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[Rbac.Application.Contracts.Common.PagedData`1[[Rbac.Application.Search.UserSearchResult, Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.AdminController.List (Rbac.Api) in 169.0954ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.AdminController.List (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:5088/api/admin/list?page=1&pageSize=5 - - - 200 - application/json;+charset=utf-8 223.4433ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:5088/api/group/index?select=true - -
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HG K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HG K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=59s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HG K=rbac:user-projects:196045): return FE[FFS=N, LEXP=59s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:00000006
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:00000006
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.GroupController.Index (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=0cbcae333e3c4d65b959babbd7c0dfdf type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "Index", controller = "Group", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] Index(Rbac.Api.Controllers.GroupIndexQuery, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.GroupController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HH K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HH K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HH K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/group/index permCode=auth.group action=read
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=7249e9dbb0824689835774c7ba449877 type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacGroup>()
+          .Where(g => g.Project == __project_0)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => new SingleQueryingEnumerable<RbacGroup>(
+          (RelationalQueryContext)queryContext, 
+          RelationalCommandCache.SelectExpression(
+              Projection Mapping:
+                  EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacGroup.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacGroup.CreatedAt (DateTimeOffset) Required, 1], [Property: RbacGroup.GroupCode (GroupCode) Required Index MaxLength(128), 2], [Property: RbacGroup.GroupName (string) Required MaxLength(128), 3], [Property: RbacGroup.ParentGroupCode (GroupCode) MaxLength(128), 4], [Property: RbacGroup.PermissionCodes (IReadOnlyList<PermissionCode>) Required, 5], [Property: RbacGroup.Project (ProjectCode) Required Index MaxLength(64), 6], [Property: RbacGroup.RuleCodes (IReadOnlyList<RuleCode>) Required, 7], [Property: RbacGroup.Status (GroupStatus) Required MaxLength(16), 8], [Property: RbacGroup.UpdatedAt (DateTimeOffset) Required, 9] }
+              SELECT r.id, r.created_at, r.group_code, r.group_name, r.parent_group_code, r.permission_codes, r.project, r.rule_codes, r.status, r.updated_at
+              FROM rbac_group AS r
+              WHERE r.project == @__project_0), 
+          Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacGroup>, 
+          Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+          False, 
+          False, 
+          True
+      )'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@__project_0='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`group_code`, `r`.`group_name`, `r`.`parent_group_code`, `r`.`permission_codes`, `r`.`project`, `r`.`rule_codes`, `r`.`status`, `r`.`updated_at`
+      FROM `rbac_group` AS `r`
+      WHERE `r`.`project` = @__project_0
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacGroupMember>()
+          .Where(m => m.Userid == __userId_0 && m.Project == __projectCode_1)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => new SingleQueryingEnumerable<RbacGroupMember>(
+          (RelationalQueryContext)queryContext, 
+          RelationalCommandCache.SelectExpression(
+              Projection Mapping:
+                  EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacGroupMember.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacGroupMember.CreatedAt (DateTimeOffset) Required, 1], [Property: RbacGroupMember.GrantedBy (string) Required MaxLength(128), 2], [Property: RbacGroupMember.GroupCode (GroupCode) Required Index MaxLength(128), 3], [Property: RbacGroupMember.Project (ProjectCode) Required Index MaxLength(64), 4], [Property: RbacGroupMember.UpdatedAt (DateTimeOffset) Required, 5], [Property: RbacGroupMember.Userid (UserId) Required Index MaxLength(128), 6] }
+              SELECT r.id, r.created_at, r.granted_by, r.group_code, r.project, r.updated_at, r.userid
+              FROM rbac_group_member AS r
+              WHERE (r.userid == @__userId_0) && (r.project == @__projectCode_1)), 
+          Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacGroupMember>, 
+          Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+          False, 
+          False, 
+          True
+      )'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (Size = 128), @__projectCode_1='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`granted_by`, `r`.`group_code`, `r`.`project`, `r`.`updated_at`, `r`.`userid`
+      FROM `rbac_group_member` AS `r`
+      WHERE (`r`.`userid` = @__userId_0) AND (`r`.`project` = @__projectCode_1)
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroupMember' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.GroupController.Index (Rbac.Api) in 143.4118ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.GroupController.Index (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:5088/api/group/index?select=true - - - 200 - application/json;+charset=utf-8 195.0433ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:5088/api/group/list?page=1&pageSize=5 - -
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HI K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HI K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=59s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HI K=rbac:user-projects:196045): return FE[FFS=N, LEXP=59s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:00000007
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:00000007
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.GroupController.List (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=4e161882275646b9a72a29e2e4af54d6 type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "List", controller = "Group", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[Rbac.Application.Contracts.Common.PagedData`1[Rbac.Application.Search.GroupSearchResult]]] List(Rbac.Application.Search.GroupSearchQuery, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.GroupController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HJ K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HJ K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HJ K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/group/list permCode=menu:group.list action=read
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=522b36ff3b234804bcff59ce0410163d type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[Rbac.Application.Contracts.Common.PagedData`1[[Rbac.Application.Search.GroupSearchResult, Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Rbac.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.GroupController.List (Rbac.Api) in 66.979ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.GroupController.List (Rbac.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:5088/api/group/list?page=1&pageSize=5 - - - 200 - application/json;+charset=utf-8 117.8008ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:5088/api/rule application/json;+charset=utf-8 236
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HK K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HK K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=59s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HK K=rbac:user-projects:196045): return FE[FFS=N, LEXP=59s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:00000008
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:00000008
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.RuleController.Create (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=0ddbb547a972420c84804994ac24b77c type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "Create", controller = "Rule", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] Create(Rbac.Api.Controllers.CreateRuleRequest, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.RuleController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HL K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HL K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HL K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/rule permCode=button:rule.create action=create
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=a44cf23e51104a4fac9022998963c95d type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (67ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (Size = 256), @p2='?' (DbType = DateTimeOffset), @p3='?' (Size = 64), @p4='?' (Size = 128), @p5='?' (DbType = Boolean), @p6='?' (Size = 16), @p7='?' (Size = 128), @p8='?' (Size = 128), @p9='?' (Size = 256), @p10='?' (Size = 256), @p11='?' (Size = 64), @p12='?' (Size = 512), @p13='?' (Size = 128), @p14='?' (Size = 16), @p15='?' (Size = 128), @p16='?' (Size = 16), @p17='?' (DbType = DateTimeOffset), @p18='?' (Size = 512), @p19='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_rule` (`id`, `component`, `created_at`, `extend`, `icon`, `keepalive`, `menu_type`, `name`, `parent_rule_code`, `path`, `permission_code`, `project`, `remark`, `rule_code`, `status`, `title`, `type`, `updated_at`, `url`, `weigh`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14, @p15, @p16, @p17, @p18, @p19);
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacRule' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      SaveRule ruleCode=smoke.rule.1778720832 project=oversia changeKind=Created operator=196045
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.RuleController.Create (Rbac.Api) in 264.967ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.RuleController.Create (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:5088/api/rule application/json;+charset=utf-8 236 - 200 - application/json;+charset=utf-8 334.3871ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:5088/api/rule/smoke.rule.1778720832/status application/json;+charset=utf-8 21
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HM K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HM K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=59s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HM K=rbac:user-projects:196045): return FE[FFS=N, LEXP=59s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:00000009
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:00000009
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.RuleController.ChangeStatus (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=d38667e9cca542cdbb749329ff92ef1f type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "ChangeStatus", controller = "Rule", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] ChangeStatus(System.String, Rbac.Api.Controllers.ChangeRuleStatusRequest, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.RuleController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HN K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HN K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HN K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/rule/{ruleCode}/status permCode=button:rule.status action=update
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=ee662fd6ae514b518dec689a9c678db9 type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacRule>()
+          .FirstOrDefault(r => r.RuleCode == __ruleCode_0 && r.Project == __project_1)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync<RbacRule>(
+          asyncEnumerable: new SingleQueryingEnumerable<RbacRule>(
+              (RelationalQueryContext)queryContext, 
+              RelationalCommandCache.SelectExpression(
+                  Projection Mapping:
+                      EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacRule.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacRule.Component (string) MaxLength(256), 1], [Property: RbacRule.CreatedAt (DateTimeOffset) Required, 2], [Property: RbacRule.Extend (string) MaxLength(64), 3], [Property: RbacRule.Icon (string) MaxLength(128), 4], [Property: RbacRule.Keepalive (bool) Required, 5], [Property: RbacRule.MenuType (MenuType?) MaxLength(16), 6], [Property: RbacRule.Name (string) MaxLength(128), 7], [Property: RbacRule.ParentRuleCode (RuleCode) MaxLength(128), 8], [Property: RbacRule.Path (string) MaxLength(256), 9], [Property: RbacRule.PermissionCode (PermissionCode) Required MaxLength(256), 10], [Property: RbacRule.Project (ProjectCode) Required Index MaxLength(64), 11], [Property: RbacRule.Remark (string) MaxLength(512), 12], [Property: RbacRule.RuleCode (RuleCode) Required Index MaxLength(128), 13], [Property: RbacRule.Status (RuleStatus) Required MaxLength(16), 14], [Property: RbacRule.Title (string) Required MaxLength(128), 15], [Property: RbacRule.Type (RuleType) Required MaxLength(16), 16], [Property: RbacRule.UpdatedAt (DateTimeOffset) Required, 17], [Property: RbacRule.Url (string) MaxLength(512), 18], [Property: RbacRule.Weigh (int) Required, 19] }
+                  SELECT TOP(1) r.id, r.component, r.created_at, r.extend, r.icon, r.keepalive, r.menu_type, r.name, r.parent_rule_code, r.path, r.permission_code, r.project, r.remark, r.rule_code, r.status, r.title, r.type, r.updated_at, r.url, r.weigh
+                  FROM rbac_rule AS r
+                  WHERE (r.rule_code == @__ruleCode_0) && (r.project == @__project_1)), 
+              Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacRule>, 
+              Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+              False, 
+              False, 
+              True
+          ), 
+          cancellationToken: queryContext.CancellationToken)'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[@__ruleCode_0='?' (Size = 128), @__project_1='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`component`, `r`.`created_at`, `r`.`extend`, `r`.`icon`, `r`.`keepalive`, `r`.`menu_type`, `r`.`name`, `r`.`parent_rule_code`, `r`.`path`, `r`.`permission_code`, `r`.`project`, `r`.`remark`, `r`.`rule_code`, `r`.`status`, `r`.`title`, `r`.`type`, `r`.`updated_at`, `r`.`url`, `r`.`weigh`
+      FROM `rbac_rule` AS `r`
+      WHERE (`r`.`rule_code` = @__ruleCode_0) AND (`r`.`project` = @__project_1)
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10802]
+      The unchanged property 'RbacRule.Status' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacRule' tracked by 'RbacDbContext' changed state from 'Unchanged' to 'Modified'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10802]
+      The unchanged property 'RbacRule.UpdatedAt' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (47ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (46ms) [Parameters=[@p19='?' (DbType = Guid), @p0='?' (Size = 256), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = Boolean), @p5='?' (Size = 16), @p6='?' (Size = 128), @p7='?' (Size = 128), @p8='?' (Size = 256), @p9='?' (Size = 256), @p10='?' (Size = 64), @p11='?' (Size = 512), @p12='?' (Size = 128), @p13='?' (Size = 16), @p14='?' (Size = 128), @p15='?' (Size = 16), @p16='?' (DbType = DateTimeOffset), @p17='?' (Size = 512), @p18='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      UPDATE `rbac_rule` SET `component` = @p0, `created_at` = @p1, `extend` = @p2, `icon` = @p3, `keepalive` = @p4, `menu_type` = @p5, `name` = @p6, `parent_rule_code` = @p7, `path` = @p8, `permission_code` = @p9, `project` = @p10, `remark` = @p11, `rule_code` = @p12, `status` = @p13, `title` = @p14, `type` = @p15, `updated_at` = @p16, `url` = @p17, `weigh` = @p18
+      WHERE `id` = @p19;
+      SELECT ROW_COUNT();
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacRule' tracked by 'RbacDbContext' changed state from 'Modified' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      SaveRule ruleCode=smoke.rule.1778720832 project=oversia changeKind=StatusChanged operator=196045
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.RuleController.ChangeStatus (Rbac.Api) in 220.9103ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.RuleController.ChangeStatus (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:5088/api/rule/smoke.rule.1778720832/status application/json;+charset=utf-8 21 - 200 - application/json;+charset=utf-8 279.0497ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:5088/api/rule/smoke.rule.1778720832/weigh application/json;+charset=utf-8 11
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HO K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HO K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=58s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HO K=rbac:user-projects:196045): return FE[FFS=N, LEXP=58s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:0000000A
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:0000000A
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.RuleController.UpdateWeigh (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=f0fff2b665984501af674d8180eeaf7c type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "UpdateWeigh", controller = "Rule", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] UpdateWeigh(System.String, Rbac.Api.Controllers.UpdateWeighRequest, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.RuleController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HP K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HP K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HP K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/rule/{ruleCode}/weigh permCode=button:rule.weigh action=update
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=5912d5d59ec24331af93afd2bc77eba8 type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@__ruleCode_0='?' (Size = 128), @__project_1='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`component`, `r`.`created_at`, `r`.`extend`, `r`.`icon`, `r`.`keepalive`, `r`.`menu_type`, `r`.`name`, `r`.`parent_rule_code`, `r`.`path`, `r`.`permission_code`, `r`.`project`, `r`.`remark`, `r`.`rule_code`, `r`.`status`, `r`.`title`, `r`.`type`, `r`.`updated_at`, `r`.`url`, `r`.`weigh`
+      FROM `rbac_rule` AS `r`
+      WHERE (`r`.`rule_code` = @__ruleCode_0) AND (`r`.`project` = @__project_1)
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10802]
+      The unchanged property 'RbacRule.UpdatedAt' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacRule' tracked by 'RbacDbContext' changed state from 'Unchanged' to 'Modified'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10802]
+      The unchanged property 'RbacRule.Weigh' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (43ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (48ms) [Parameters=[@p19='?' (DbType = Guid), @p0='?' (Size = 256), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = Boolean), @p5='?' (Size = 16), @p6='?' (Size = 128), @p7='?' (Size = 128), @p8='?' (Size = 256), @p9='?' (Size = 256), @p10='?' (Size = 64), @p11='?' (Size = 512), @p12='?' (Size = 128), @p13='?' (Size = 16), @p14='?' (Size = 128), @p15='?' (Size = 16), @p16='?' (DbType = DateTimeOffset), @p17='?' (Size = 512), @p18='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      UPDATE `rbac_rule` SET `component` = @p0, `created_at` = @p1, `extend` = @p2, `icon` = @p3, `keepalive` = @p4, `menu_type` = @p5, `name` = @p6, `parent_rule_code` = @p7, `path` = @p8, `permission_code` = @p9, `project` = @p10, `remark` = @p11, `rule_code` = @p12, `status` = @p13, `title` = @p14, `type` = @p15, `updated_at` = @p16, `url` = @p17, `weigh` = @p18
+      WHERE `id` = @p19;
+      SELECT ROW_COUNT();
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacRule' tracked by 'RbacDbContext' changed state from 'Modified' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      SaveRule ruleCode=smoke.rule.1778720832 project=oversia changeKind=Reordered operator=196045
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.RuleController.UpdateWeigh (Rbac.Api) in 212.2161ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.RuleController.UpdateWeigh (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:5088/api/rule/smoke.rule.1778720832/weigh application/json;+charset=utf-8 11 - 200 - application/json;+charset=utf-8 263.5797ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:5088/api/rule/smoke.rule.1778720832 - 0
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HQ K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HQ K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=58s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HQ K=rbac:user-projects:196045): return FE[FFS=N, LEXP=58s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:0000000B
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:0000000B
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.RuleController.Delete (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=d52cf2020e444a31ac2955f1f713f2cc type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "Delete", controller = "Rule", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] Delete(System.String, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.RuleController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HR K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HR K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HR K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/rule/{ruleCode} permCode=button:rule.delete action=delete
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=98199a9a8d9c43f0af8589871cd6c794 type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__ruleCode_0='?' (Size = 128), @__project_1='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`component`, `r`.`created_at`, `r`.`extend`, `r`.`icon`, `r`.`keepalive`, `r`.`menu_type`, `r`.`name`, `r`.`parent_rule_code`, `r`.`path`, `r`.`permission_code`, `r`.`project`, `r`.`remark`, `r`.`rule_code`, `r`.`status`, `r`.`title`, `r`.`type`, `r`.`updated_at`, `r`.`url`, `r`.`weigh`
+      FROM `rbac_rule` AS `r`
+      WHERE (`r`.`rule_code` = @__ruleCode_0) AND (`r`.`project` = @__project_1)
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacRule' tracked by 'RbacDbContext' changed state from 'Unchanged' to 'Deleted'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (64ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (58ms) [Parameters=[@p0='?' (DbType = Guid)], CommandType='Text', CommandTimeout='30']
+      DELETE FROM `rbac_rule`
+      WHERE `id` = @p0;
+      SELECT ROW_COUNT();
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacRule' tracked by 'RbacDbContext' changed state from 'Deleted' to 'Detached'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      DeleteRule ruleCode=smoke.rule.1778720832 project=oversia operator=196045
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.RuleController.Delete (Rbac.Api) in 250.9498ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.RuleController.Delete (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:5088/api/rule/smoke.rule.1778720832 - 0 - 200 - application/json;+charset=utf-8 306.8837ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:5088/api/group application/json;+charset=utf-8 97
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HS K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HS K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=58s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HS K=rbac:user-projects:196045): return FE[FFS=N, LEXP=58s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:0000000C
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:0000000C
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.GroupController.Create (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=2bcba34681304441be2b7fab0f616e24 type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "Create", controller = "Group", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] Create(Rbac.Api.Controllers.CreateGroupRequest, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.GroupController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HT K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HT K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HT K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/group permCode=button:group.create action=create
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=1cbcf833012c4d4a871046bc43bd11b4 type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@__project_0='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`component`, `r`.`created_at`, `r`.`extend`, `r`.`icon`, `r`.`keepalive`, `r`.`menu_type`, `r`.`name`, `r`.`parent_rule_code`, `r`.`path`, `r`.`permission_code`, `r`.`project`, `r`.`remark`, `r`.`rule_code`, `r`.`status`, `r`.`title`, `r`.`type`, `r`.`updated_at`, `r`.`url`, `r`.`weigh`
+      FROM `rbac_rule` AS `r`
+      WHERE (`r`.`project` = @__project_0) AND (`r`.`status` = 'Active')
+      ORDER BY `r`.`weigh`
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacRule' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 128), @p3='?' (Size = 128), @p4='?' (Size = 128), @p5='?' (Size = 4000), @p6='?' (Size = 64), @p7='?' (Size = 4000), @p8='?' (Size = 16), @p9='?' (DbType = DateTimeOffset)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_group` (`id`, `created_at`, `group_code`, `group_name`, `parent_group_code`, `permission_codes`, `project`, `rule_codes`, `status`, `updated_at`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (48ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacGroup' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      SaveGroup groupCode=smoke_group_1778720832 project=oversia operator=196045
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.GroupController.Create (Rbac.Api) in 195.5079ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.GroupController.Create (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:5088/api/group application/json;+charset=utf-8 97 - 200 - application/json;+charset=utf-8 255.7947ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:5088/api/group/smoke_group_1778720832/status application/json;+charset=utf-8 21
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HU K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HU K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=57s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HU K=rbac:user-projects:196045): return FE[FFS=N, LEXP=57s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:0000000D
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:0000000D
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.GroupController.ChangeStatus (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=9f9cab0adaab4c5db82295cbf31cb24b type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "ChangeStatus", controller = "Group", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] ChangeStatus(System.String, Rbac.Api.Controllers.ChangeGroupStatusRequest, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.GroupController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HV K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HV K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88HV K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/group/{groupCode}/status permCode=button:group.status action=update
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=16af56b14c8f46c580222b5d8aed8b09 type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacGroup>()
+          .FirstOrDefault(g => g.GroupCode == __groupCode_0 && g.Project == __project_1)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync<RbacGroup>(
+          asyncEnumerable: new SingleQueryingEnumerable<RbacGroup>(
+              (RelationalQueryContext)queryContext, 
+              RelationalCommandCache.SelectExpression(
+                  Projection Mapping:
+                      EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacGroup.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacGroup.CreatedAt (DateTimeOffset) Required, 1], [Property: RbacGroup.GroupCode (GroupCode) Required Index MaxLength(128), 2], [Property: RbacGroup.GroupName (string) Required MaxLength(128), 3], [Property: RbacGroup.ParentGroupCode (GroupCode) MaxLength(128), 4], [Property: RbacGroup.PermissionCodes (IReadOnlyList<PermissionCode>) Required, 5], [Property: RbacGroup.Project (ProjectCode) Required Index MaxLength(64), 6], [Property: RbacGroup.RuleCodes (IReadOnlyList<RuleCode>) Required, 7], [Property: RbacGroup.Status (GroupStatus) Required MaxLength(16), 8], [Property: RbacGroup.UpdatedAt (DateTimeOffset) Required, 9] }
+                  SELECT TOP(1) r.id, r.created_at, r.group_code, r.group_name, r.parent_group_code, r.permission_codes, r.project, r.rule_codes, r.status, r.updated_at
+                  FROM rbac_group AS r
+                  WHERE (r.group_code == @__groupCode_0) && (r.project == @__project_1)), 
+              Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacGroup>, 
+              Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+              False, 
+              False, 
+              True
+          ), 
+          cancellationToken: queryContext.CancellationToken)'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__groupCode_0='?' (Size = 128), @__project_1='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`group_code`, `r`.`group_name`, `r`.`parent_group_code`, `r`.`permission_codes`, `r`.`project`, `r`.`rule_codes`, `r`.`status`, `r`.`updated_at`
+      FROM `rbac_group` AS `r`
+      WHERE (`r`.`group_code` = @__groupCode_0) AND (`r`.`project` = @__project_1)
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacGroupMember>()
+          .Where(m => m.GroupCode == __group_0 && m.Project == __projectCode_1)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => new SingleQueryingEnumerable<RbacGroupMember>(
+          (RelationalQueryContext)queryContext, 
+          RelationalCommandCache.SelectExpression(
+              Projection Mapping:
+                  EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacGroupMember.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacGroupMember.CreatedAt (DateTimeOffset) Required, 1], [Property: RbacGroupMember.GrantedBy (string) Required MaxLength(128), 2], [Property: RbacGroupMember.GroupCode (GroupCode) Required Index MaxLength(128), 3], [Property: RbacGroupMember.Project (ProjectCode) Required Index MaxLength(64), 4], [Property: RbacGroupMember.UpdatedAt (DateTimeOffset) Required, 5], [Property: RbacGroupMember.Userid (UserId) Required Index MaxLength(128), 6] }
+              SELECT r.id, r.created_at, r.granted_by, r.group_code, r.project, r.updated_at, r.userid
+              FROM rbac_group_member AS r
+              WHERE (r.group_code == @__group_0) && (r.project == @__projectCode_1)), 
+          Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacGroupMember>, 
+          Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+          False, 
+          False, 
+          True
+      )'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__group_0='?' (Size = 128), @__projectCode_1='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`granted_by`, `r`.`group_code`, `r`.`project`, `r`.`updated_at`, `r`.`userid`
+      FROM `rbac_group_member` AS `r`
+      WHERE (`r`.`group_code` = @__group_0) AND (`r`.`project` = @__projectCode_1)
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10802]
+      The unchanged property 'RbacGroup.Status' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacGroup' tracked by 'RbacDbContext' changed state from 'Unchanged' to 'Modified'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10802]
+      The unchanged property 'RbacGroup.UpdatedAt' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (46ms) [Parameters=[@p9='?' (DbType = Guid), @p0='?' (DbType = DateTimeOffset), @p1='?' (Size = 128), @p2='?' (Size = 128), @p3='?' (Size = 128), @p4='?' (Size = 4000), @p5='?' (Size = 64), @p6='?' (Size = 4000), @p7='?' (Size = 16), @p8='?' (DbType = DateTimeOffset)], CommandType='Text', CommandTimeout='30']
+      UPDATE `rbac_group` SET `created_at` = @p0, `group_code` = @p1, `group_name` = @p2, `parent_group_code` = @p3, `permission_codes` = @p4, `project` = @p5, `rule_codes` = @p6, `status` = @p7, `updated_at` = @p8
+      WHERE `id` = @p9;
+      SELECT ROW_COUNT();
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (56ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacGroup' tracked by 'RbacDbContext' changed state from 'Modified' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      SaveGroup groupCode=smoke_group_1778720832 project=oversia operator=196045
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.GroupController.ChangeStatus (Rbac.Api) in 272.471ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.GroupController.ChangeStatus (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:5088/api/group/smoke_group_1778720832/status application/json;+charset=utf-8 21 - 200 - application/json;+charset=utf-8 323.1941ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:5088/api/group/smoke_group_1778720832 - 0
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I0 K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I0 K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=57s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I0 K=rbac:user-projects:196045): return FE[FFS=N, LEXP=57s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:0000000E
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:0000000E
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.GroupController.Delete (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=c181a4d5e38247f18e43dcc0bd7e92a1 type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "Delete", controller = "Group", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] Delete(System.String, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.GroupController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I1 K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I1 K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I1 K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/group/{groupCode} permCode=button:group.delete action=delete
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=55fbffd729164826984de0eb74773b72 type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@__groupCode_0='?' (Size = 128), @__project_1='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`group_code`, `r`.`group_name`, `r`.`parent_group_code`, `r`.`permission_codes`, `r`.`project`, `r`.`rule_codes`, `r`.`status`, `r`.`updated_at`
+      FROM `rbac_group` AS `r`
+      WHERE (`r`.`group_code` = @__groupCode_0) AND (`r`.`project` = @__project_1)
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (6ms) [Parameters=[@__project_0='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`group_code`, `r`.`group_name`, `r`.`parent_group_code`, `r`.`permission_codes`, `r`.`project`, `r`.`rule_codes`, `r`.`status`, `r`.`updated_at`
+      FROM `rbac_group` AS `r`
+      WHERE `r`.`project` = @__project_0
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroup' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[@__group_0='?' (Size = 128), @__projectCode_1='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`granted_by`, `r`.`group_code`, `r`.`project`, `r`.`updated_at`, `r`.`userid`
+      FROM `rbac_group_member` AS `r`
+      WHERE (`r`.`group_code` = @__group_0) AND (`r`.`project` = @__projectCode_1)
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (Size = 128), @__projectCode_1='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`granted_by`, `r`.`group_code`, `r`.`project`, `r`.`updated_at`, `r`.`userid`
+      FROM `rbac_group_member` AS `r`
+      WHERE (`r`.`userid` = @__userId_0) AND (`r`.`project` = @__projectCode_1)
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacGroupMember' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacGroupMember>()
+          .Where(m => m.GroupCode == __group_GroupCode_0 && m.Project == __group_Project_1)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => new SingleQueryingEnumerable<RbacGroupMember>(
+          (RelationalQueryContext)queryContext, 
+          RelationalCommandCache.SelectExpression(
+              Projection Mapping:
+                  EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacGroupMember.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacGroupMember.CreatedAt (DateTimeOffset) Required, 1], [Property: RbacGroupMember.GrantedBy (string) Required MaxLength(128), 2], [Property: RbacGroupMember.GroupCode (GroupCode) Required Index MaxLength(128), 3], [Property: RbacGroupMember.Project (ProjectCode) Required Index MaxLength(64), 4], [Property: RbacGroupMember.UpdatedAt (DateTimeOffset) Required, 5], [Property: RbacGroupMember.Userid (UserId) Required Index MaxLength(128), 6] }
+              SELECT r.id, r.created_at, r.granted_by, r.group_code, r.project, r.updated_at, r.userid
+              FROM rbac_group_member AS r
+              WHERE (r.group_code == @__group_GroupCode_0) && (r.project == @__group_Project_1)), 
+          Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacGroupMember>, 
+          Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+          False, 
+          False, 
+          True
+      )'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@__group_GroupCode_0='?' (Size = 128), @__group_Project_1='?' (Size = 64)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`granted_by`, `r`.`group_code`, `r`.`project`, `r`.`updated_at`, `r`.`userid`
+      FROM `rbac_group_member` AS `r`
+      WHERE (`r`.`group_code` = @__group_GroupCode_0) AND (`r`.`project` = @__group_Project_1)
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacGroup' tracked by 'RbacDbContext' changed state from 'Unchanged' to 'Deleted'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (61ms) [Parameters=[@p0='?' (DbType = Guid)], CommandType='Text', CommandTimeout='30']
+      DELETE FROM `rbac_group`
+      WHERE `id` = @p0;
+      SELECT ROW_COUNT();
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (48ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacGroup' tracked by 'RbacDbContext' changed state from 'Deleted' to 'Detached'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      DeleteGroup groupCode=smoke_group_1778720832 project=oversia membersCleaned=0 operator=196045
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.GroupController.Delete (Rbac.Api) in 467.347ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.GroupController.Delete (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:5088/api/group/smoke_group_1778720832 - 0 - 200 - application/json;+charset=utf-8 516.7775ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:5088/api/admin application/json;+charset=utf-8 73
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I2 K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I2 K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=57s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I2 K=rbac:user-projects:196045): return FE[FFS=N, LEXP=57s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:0000000F
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:0000000F
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.AdminController.Create (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=d1b976f1e21b4ed9b1e3fca80c6e22be type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "Create", controller = "Admin", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] Create(Rbac.Api.Controllers.CreateAdminRequest, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.AdminController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I3 K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I3 K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I3 K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/admin permCode=button:admin.create action=create
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=cb25a5dcef534e3ca3305024de049cc6 type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacAdministrator' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 16), @p3='?' (DbType = DateTimeOffset), @p4='?' (Size = 128), @p5='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_administrator` (`id`, `created_at`, `status`, `updated_at`, `userid`, `username`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (51ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacAdministrator' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      SaveAdministrator userid=smoke_user_1778720832 operator=196045
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.AdminController.Create (Rbac.Api) in 123.1692ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.AdminController.Create (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:5088/api/admin application/json;+charset=utf-8 73 - 200 - application/json;+charset=utf-8 170.8302ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:5088/api/admin/smoke_user_1778720832/username application/json;+charset=utf-8 33
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I4 K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I4 K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=56s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I4 K=rbac:user-projects:196045): return FE[FFS=N, LEXP=56s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:00000010
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:00000010
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.AdminController.UpdateUsername (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=4fe13f8b377e41eb831011abe1efa0d4 type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "UpdateUsername", controller = "Admin", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] UpdateUsername(System.String, Rbac.Api.Controllers.UpdateUsernameRequest, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.AdminController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I5 K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I5 K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I5 K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/admin/{userid}/username permCode=button:admin.username action=update
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=930af64869b84c44ad7bf45c578e7dc5 type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__userid_0='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`status`, `r`.`updated_at`, `r`.`userid`, `r`.`username`
+      FROM `rbac_administrator` AS `r`
+      WHERE `r`.`userid` = @__userid_0
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacAdministrator' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10802]
+      The unchanged property 'RbacAdministrator.UpdatedAt' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacAdministrator' tracked by 'RbacDbContext' changed state from 'Unchanged' to 'Modified'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10802]
+      The unchanged property 'RbacAdministrator.Username' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (61ms) [Parameters=[@p5='?' (DbType = Guid), @p0='?' (DbType = DateTimeOffset), @p1='?' (Size = 16), @p2='?' (DbType = DateTimeOffset), @p3='?' (Size = 128), @p4='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      UPDATE `rbac_administrator` SET `created_at` = @p0, `status` = @p1, `updated_at` = @p2, `userid` = @p3, `username` = @p4
+      WHERE `id` = @p5;
+      SELECT ROW_COUNT();
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (48ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacAdministrator' tracked by 'RbacDbContext' changed state from 'Modified' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      SaveAdministrator userid=smoke_user_1778720832 operator=196045
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.AdminController.UpdateUsername (Rbac.Api) in 235.5526ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.AdminController.UpdateUsername (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:5088/api/admin/smoke_user_1778720832/username application/json;+charset=utf-8 33 - 200 - application/json;+charset=utf-8 282.8864ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:5088/api/admin/smoke_user_1778720832/status application/json;+charset=utf-8 21
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I6 K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I6 K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=56s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I6 K=rbac:user-projects:196045): return FE[FFS=N, LEXP=56s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:00000011
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:00000011
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.AdminController.ChangeStatus (Rbac.Api)'
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=abb87fcdf5ee4db6825d826586686816 type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "ChangeStatus", controller = "Admin", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] ChangeStatus(System.String, Rbac.Api.Controllers.ChangeStatusRequest, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.AdminController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I7 K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I7 K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I7 K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/admin/{userid}/status permCode=button:admin.status action=update
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=cdd6838756e74e6e89244de25f3499fa type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__userid_0='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`status`, `r`.`updated_at`, `r`.`userid`, `r`.`username`
+      FROM `rbac_administrator` AS `r`
+      WHERE `r`.`userid` = @__userid_0
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacAdministrator' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10802]
+      The unchanged property 'RbacAdministrator.Status' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacAdministrator' tracked by 'RbacDbContext' changed state from 'Unchanged' to 'Modified'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10802]
+      The unchanged property 'RbacAdministrator.UpdatedAt' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (54ms) [Parameters=[@p5='?' (DbType = Guid), @p0='?' (DbType = DateTimeOffset), @p1='?' (Size = 16), @p2='?' (DbType = DateTimeOffset), @p3='?' (Size = 128), @p4='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      UPDATE `rbac_administrator` SET `created_at` = @p0, `status` = @p1, `updated_at` = @p2, `userid` = @p3, `username` = @p4
+      WHERE `id` = @p5;
+      SELECT ROW_COUNT();
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (49ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacAdministrator' tracked by 'RbacDbContext' changed state from 'Modified' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      SaveAdministrator userid=smoke_user_1778720832 operator=196045
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.AdminController.ChangeStatus (Rbac.Api) in 220.0224ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.AdminController.ChangeStatus (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:5088/api/admin/smoke_user_1778720832/status application/json;+charset=utf-8 21 - 200 - application/json;+charset=utf-8 272.4230ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:5088/api/admin/smoke_user_1778720832 - 0
+dbug: Rbac.Api.Security.TrustedJwtAuthenticationHandler[8]
+      AuthenticationScheme: Bearer was successfully authenticated.
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I8 K=rbac:user-projects:196045): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=1m SKM=N SKD=N SKDRWS=N DDUR=20m JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=/ FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I8 K=rbac:user-projects:196045): [MC] memory entry found FE[FFS=N, LEXP=56s, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I8 K=rbac:user-projects:196045): return FE[FFS=N, LEXP=56s, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Application.Security.RbacProjectResolver[0]
+      Authorized userid=196045 project=oversia super=True traceId=0HNLHAKFKHBLC:00000012
+dbug: Rbac.Api.Middleware.CurrentRbacContextMiddleware[0]
+      RbacContext set userid=196045 project=oversia authorized=True traceId=0HNLHAKFKHBLC:00000012
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=cd78ee679dc7401c89bbf0719ab9a8bf type=AuthorizationAuditEvent
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Rbac.Api.Controllers.AdminController.Delete (Rbac.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[3]
+      Route matched with {action = "Delete", controller = "Admin", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Rbac.Application.Contracts.Common.ApiResponse`1[System.Object]] Delete(System.String, System.Threading.CancellationToken) on controller Rbac.Api.Controllers.AdminController (Rbac.Api).
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I9 K=rbac:api-map:oversia): calling GetOrSetAsync<T> FEO[LKTO=/ DUR=2m SKM=N SKD=N SKDRWS=N DDUR=01:00:00 JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=3s TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N BBO=Y]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I9 K=rbac:api-map:oversia): [MC] memory entry found FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: ZiggyCreatures.Caching.Fusion.FusionCache[0]
+      FUSION [N=FusionCache I=2913764846a74025bb444a7f63647459] (O=0HNLHAKGP88I9 K=rbac:api-map:oversia): return FE[FFS=N, LEXP=2m, EEXP=/, LM=/, ET=/]
+dbug: Rbac.Api.Authorization.RoutePatternApiPermissionMapper[0]
+      Matched pattern=/api/admin/{userid} permCode=button:admin.delete action=delete
+dbug: Rbac.Application.Authorization.RbacPermissionChecker[0]
+      SuperAllow userid=196045 project=oversia
+info: Rbac.Application.Auditing.RbacAuditEventWorker[0]
+      Audit event consumed auditId=aeb8a374d5a2429593208d026a710c70 type=AuthorizationAuditEvent
+info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 6.0.36 initialized 'RbacDbContext' using provider 'Pomelo.EntityFrameworkCore.MySql:6.0.3' with options: ServerVersion 5.7.40-mysql 
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (12ms) [Parameters=[@__userid_0='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`status`, `r`.`updated_at`, `r`.`userid`, `r`.`username`
+      FROM `rbac_administrator` AS `r`
+      WHERE `r`.`userid` = @__userid_0
+      LIMIT 1
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'RbacAdministrator' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Query[10111]
+      Compiling query expression: 
+      'DbSet<RbacGroupMember>()
+          .Where(m => m.Userid == __admin_Userid_0)'
+dbug: Microsoft.EntityFrameworkCore.Query[10107]
+      Generated query execution expression: 
+      'queryContext => new SingleQueryingEnumerable<RbacGroupMember>(
+          (RelationalQueryContext)queryContext, 
+          RelationalCommandCache.SelectExpression(
+              Projection Mapping:
+                  EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: RbacGroupMember.Id (Guid) Required PK AfterSave:Throw, 0], [Property: RbacGroupMember.CreatedAt (DateTimeOffset) Required, 1], [Property: RbacGroupMember.GrantedBy (string) Required MaxLength(128), 2], [Property: RbacGroupMember.GroupCode (GroupCode) Required Index MaxLength(128), 3], [Property: RbacGroupMember.Project (ProjectCode) Required Index MaxLength(64), 4], [Property: RbacGroupMember.UpdatedAt (DateTimeOffset) Required, 5], [Property: RbacGroupMember.Userid (UserId) Required Index MaxLength(128), 6] }
+              SELECT r.id, r.created_at, r.granted_by, r.group_code, r.project, r.updated_at, r.userid
+              FROM rbac_group_member AS r
+              WHERE r.userid == @__admin_Userid_0), 
+          Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, RbacGroupMember>, 
+          Rbac.Infrastructure.MySql.Mapping.RbacDbContext, 
+          False, 
+          False, 
+          True
+      )'
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__admin_Userid_0='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      SELECT `r`.`id`, `r`.`created_at`, `r`.`granted_by`, `r`.`group_code`, `r`.`project`, `r`.`updated_at`, `r`.`userid`
+      FROM `rbac_group_member` AS `r`
+      WHERE `r`.`userid` = @__admin_Userid_0
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacAdministrator' tracked by 'RbacDbContext' changed state from 'Unchanged' to 'Deleted'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10806]
+      Context 'RbacDbContext' started tracking 'OutboxEventEntity' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10004]
+      SaveChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10800]
+      DetectChanges starting for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10801]
+      DetectChanges completed for 'RbacDbContext'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+      Opening connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+      Opened connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20209]
+      Beginning transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20200]
+      Began transaction with isolation level 'Unspecified'.
+dbug: Microsoft.EntityFrameworkCore.Update[20701]
+      Executing update commands individually as the number of batchable commands (2) is smaller than the minimum batch size (4).
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (46ms) [Parameters=[@p0='?' (DbType = Guid)], CommandType='Text', CommandTimeout='30']
+      DELETE FROM `rbac_administrator`
+      WHERE `id` = @p0;
+      SELECT ROW_COUNT();
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (43ms) [Parameters=[@p0='?' (Size = 64), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 64), @p3='?' (Size = 128), @p4='?' (DbType = DateTimeOffset), @p5='?' (Size = 4000), @p6='?' (DbType = DateTimeOffset), @p7='?' (Size = 64), @p8='?' (Size = 16), @p9='?' (Size = 128)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO `rbac_outbox` (`event_id`, `created_at`, `event_type`, `group_code`, `next_retry_at`, `payload`, `processed_at`, `project`, `status`, `userid`)
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+      SELECT `retry_count`
+      FROM `rbac_outbox`
+      WHERE ROW_COUNT() = 1 AND `event_id` = @p0;
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20210]
+      Committing transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20202]
+      Committed transaction.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+      Closing connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+      Closed connection to database 'rbac' on server '192.168.124.2'.
+dbug: Microsoft.EntityFrameworkCore.Database.Transaction[20204]
+      Disposing transaction.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'OutboxEventEntity' tracked by 'RbacDbContext' changed state from 'Added' to 'Unchanged'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.ChangeTracking[10807]
+      An entity of type 'RbacAdministrator' tracked by 'RbacDbContext' changed state from 'Deleted' to 'Detached'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+dbug: Microsoft.EntityFrameworkCore.Update[10005]
+      SaveChanges completed for 'RbacDbContext' with 2 entities written to the database.
+info: Rbac.Infrastructure.MySql.Management.RbacManagementWriteService[0]
+      DeleteAdministrator userid=smoke_user_1778720832 membersCleaned=0 operator=196045
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'Rbac.Application.Contracts.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[2]
+      Executed action Rbac.Api.Controllers.AdminController.Delete (Rbac.Api) in 283.4039ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Rbac.Api.Controllers.AdminController.Delete (Rbac.Api)'
+dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+      'RbacDbContext' disposed.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:5088/api/admin/smoke_user_1778720832 - 0 - 200 - application/json;+charset=utf-8 348.3135ms

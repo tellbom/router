@@ -9,7 +9,7 @@
 **认证方式**: `Authorization: Bearer <jwt>`  
 **项目上下文**: `X-Project: <projectCode>`，例如 `X-Project: oversia`
 
-除 `/ops/*` 外，业务接口的 `project` 均由服务端 `CurrentRbacContext` 解析，前端不要把 `project` 放入 body 作为可信字段。`dxeId`、菜单 `id` 等业务 ID 始终按字符串处理，不要转成 JavaScript number。
+除 `/ops/*` 外，业务接口的 `project` 均由服务端 `CurrentRbacContext` 解析，前端不要把 `project` 放入 body 作为可信字段。
 
 ### 统一响应
 
@@ -140,7 +140,7 @@ Query 参数：
 | `status` | string | `Active` / `Disabled` |
 | `page` / `pageSize` | int | 分页 |
 
-响应项字段：`dxeId`、`userid`、`username`、`status`、`projectCodes`、`groupCodes`、`groupNames`。
+响应项字段：`userid`、`username`、`status`、`projectCodes`、`groupCodes`、`groupNames`。
 
 ### `POST /api/admin`
 
@@ -162,9 +162,9 @@ Query 参数：
 | `username` | string | 是 | 显示名称 |
 | `groupCode` | string[] | 否 | 要加入的权限组编码列表 |
 
-响应 `data`：`{ "dxeId": "1234567890123456789" }`
+响应 `data`：`{ "userid": "u001" }`
 
-### `PUT /api/admin/{dxeId}`
+### `PUT /api/admin/{userid}`
 
 完整编辑管理员。`null` 字段表示不修改。
 
@@ -180,7 +180,7 @@ Query 参数：
 
 `groupArr` 为目标权限组全量列表，服务端会对当前成员关系做 diff，自动新增或移除组成员。
 
-### `PUT /api/admin/{dxeId}/status`
+### `PUT /api/admin/{userid}/status`
 
 快速启用或禁用管理员。
 
@@ -188,7 +188,7 @@ Query 参数：
 { "status": "Disabled" }
 ```
 
-### `PUT /api/admin/{dxeId}/username`
+### `PUT /api/admin/{userid}/username`
 
 快速更新管理员显示名称。
 
@@ -196,7 +196,7 @@ Query 参数：
 { "username": "新名称" }
 ```
 
-### `DELETE /api/admin/{dxeId}`
+### `DELETE /api/admin/{userid}`
 
 删除管理员账号，并清理相关授权关系。
 
@@ -252,7 +252,7 @@ Query 参数：
 | `status` | string | `Active` / `Disabled` |
 | `page` / `pageSize` | int | 分页 |
 
-响应项字段：`dxeId`、`groupCode`、`groupName`、`project`、`status`、`permissionCodes`。
+响应项字段：`groupCode`、`groupName`、`project`、`status`、`permissionCodes`。
 
 ### `POST /api/group`
 
@@ -276,12 +276,11 @@ Query 参数：
 
 ```json
 {
-  "dxeId": "1234567890123456789",
   "groupCode": "operator"
 }
 ```
 
-### `PUT /api/group/{dxeId}`
+### `PUT /api/group/{groupCode}`
 
 完整编辑权限组。`null` 字段表示不修改，`parentGroupCode: ""` 表示提升为根组。
 
@@ -295,7 +294,7 @@ Query 参数：
 }
 ```
 
-### `PUT /api/group/{dxeId}/rules`
+### `PUT /api/group/{groupCode}/rules`
 
 更新权限组规则授权。
 
@@ -307,7 +306,7 @@ Query 参数：
 
 注意：当前实现会用新 `ruleCodes` 替换组内规则码，但 `permissionCodes` 会与旧权限码合并。
 
-### `PUT /api/group/{dxeId}/status`
+### `PUT /api/group/{groupCode}/status`
 
 快速启用或禁用权限组。
 
@@ -315,7 +314,7 @@ Query 参数：
 { "status": "Disabled" }
 ```
 
-### `POST /api/group/{dxeId}/members`
+### `POST /api/group/{groupCode}/members`
 
 将用户加入权限组。
 
@@ -323,11 +322,11 @@ Query 参数：
 { "userid": "u001" }
 ```
 
-### `DELETE /api/group/{dxeId}/members/{userid}`
+### `DELETE /api/group/{groupCode}/members/{userid}`
 
 将用户从权限组移除。
 
-### `DELETE /api/group/{dxeId}`
+### `DELETE /api/group/{groupCode}`
 
 删除权限组。删除前需满足：
 
@@ -359,7 +358,7 @@ Query 参数：
 | `status` | string | `Active` / `Disabled` |
 | `page` / `pageSize` | int | 分页 |
 
-响应项字段：`dxeId`、`ruleCode`、`permissionCode`、`title`、`type`、`status`、`icon`、`remark`。
+响应项字段：`ruleCode`、`permissionCode`、`title`、`type`、`status`、`icon`、`remark`。
 
 ### `POST /api/rule`
 
@@ -403,9 +402,9 @@ Query 参数：
 | `keepalive` | bool | 否 | 默认 `false` |
 | `weigh` | int | 否 | 默认 `0` |
 
-响应 `data`：`{ "dxeId": "1234567890123456789" }`
+响应 `data`：`{ "ruleCode": "system.user" }`
 
-### `PUT /api/rule/{dxeId}`
+### `PUT /api/rule/{ruleCode}`
 
 完整编辑规则元数据。`null` 字段表示不修改，`parentRuleCode: ""` 表示提升为根节点。
 
@@ -428,7 +427,7 @@ Query 参数：
 }
 ```
 
-### `PUT /api/rule/{dxeId}/status`
+### `PUT /api/rule/{ruleCode}/status`
 
 快速启用或禁用规则。
 
@@ -436,7 +435,7 @@ Query 参数：
 { "status": "Disabled" }
 ```
 
-### `PUT /api/rule/{dxeId}/weigh`
+### `PUT /api/rule/{ruleCode}/weigh`
 
 更新规则排序权重。
 
@@ -444,7 +443,7 @@ Query 参数：
 { "weigh": 50 }
 ```
 
-### `DELETE /api/rule/{dxeId}`
+### `DELETE /api/rule/{ruleCode}`
 
 删除规则。
 
@@ -597,26 +596,26 @@ Query 参数：`project` 可选。
 | 初始化 | GET | `/api/admin/index` | 后台初始化 |
 | 管理员 | GET | `/api/admin/list` | 分页列表 |
 | 管理员 | POST | `/api/admin` | 新建管理员 |
-| 管理员 | PUT | `/api/admin/{dxeId}` | 完整编辑 |
-| 管理员 | PUT | `/api/admin/{dxeId}/status` | 切换状态 |
-| 管理员 | PUT | `/api/admin/{dxeId}/username` | 更新名称 |
-| 管理员 | DELETE | `/api/admin/{dxeId}` | 删除管理员 |
+| 管理员 | PUT | `/api/admin/{userid}` | 完整编辑 |
+| 管理员 | PUT | `/api/admin/{userid}/status` | 切换状态 |
+| 管理员 | PUT | `/api/admin/{userid}/username` | 更新名称 |
+| 管理员 | DELETE | `/api/admin/{userid}` | 删除管理员 |
 | 权限组 | GET | `/api/group/index` | BuildAdmin 兼容树/选项 |
 | 权限组 | GET | `/api/group/list` | 分页列表 |
 | 权限组 | POST | `/api/group` | 新建权限组 |
-| 权限组 | PUT | `/api/group/{dxeId}` | 完整编辑 |
-| 权限组 | PUT | `/api/group/{dxeId}/rules` | 更新规则授权 |
-| 权限组 | PUT | `/api/group/{dxeId}/status` | 切换状态 |
-| 权限组 | POST | `/api/group/{dxeId}/members` | 添加成员 |
-| 权限组 | DELETE | `/api/group/{dxeId}/members/{userid}` | 移除成员 |
-| 权限组 | DELETE | `/api/group/{dxeId}` | 删除权限组 |
+| 权限组 | PUT | `/api/group/{groupCode}` | 完整编辑 |
+| 权限组 | PUT | `/api/group/{groupCode}/rules` | 更新规则授权 |
+| 权限组 | PUT | `/api/group/{groupCode}/status` | 切换状态 |
+| 权限组 | POST | `/api/group/{groupCode}/members` | 添加成员 |
+| 权限组 | DELETE | `/api/group/{groupCode}/members/{userid}` | 移除成员 |
+| 权限组 | DELETE | `/api/group/{groupCode}` | 删除权限组 |
 | 规则 | GET | `/api/rule/tree` | 完整规则树 |
 | 规则 | GET | `/api/rule/list` | 分页列表 |
 | 规则 | POST | `/api/rule` | 新建规则 |
-| 规则 | PUT | `/api/rule/{dxeId}` | 完整编辑 |
-| 规则 | PUT | `/api/rule/{dxeId}/status` | 切换状态 |
-| 规则 | PUT | `/api/rule/{dxeId}/weigh` | 更新排序 |
-| 规则 | DELETE | `/api/rule/{dxeId}` | 删除规则 |
+| 规则 | PUT | `/api/rule/{ruleCode}` | 完整编辑 |
+| 规则 | PUT | `/api/rule/{ruleCode}/status` | 切换状态 |
+| 规则 | PUT | `/api/rule/{ruleCode}/weigh` | 更新排序 |
+| 规则 | DELETE | `/api/rule/{ruleCode}` | 删除规则 |
 | Project 授权 | POST | `/api/project-grant` | 授权用户 |
 | Project 授权 | DELETE | `/api/project-grant/{userid}` | 撤销授权 |
 | Project 授权 | PUT | `/api/project-grant/{userid}/super` | 切换 super |

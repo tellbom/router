@@ -33,10 +33,9 @@ SET @project = _utf8mb4'project' COLLATE utf8mb4_unicode_ci;
 -- 1. bootstrap 管理员账号
 -- =============================================================
 INSERT IGNORE INTO `rbac_administrator`
-    (`id`, `dxe_id`, `userid`, `username`, `status`, `created_at`, `updated_at`)
+    (`id`, `userid`, `username`, `status`, `created_at`, `updated_at`)
 VALUES (
     UUID(),
-    CONCAT('bootstrap_', UNIX_TIMESTAMP()),
     @userid,
     'Bootstrap Admin',
     'Active',
@@ -61,12 +60,11 @@ VALUES (
 -- 3. bootstrap 权限组
 -- =============================================================
 INSERT IGNORE INTO `rbac_group`
-    (`id`, `dxe_id`, `group_code`, `project`, `group_name`,
+    (`id`, `group_code`, `project`, `group_name`,
      `parent_group_code`, `rule_codes`, `permission_codes`, `status`,
      `created_at`, `updated_at`)
 VALUES (
     UUID(),
-    CONCAT('bg_', UNIX_TIMESTAMP()),
     'system_admin',
     @project,
     '系统管理员（Bootstrap）',
@@ -116,10 +114,10 @@ INSERT IGNORE INTO `rbac_api_permission_map`
 VALUES
     (UUID(), @project, 'GET',    '/api/admin/list',           'menu:admin.list',        'read',   'Active', NOW(6), NOW(6)),
     (UUID(), @project, 'POST',   '/api/admin',                'button:admin.create',    'create', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'PUT',    '/api/admin/{dxeId}',        'button:admin.edit',      'update', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'PUT',    '/api/admin/{dxeId}/status', 'button:admin.status',    'update', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'PUT',    '/api/admin/{dxeId}/username','button:admin.username', 'update', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'DELETE', '/api/admin/{dxeId}',        'button:admin.delete',    'delete', 'Active', NOW(6), NOW(6));
+    (UUID(), @project, 'PUT',    '/api/admin/{userid}',        'button:admin.edit',      'update', 'Active', NOW(6), NOW(6)),
+    (UUID(), @project, 'PUT',    '/api/admin/{userid}/status', 'button:admin.status',    'update', 'Active', NOW(6), NOW(6)),
+    (UUID(), @project, 'PUT',    '/api/admin/{userid}/username','button:admin.username', 'update', 'Active', NOW(6), NOW(6)),
+    (UUID(), @project, 'DELETE', '/api/admin/{userid}',        'button:admin.delete',    'delete', 'Active', NOW(6), NOW(6));
 
 -- ── 权限组管理
 INSERT IGNORE INTO `rbac_api_permission_map`
@@ -127,12 +125,12 @@ INSERT IGNORE INTO `rbac_api_permission_map`
 VALUES
     (UUID(), @project, 'GET',    '/api/group/list',                    'menu:group.list',         'read',   'Active', NOW(6), NOW(6)),
     (UUID(), @project, 'POST',   '/api/group',                         'button:group.create',     'create', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'PUT',    '/api/group/{dxeId}',                 'button:group.edit',       'update', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'PUT',    '/api/group/{dxeId}/rules',           'button:group.rules',      'update', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'PUT',    '/api/group/{dxeId}/status',          'button:group.status',     'update', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'POST',   '/api/group/{dxeId}/members',         'button:group.member.add', 'create', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'DELETE', '/api/group/{dxeId}/members/{userid}','button:group.member.del', 'delete', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'DELETE', '/api/group/{dxeId}',                 'button:group.delete',     'delete', 'Active', NOW(6), NOW(6));
+    (UUID(), @project, 'PUT',    '/api/group/{groupCode}',                 'button:group.edit',       'update', 'Active', NOW(6), NOW(6)),
+    (UUID(), @project, 'PUT',    '/api/group/{groupCode}/rules',           'button:group.rules',      'update', 'Active', NOW(6), NOW(6)),
+    (UUID(), @project, 'PUT',    '/api/group/{groupCode}/status',          'button:group.status',     'update', 'Active', NOW(6), NOW(6)),
+    (UUID(), @project, 'POST',   '/api/group/{groupCode}/members',         'button:group.member.add', 'create', 'Active', NOW(6), NOW(6)),
+    (UUID(), @project, 'DELETE', '/api/group/{groupCode}/members/{userid}','button:group.member.del', 'delete', 'Active', NOW(6), NOW(6)),
+    (UUID(), @project, 'DELETE', '/api/group/{groupCode}',                 'button:group.delete',     'delete', 'Active', NOW(6), NOW(6));
 
 -- ── 菜单/按钮规则管理
 INSERT IGNORE INTO `rbac_api_permission_map`
@@ -141,10 +139,10 @@ VALUES
     (UUID(), @project, 'GET',    '/api/rule/tree',           'menu:rule.tree',       'read',   'Active', NOW(6), NOW(6)),
     (UUID(), @project, 'GET',    '/api/rule/list',           'menu:rule.list',       'read',   'Active', NOW(6), NOW(6)),
     (UUID(), @project, 'POST',   '/api/rule',                'button:rule.create',   'create', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'PUT',    '/api/rule/{dxeId}',        'button:rule.edit',     'update', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'PUT',    '/api/rule/{dxeId}/status', 'button:rule.status',   'update', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'PUT',    '/api/rule/{dxeId}/weigh',  'button:rule.weigh',    'update', 'Active', NOW(6), NOW(6)),
-    (UUID(), @project, 'DELETE', '/api/rule/{dxeId}',        'button:rule.delete',   'delete', 'Active', NOW(6), NOW(6));
+    (UUID(), @project, 'PUT',    '/api/rule/{ruleCode}',        'button:rule.edit',     'update', 'Active', NOW(6), NOW(6)),
+    (UUID(), @project, 'PUT',    '/api/rule/{ruleCode}/status', 'button:rule.status',   'update', 'Active', NOW(6), NOW(6)),
+    (UUID(), @project, 'PUT',    '/api/rule/{ruleCode}/weigh',  'button:rule.weigh',    'update', 'Active', NOW(6), NOW(6)),
+    (UUID(), @project, 'DELETE', '/api/rule/{ruleCode}',        'button:rule.delete',   'delete', 'Active', NOW(6), NOW(6));
 
 -- ── API 权限映射管理
 INSERT IGNORE INTO `rbac_api_permission_map`

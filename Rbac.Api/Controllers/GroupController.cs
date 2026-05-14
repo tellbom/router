@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using Rbac.Application.Contracts.Common;
-using Rbac.Application.Identity;
 using Rbac.Application.Management;
 using Rbac.Application.Repositories;
 using Rbac.Application.Search;
@@ -26,7 +25,6 @@ public sealed partial class GroupController : ControllerBase
     private readonly IRbacManagementSearchService _search;
     private readonly IRbacManagementWriteService _write;
     private readonly RbacManagementWriteGuard _guard;
-    private readonly IRbacDxEIdGenerator _idGen;
     private readonly IGroupRepository _groupRepo;
     private readonly IRuleRepository _ruleRepo;
     private readonly IGroupMemberRepository _memberRepo;
@@ -36,7 +34,6 @@ public sealed partial class GroupController : ControllerBase
         IRbacManagementSearchService search,
         IRbacManagementWriteService write,
         RbacManagementWriteGuard guard,
-        IRbacDxEIdGenerator idGen,
         IGroupRepository groupRepo,
         IRuleRepository ruleRepo,
         IGroupMemberRepository memberRepo)
@@ -45,7 +42,6 @@ public sealed partial class GroupController : ControllerBase
         _search = search;
         _write = write;
         _guard = guard;
-        _idGen = idGen;
         _groupRepo = groupRepo;
         _ruleRepo = ruleRepo;
         _memberRepo = memberRepo;
@@ -108,7 +104,6 @@ public sealed partial class GroupController : ControllerBase
 
         var group = RbacGroup.Create(
             Guid.NewGuid(),
-            new DxEId(_idGen.Generate()),
             new GroupCode(req.GroupCode),
             new ProjectCode(ctx.Project),
             req.GroupName,
@@ -158,21 +153,20 @@ public sealed partial class GroupController : ControllerBase
 
         return ApiResponse<object>.Ok(new
         {
-            dxeId = group.DxEId.Value,
             groupCode = group.GroupCode.Value
         });
     }
 
     // ── 更新规则/权限码 ────────────────────────────────────────────
 
-    /// <summary>PUT /api/group/{dxeId}/rules — 更新权限组的 ruleCodes + permissionCodes。</summary>
-    [HttpPut("{dxeId}/rules")]
+    /// <summary>PUT /api/group/{groupCode}/rules — 更新权限组的 ruleCodes + permissionCodes。</summary>
+    [HttpPut("{groupCode}/rules")]
     public async Task<ApiResponse<object>> UpdateRules(
-        string dxeId, [FromBody] UpdateGroupRulesRequest req, CancellationToken ct)
+        string groupCode, [FromBody] UpdateGroupRulesRequest req, CancellationToken ct)
     {
         var ctx = RequireContext();
 
-        var group = await _guard.LoadGroupByDxEIdAsync(dxeId, ctx.Project, ct);
+        var group = await _guard.LoadGroupByCodeAsync(groupCode, ctx.Project, ct);
         if (group is null) return Fail(40400, "权限组不存在");
 
         var oldRuleCodes = group.RuleCodes.Select(r => r.Value).ToList();
@@ -222,14 +216,14 @@ public sealed partial class GroupController : ControllerBase
 
     // ── 变更状态 ──────────────────────────────────────────────────
 
-    /// <summary>PUT /api/group/{dxeId}/status — 启用/禁用权限组。</summary>
-    [HttpPut("{dxeId}/status")]
+    /// <summary>PUT /api/group/{groupCode}/status — 启用/禁用权限组。</summary>
+    [HttpPut("{groupCode}/status")]
     public async Task<ApiResponse<object>> ChangeStatus(
-        string dxeId, [FromBody] ChangeGroupStatusRequest req, CancellationToken ct)
+        string groupCode, [FromBody] ChangeGroupStatusRequest req, CancellationToken ct)
     {
         var ctx = RequireContext();
 
-        var group = await _guard.LoadGroupByDxEIdAsync(dxeId, ctx.Project, ct);
+        var group = await _guard.LoadGroupByCodeAsync(groupCode, ctx.Project, ct);
         if (group is null) return Fail(40400, "权限组不存在");
 
         if (req.Status == "Disabled") group.Disable();
@@ -253,15 +247,15 @@ public sealed partial class GroupController : ControllerBase
 
     // ── 成员管理 ──────────────────────────────────────────────────
 
-    /// <summary>POST /api/group/{dxeId}/members — 将用户加入权限组。</summary>
-    [HttpPost("{dxeId}/members")]
+    /// <summary>POST /api/group/{groupCode}/members — 将用户加入权限组。</summary>
+    [HttpPost("{groupCode}/members")]
     public async Task<ApiResponse<object>> AddMember(
-        string dxeId, [FromBody] GroupMemberRequest req, CancellationToken ct)
+        string groupCode, [FromBody] GroupMemberRequest req, CancellationToken ct)
     {
         var ctx = RequireContext();
         if (string.IsNullOrWhiteSpace(req.Userid)) return Fail(40001, "userid 不能为空");
 
-        var group = await _guard.LoadGroupByDxEIdAsync(dxeId, ctx.Project, ct);
+        var group = await _guard.LoadGroupByCodeAsync(groupCode, ctx.Project, ct);
         if (group is null) return Fail(40400, "权限组不存在");
 
         var member = RbacGroupMember.Create(
@@ -281,14 +275,14 @@ public sealed partial class GroupController : ControllerBase
         return ApiResponse<object>.Ok(null!);
     }
 
-    /// <summary>DELETE /api/group/{dxeId}/members/{userid} — 将用户从权限组移除。</summary>
-    [HttpDelete("{dxeId}/members/{userid}")]
+    /// <summary>DELETE /api/group/{groupCode}/members/{userid} — 将用户从权限组移除。</summary>
+    [HttpDelete("{groupCode}/members/{userid}")]
     public async Task<ApiResponse<object>> RemoveMember(
-        string dxeId, string userid, CancellationToken ct)
+        string groupCode, string userid, CancellationToken ct)
     {
         var ctx = RequireContext();
 
-        var group = await _guard.LoadGroupByDxEIdAsync(dxeId, ctx.Project, ct);
+        var group = await _guard.LoadGroupByCodeAsync(groupCode, ctx.Project, ct);
         if (group is null) return Fail(40400, "权限组不存在");
 
         var memberRepo = HttpContext.RequestServices
@@ -336,7 +330,7 @@ public sealed partial class GroupController : ControllerBase
     {
         return new GroupIndexRowDto
         {
-            Id = group.DxEId.Value,
+            Id = group.GroupCode.Value,
             Pid = "0",
             GroupCode = group.GroupCode.Value,
             ParentGroupCode = group.ParentGroupCode?.Value,

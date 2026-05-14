@@ -39,15 +39,12 @@ public enum RuleStatus
 /// - 按钮规则（Button）：生成 authNode（add / edit / del / sortable 等）。
 ///
 /// 每条规则对应一个 <see cref="PermissionCode"/>，服务端鉴权依赖 permissionCode，
-/// 前端兼容依赖 <see cref="RuleCode"/> 和 <see cref="DxEId"/>（均为 string）。
+/// 前端兼容依赖 <see cref="RuleCode"/>。
 /// </summary>
 public sealed class RbacRule
 {
     /// <summary>内部数据库主键（Guid）。</summary>
     public Guid Id { get; private set; }
-
-    /// <summary>前端兼容业务 ID（string）。不作为权限判断依据。</summary>
-    public DxEId DxEId { get; private set; } = new DxEId("0");
 
     /// <summary>所属项目。</summary>
     public ProjectCode Project { get; private set; } = new ProjectCode("_");
@@ -108,7 +105,7 @@ public sealed class RbacRule
 
     /// <summary>创建菜单目录或菜单规则。</summary>
     public static RbacRule CreateMenu(
-        Guid id, DxEId dxeId, ProjectCode project,
+        Guid id, ProjectCode project,
         RuleCode ruleCode, PermissionCode permissionCode,
         RuleType type, string title, string name, string path,
         RuleCode? parentRuleCode = null,
@@ -124,7 +121,7 @@ public sealed class RbacRule
 
         return new RbacRule
         {
-            Id = id, DxEId = dxeId, Project = project,
+            Id = id, Project = project,
             RuleCode = ruleCode, PermissionCode = permissionCode,
             ParentRuleCode = parentRuleCode,
             Type = type, Title = title.Trim(), Name = name.Trim(), Path = path.Trim(),
@@ -138,7 +135,7 @@ public sealed class RbacRule
 
     /// <summary>创建按钮规则（button）。</summary>
     public static RbacRule CreateButton(
-        Guid id, DxEId dxeId, ProjectCode project,
+        Guid id, ProjectCode project,
         RuleCode ruleCode, PermissionCode permissionCode,
         string title, string name, RuleCode parentRuleCode,
         string? icon = null, string? remark = null, int weigh = 0)
@@ -148,7 +145,7 @@ public sealed class RbacRule
 
         return new RbacRule
         {
-            Id = id, DxEId = dxeId, Project = project,
+            Id = id, Project = project,
             RuleCode = ruleCode, PermissionCode = permissionCode,
             ParentRuleCode = parentRuleCode,
             Type = RuleType.Button, Title = title.Trim(), Name = name.Trim(),
