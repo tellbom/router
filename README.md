@@ -140,7 +140,9 @@ Query 参数：
 | `status` | string | `Active` / `Disabled` |
 | `page` / `pageSize` | int | 分页 |
 
-响应项字段：`userid`、`username`、`status`、`projectCodes`、`groupCodes`、`groupNames`。
+响应项字段：`userid`、`username`、`status`、`projectCodes`、`groupCodes`、`groupNames`、`superProjects`、`isSuper`。
+
+`isSuper` 表示该用户是否为当前 `X-Project` 的超管；`superProjects` 为该用户拥有超管身份的 project 列表。
 
 ### `POST /api/admin`
 

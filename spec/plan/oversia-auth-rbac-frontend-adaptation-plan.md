@@ -266,7 +266,7 @@ PUT    /api/project-grant/{userid}/super
 - `status`
 - 操作：授权、撤销、设为超管、取消超管
 
-当前后端 README 未提供 Project 授权分页列表接口。前端可先复用 `GET /api/admin/list` 展示用户列表，并根据 `adminInfo.super` 或 `adminInfo.project` 显示当前操作者身份；如果需要准确展示每个用户当前 project 的 `isSuper`，需要后端补充只读查询接口。开发时不要用猜测字段伪造 super 状态。
+当前后端已在 `GET /api/admin/list` 响应中提供 `isSuper` 与 `superProjects`。前端 Project 授权页面第一阶段应复用该列表展示用户，并使用 `isSuper` 准确展示每个用户在当前 `X-Project` 下的超管状态；不要根据 `adminInfo.super`、`adminInfo.project` 或本地猜测字段伪造其他用户的 super 状态。
 
 ### 7.4 风险提示
 
@@ -715,7 +715,7 @@ type AdminInfo = {
 
 目前按 README 可完成大部分页面。但为了更完整的权限管理体验，建议后端后续补充：
 
-1. Project 授权分页查询接口，例如 `GET /api/project-grant/list`，返回 `userid/project/isSuper/grantedBy/createdAt`。
+1. Project 授权审计型分页查询接口，例如 `GET /api/project-grant/list`，返回 `userid/project/isSuper/grantedBy/createdAt`。第一阶段展示和切换超管状态不依赖该接口，可使用 `/api/admin/list` 的 `isSuper`。
 2. API 映射 MySQL 源数据分页接口，返回 `id/httpMethod/routePattern/permissionCode/action/status`，避免 `GET /api/api-map/list` 只有权限视图而无法编辑。
 3. 当前用户权限节点查询接口，方便前端统一控制按钮级权限。
 

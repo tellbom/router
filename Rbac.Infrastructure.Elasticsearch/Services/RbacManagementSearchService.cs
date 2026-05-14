@@ -28,14 +28,21 @@ public sealed class RbacManagementSearchService : IRbacManagementSearchService
         var descriptor = RbacElasticQueryBuilder.BuildUserSearch(query);
         var response = await _esClient.SearchAsync<UserDocument>(d => descriptor, ct);
         return Map(response, query, RbacUserIndexMapping.IndexName,
-            doc => new UserSearchResult
+            doc =>
             {
-                Userid = doc.Userid,
-                Username = doc.Username,
-                Status = doc.Status,
-                ProjectCodes = doc.ProjectCodes,
-                GroupCodes = doc.GroupCodes,
-                GroupNames = doc.GroupNames,
+                var superProjects = doc.SuperProjects ?? Array.Empty<string>();
+                return new UserSearchResult
+                {
+                    Userid = doc.Userid,
+                    Username = doc.Username,
+                    Status = doc.Status,
+                    ProjectCodes = doc.ProjectCodes,
+                    GroupCodes = doc.GroupCodes,
+                    GroupNames = doc.GroupNames,
+                    SuperProjects = superProjects,
+                    IsSuper = !string.IsNullOrWhiteSpace(query.Project)
+                        && superProjects.Contains(query.Project, StringComparer.OrdinalIgnoreCase),
+                };
             });
     }
 
