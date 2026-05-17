@@ -83,19 +83,33 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
     {
         ValidateOperator(operatorUserid);
 
-        // 1. 查出该用户所有 GroupMember 记录，逐条产生 PolicyChanged + GroupChanged，
-        //    然后批量删除（同一事务）
+        // 1. 查出该用户所有 GroupMember 记录
         var members = await _db.GroupMembers
             .Where(m => m.Userid == admin.Userid)
             .ToListAsync(ct);
 
+        // 批量加载所有相关 Group，避免在 foreach 内对同一 DbContext 做并发异步查询
+        // （EF Core 不允许同一 DbContext 实例上同时运行多个异步操作）
+        var groupKeys = members
+            .Select(m => new { m.GroupCode, m.Project })
+            .Distinct()
+            .ToList();
+
+        var groupCodes  = groupKeys.Select(k => k.GroupCode).ToList();
+        var projectCodes = groupKeys.Select(k => k.Project).ToList();
+
+        var groups = await _db.Groups
+            .Where(g => groupCodes.Contains(g.GroupCode) && projectCodes.Contains(g.Project))
+            .ToListAsync(ct);
+
+        var groupLookup = groups.ToDictionary(
+            g => (g.GroupCode, g.Project));
+
         foreach (var member in members)
         {
-            // 取该组当前 permissionCodes（用于 Outbox payload）
-            var group = await _db.Groups.FirstOrDefaultAsync(
-                g => g.GroupCode == member.GroupCode && g.Project == member.Project, ct);
-            var permCodes = group?.PermissionCodes.Select(p => p.Value).ToList()
-                ?? new List<string>();
+            groupLookup.TryGetValue((member.GroupCode, member.Project), out var grp);
+            var permCodes = grp?.PermissionCodes.Select(p => p.Value).ToList()
+                            ?? new List<string>();
 
             AppendPolicyChangedEvent(
                 member.Project.Value, member.GroupCode.Value,
@@ -113,7 +127,7 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
                 Payload   = Serialize(new GroupChangedPayload
                 {
                     GroupCode          = member.GroupCode.Value,
-                    GroupGuid          = group?.Id.ToString() ?? string.Empty,
+                    GroupGuid          = grp?.Id.ToString() ?? string.Empty,
                     Project            = member.Project.Value,
                     ChangedFields      = new[] { "members" },
                     OldPermissionCodes = permCodes,
@@ -499,10 +513,21 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
 
     private void UpsertEntity<T>(DbSet<T> set, T entity) where T : class
     {
-        if (_db.Entry(entity).State == EntityState.Detached)
+        var entry = _db.Entry(entity);
+        if (entry.State == EntityState.Detached)
+        {
+            // 实体从未被当前 DbContext 追踪过（Create 场景）。
+            // 直接 Add：EF 将其标记为 Added，SaveChanges 时执行 INSERT。
             set.Add(entity);
-        else
-            set.Update(entity);
+        }
+        else if (entry.State == EntityState.Modified
+              || entry.State == EntityState.Unchanged)
+        {
+            // 实体已由同一 DbContext 查询加载（Update 场景）。
+            // 显式标记 Modified，避免 Update() 对无变化字段产生不必要的 UPDATE。
+            entry.State = EntityState.Modified;
+        }
+        // Added / Deleted 状态：调用方已明确设置，不干预。
     }
 
     private static void ValidateOperator(string operatorUserid)

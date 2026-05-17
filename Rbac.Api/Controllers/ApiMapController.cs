@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Rbac.Application.Contracts.Common;
 using Rbac.Application.Management;
+using Rbac.Application.Repositories;
 using Rbac.Application.Search;
 using Rbac.Application.Security;
 using Rbac.Domain.Permissions;
@@ -23,21 +24,25 @@ public sealed class ApiMapController : ControllerBase
     private readonly IRbacManagementSearchService _search;
     private readonly IRbacManagementWriteService _write;
     private readonly RbacManagementWriteGuard _guard;
+    private readonly IApiPermissionMapRepository _apiMapRepo;
+
     public ApiMapController(
         ICurrentRbacContextAccessor ctx,
         IRbacManagementSearchService search,
         IRbacManagementWriteService write,
-        RbacManagementWriteGuard guard)
+        RbacManagementWriteGuard guard,
+        IApiPermissionMapRepository apiMapRepo)
     {
         _ctx = ctx;
         _search = search;
         _write = write;
         _guard = guard;
+        _apiMapRepo = apiMapRepo;
     }
 
     // ── 权限视图列表（ES）──────────────────────────────────────────
 
-    /// <summary>GET /api/api-map/list — ES 分页查询权限视图。</summary>
+    /// <summary>GET /api/api-map/list — ES 分页查询权限视图（只读展示，无 id 字段）。</summary>
     [HttpGet("list")]
     public async Task<ApiResponse<PagedData<PermissionViewSearchResult>>> List(
         [FromQuery] PermissionViewSearchQuery query, CancellationToken ct)
@@ -46,6 +51,42 @@ public sealed class ApiMapController : ControllerBase
         query.Project = project;
         return ApiResponse<PagedData<PermissionViewSearchResult>>.Ok(
             await _search.SearchPermissionViewAsync(query, ct));
+    }
+
+    // ── 管理端完整记录列表（MySQL）────────────────────────────────
+
+    /// <summary>
+    /// GET /api/api-map/records — MySQL 分页查询 API 映射完整记录。
+    /// 返回含 id（Guid）、httpMethod、routePattern 等完整字段，供编辑/删除使用。
+    /// </summary>
+    [HttpGet("records")]
+    public async Task<ApiResponse<PagedData<ApiMapRecordDto>>> Records(
+        [FromQuery] ApiMapRecordsQuery query, CancellationToken ct)
+    {
+        var project = RequireContext().Project;
+        var page = query.Page < 1 ? 1 : query.Page;
+        var pageSize = query.PageSize is < 1 or > 100 ? 20 : query.PageSize;
+
+        var (items, total) = await _apiMapRepo.FindByProjectPagedAsync(
+            new ProjectCode(project),
+            query.Keyword,
+            query.Status,
+            page,
+            pageSize,
+            ct);
+
+        var list = items.Select(m => new ApiMapRecordDto(
+            m.Id,
+            m.HttpMethod,
+            m.RoutePattern,
+            m.PermissionCode.Value,
+            m.Action,
+            m.Status.ToString(),
+            m.CreatedAt,
+            m.UpdatedAt)).ToList();
+
+        return ApiResponse<PagedData<ApiMapRecordDto>>.Ok(
+            new PagedData<ApiMapRecordDto> { List = list, Total = total });
     }
 
     // ── 创建映射 ──────────────────────────────────────────────────
@@ -138,7 +179,7 @@ public sealed class ApiMapController : ControllerBase
         ApiResponse<object>.Fail(code, msg);
 }
 
-// ── Request DTOs ───────────────────────────────────────────────────
+// ── Request / Response DTOs ────────────────────────────────────────
 
 public sealed record CreateApiMapRequest(
     string HttpMethod,
@@ -149,3 +190,22 @@ public sealed record CreateApiMapRequest(
 public sealed record UpdateApiMapRequest(
     string? PermissionCode,
     string? Action);
+
+public sealed class ApiMapRecordsQuery
+{
+    public string? Keyword { get; init; }
+    public string? Status { get; init; }
+    public int Page { get; init; } = 1;
+    public int PageSize { get; init; } = 20;
+}
+
+/// <summary>管理端 API 映射完整记录（含 Guid id，供编辑/删除使用）。</summary>
+public sealed record ApiMapRecordDto(
+    Guid Id,
+    string HttpMethod,
+    string RoutePattern,
+    string PermissionCode,
+    string Action,
+    string Status,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset UpdatedAt);

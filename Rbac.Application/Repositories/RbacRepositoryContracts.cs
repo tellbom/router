@@ -95,6 +95,19 @@ public interface IApiPermissionMapRepository
     /// <summary>获取 project 下所有启用的 API 映射，用于运行时路由匹配缓存。</summary>
     Task<IReadOnlyList<RbacApiPermissionMap>> FindActiveByProjectAsync(ProjectCode project, CancellationToken ct = default);
 
+    /// <summary>
+    /// 管理端分页查询（MySQL 真相源）。
+    /// 返回带完整字段（含 Id）的记录，供前端编辑/删除使用。
+    /// keyword 匹配 routePattern 或 permissionCode（大小写不敏感，contains）。
+    /// </summary>
+    Task<(IReadOnlyList<RbacApiPermissionMap> Items, int Total)> FindByProjectPagedAsync(
+        ProjectCode project,
+        string? keyword,
+        string? status,
+        int page,
+        int pageSize,
+        CancellationToken ct = default);
+
     Task SaveAsync(RbacApiPermissionMap map, CancellationToken ct = default);
     Task DeleteAsync(Guid id, CancellationToken ct = default);
 }

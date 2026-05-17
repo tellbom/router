@@ -242,6 +242,44 @@ public sealed class ApiPermissionMapRepository : IApiPermissionMapRepository
         return await query.ToListAsync(ct);
     }
 
+    public async Task<(IReadOnlyList<RbacApiPermissionMap> Items, int Total)> FindByProjectPagedAsync(
+        ProjectCode project,
+        string? keyword,
+        string? status,
+        int page,
+        int pageSize,
+        CancellationToken ct = default)
+    {
+        var q = project.Value == "*"
+            ? _db.ApiPermissionMaps.AsQueryable()
+            : _db.ApiPermissionMaps.Where(m => m.Project == project);
+
+        if (!string.IsNullOrWhiteSpace(status) &&
+            Enum.TryParse<ApiMapStatus>(status, ignoreCase: true, out var parsedStatus))
+        {
+            q = q.Where(m => m.Status == parsedStatus);
+        }
+
+        if (!string.IsNullOrWhiteSpace(keyword))
+        {
+            var kw = keyword.Trim();
+            q = q.Where(m =>
+                EF.Functions.Like(m.RoutePattern, $"%{kw}%") ||
+                EF.Functions.Like(m.PermissionCode.Value, $"%{kw}%"));
+        }
+
+        var total = await q.CountAsync(ct);
+        var items = await q
+            .OrderBy(m => m.Project.Value)
+            .ThenBy(m => m.HttpMethod)
+            .ThenBy(m => m.RoutePattern)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(ct);
+
+        return (items, total);
+    }
+
     public async Task SaveAsync(RbacApiPermissionMap map, CancellationToken ct = default)
     {
         var existing = await _db.ApiPermissionMaps.FindAsync(new object[] { map.Id }, ct);
