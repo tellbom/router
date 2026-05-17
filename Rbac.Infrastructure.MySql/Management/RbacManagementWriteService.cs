@@ -43,6 +43,59 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
 
     // ── 1. 管理员 ────────────────────────────────────────────────
 
+    public async Task CreateAdministratorWithGrantAsync(
+        RbacAdministrator admin,
+        RbacProjectGrant grant,
+        string operatorUserid,
+        CancellationToken ct = default)
+    {
+        ValidateOperator(operatorUserid);
+
+        _db.Administrators.Add(admin);
+        _db.ProjectGrants.Add(grant);
+
+        _outbox.Append(new RbacOutboxEvent
+        {
+            EventType = RbacOutboxEventTypes.UserChanged,
+            Project   = string.Empty,
+            Userid    = admin.Userid.Value,
+            Payload   = Serialize(new UserChangedPayload
+            {
+                Userid             = admin.Userid.Value,
+                UserGuid           = admin.Id.ToString(),
+                Project            = string.Empty,
+                ChangedFields      = new[] { "created" },
+                OldStatus          = null,
+                NewStatus          = admin.Status.ToString(),
+                AffectedGroupCodes = Array.Empty<string>(),
+                OperatorUserid     = operatorUserid,
+            }),
+        });
+
+        _outbox.Append(new RbacOutboxEvent
+        {
+            EventType = RbacOutboxEventTypes.ProjectGrantChanged,
+            Project   = grant.Project.Value,
+            Userid    = grant.Userid.Value,
+            Payload   = Serialize(new ProjectGrantChangedPayload
+            {
+                Project        = grant.Project.Value,
+                Userid         = grant.Userid.Value,
+                GrantKind      = "Granted",
+                OldProjects    = Array.Empty<string>(),
+                NewProjects    = new[] { grant.Project.Value },
+                OldSuper       = false,
+                NewSuper       = grant.IsSuper,
+                OperatorUserid = operatorUserid,
+            }),
+        });
+
+        await _db.SaveChangesAsync(ct);
+        _logger.LogInformation(
+            "CreateAdministratorWithGrant userid={U} project={P} operator={Op}",
+            admin.Userid.Value, grant.Project.Value, operatorUserid);
+    }
+
     public async Task SaveAdministratorAsync(
         RbacAdministrator admin,
         IReadOnlyList<string> changedFields,

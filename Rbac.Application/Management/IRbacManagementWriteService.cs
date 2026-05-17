@@ -23,6 +23,17 @@ public interface IRbacManagementWriteService
 {
     // ── 1. 管理员 ────────────────────────────────────────────────
 
+    /// <summary>
+    /// 新增管理员账号并同时授权到指定 project。
+    /// 两个聚合根写入同一事务，保证原子性：账号存在则 project 授权必然存在。
+    /// 产生事件：UserChanged + ProjectGrantChanged。
+    /// </summary>
+    Task CreateAdministratorWithGrantAsync(
+        RbacAdministrator admin,
+        RbacProjectGrant grant,
+        string operatorUserid,
+        CancellationToken ct = default);
+
     /// <summary>新增或更新管理员账号。产生事件：UserChanged。</summary>
     Task SaveAdministratorAsync(
         RbacAdministrator admin,

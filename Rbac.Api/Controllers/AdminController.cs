@@ -7,6 +7,7 @@ using Rbac.Application.Repositories;
 using Rbac.Application.Search;
 using Rbac.Application.Security;
 using Rbac.Domain.Groups;
+using Rbac.Domain.Projects;
 using Rbac.Domain.Users;
 using Rbac.Domain.ValueObjects;
 
@@ -68,7 +69,10 @@ public sealed partial class AdminController : ControllerBase
 
     // ── 创建管理员 ─────────────────────────────────────────────────
 
-    /// <summary>POST /api/admin — 新增管理员账号。</summary>
+    /// <summary>
+    /// POST /api/admin — 新增管理员账号，并原子地将其授权到当前 project（普通用户，isSuper=false）。
+    /// 两个聚合根在同一事务内提交，保证账号存在则 project 授权必然存在。
+    /// </summary>
     [HttpPost]
     public async Task<ApiResponse<object>> Create(
         [FromBody] CreateAdminRequest req, CancellationToken ct)
@@ -84,13 +88,14 @@ public sealed partial class AdminController : ControllerBase
             new UserId(req.Userid),
             req.Username);
 
-        await _write.SaveAdministratorAsync(
-            admin,
-            changedFields: new[] { "created" },
-            oldStatus: null,
-            affectedGroupCodes: req.GroupCode ?? Array.Empty<string>(),
-            operatorUserid: ctx.Userid,
-            ct);
+        var grant = RbacProjectGrant.Create(
+            Guid.NewGuid(),
+            admin.Userid,
+            new ProjectCode(ctx.Project),
+            grantedBy: ctx.Userid,
+            isSuper: false);
+
+        await _write.CreateAdministratorWithGrantAsync(admin, grant, ctx.Userid, ct);
 
         if (req.GroupCode is not null)
         {
