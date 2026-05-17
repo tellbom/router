@@ -90,6 +90,8 @@ public sealed class RbacEsAliasBootstrapper
                 await _esClient.Indices.CreateAsync(initialIndex, c => RbacGroupIndexMapping.Build(c), ct),
             var a when a == RbacRuleIndexMapping.IndexName =>
                 await _esClient.Indices.CreateAsync(initialIndex, c => RbacRuleIndexMapping.Build(c), ct),
+            var a when a == RbacPermissionViewIndexMapping.IndexName =>
+                await _esClient.Indices.CreateAsync(initialIndex, c => RbacPermissionViewIndexMapping.Build(c), ct),
             var a when a == RbacAuditLogIndexMapping.IndexName =>
                 await _esClient.Indices.CreateAsync(initialIndex, c => RbacAuditLogIndexMapping.Build(c), ct),
             _ => await _esClient.Indices.CreateAsync(initialIndex, ct: ct)

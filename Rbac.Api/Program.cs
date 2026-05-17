@@ -24,6 +24,7 @@ using Rbac.Application.Serialization;
 using Rbac.Application.Snapshots;
 using Rbac.Infrastructure.Casbin;
 using Rbac.Infrastructure.Elasticsearch.Bootstrap;
+using Rbac.Infrastructure.Elasticsearch.Indexes;
 using Rbac.Infrastructure.Elasticsearch.Reindex;
 using Rbac.Infrastructure.Elasticsearch.Services;
 using Rbac.Infrastructure.MySql.Management;
@@ -149,6 +150,8 @@ builder.Services.AddScoped<IRbacManagementSearchService, RbacManagementSearchSer
 builder.Services.AddScoped<RbacEsFullReindexService>();
 // PATCH-11: RbacEsAliasPreflightChecker 已在 RbacEsBootstrap.cs 实现，注入 RbacEsFullReindexService
 builder.Services.AddSingleton<RbacEsAliasPreflightChecker>();
+// Bootstrap：确保 5 个 alias 在首次部署时自动创建
+builder.Services.AddSingleton<RbacEsAliasBootstrapper>();
 
 // ── Infrastructure: Casbin ────────────────────────────────────────
 builder.Services.AddSingleton<RbacCasbinModelProvider>();
@@ -194,6 +197,33 @@ builder.Services.AddSingleton<RbacLoginResultFactory>();
 
 // ── Build & Pipeline ─────────────────────────────────────────────
 var app = builder.Build();
+
+// ES alias bootstrap：首次部署时自动创建 5 个 alias + 初始物理索引。
+// 已存在的 alias 直接跳过；失败不阻塞启动，运维可再手动触发 reindex。
+using (var scope = app.Services.CreateScope())
+{
+    var bootstrapper = scope.ServiceProvider.GetRequiredService<RbacEsAliasBootstrapper>();
+    var aliases = new[]
+    {
+        RbacUserIndexMapping.IndexName,
+        RbacGroupIndexMapping.IndexName,
+        RbacRuleIndexMapping.IndexName,
+        RbacPermissionViewIndexMapping.IndexName,
+        RbacAuditLogIndexMapping.IndexName,
+    };
+
+    foreach (var alias in aliases)
+    {
+        try
+        {
+            await bootstrapper.EnsureAliasAsync(alias);
+        }
+        catch (Exception ex)
+        {
+            app.Logger.LogWarning(ex, "ES alias bootstrap failed for {Alias}", alias);
+        }
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {
