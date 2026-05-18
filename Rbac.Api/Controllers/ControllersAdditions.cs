@@ -237,6 +237,10 @@ public sealed partial class GroupController
 
             var mergedPermCodes = oldPermCodes
                 .Union(derivedPermCodes, StringComparer.OrdinalIgnoreCase)
+                .Union(
+                    (req.ExtraPermissionCodes ?? Array.Empty<string>())
+                        .Where(p => !string.IsNullOrWhiteSpace(p)),
+                    StringComparer.OrdinalIgnoreCase)
                 .Select(p => new PermissionCode(p)).ToList();
 
             group.UpdateRules(newRuleCodes, mergedPermCodes);
@@ -342,7 +346,8 @@ public sealed record UpdateGroupRequest(
     string? Name,
     string? ParentGroupCode,   // 空字符串表示提升为根组
     string? Status,
-    string[]? RuleCodes);
+    string[]? RuleCodes,
+    string[]? ExtraPermissionCodes = null);
 
 /// <summary>规则完整编辑请求。null 字段表示不修改。</summary>
 public sealed record UpdateRuleRequest(

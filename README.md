@@ -268,11 +268,18 @@ Query 参数：
   "groupName": "操作员组",
   "parentGroupCode": "admin",
   "status": "Active",
-  "ruleCodes": ["dashboard", "system.user"]
+  "ruleCodes": ["dashboard", "system.user"],
+  "extraPermissionCodes": ["menu:system.user", "button:admin.list"]
 }
 ```
 
-说明：前端提交 `ruleCodes`，服务端从启用的规则中推导 `permissionCodes`。支持 `ruleCodes: ["*"]` 表示全部权限。
+说明：前端提交 `ruleCodes`，服务端从启用的规则中推导 `permissionCodes`。`extraPermissionCodes` 为可选字段，用于追加从 APIMap 权限视图选择的端点权限。不传 `extraPermissionCodes` 时行为与旧版一致。支持 `ruleCodes: ["*"]` 表示全部权限。
+
+最终授权权限码：
+
+```text
+permissionCodes = ruleCodes 推导值 ∪ extraPermissionCodes
+```
 
 响应 `data`：
 
@@ -292,9 +299,12 @@ Query 参数：
   "name": "兼容字段，可替代 groupName",
   "parentGroupCode": "",
   "status": "Disabled",
-  "ruleCodes": ["dashboard"]
+  "ruleCodes": ["dashboard"],
+  "extraPermissionCodes": ["button:admin.edit"]
 }
 ```
+
+`extraPermissionCodes` 可选；当传入 `ruleCodes` 时，服务端会把已有权限码、`ruleCodes` 推导值和 `extraPermissionCodes` 做三路 Union。
 
 ### `PUT /api/group/{groupCode}/rules`
 
@@ -302,11 +312,18 @@ Query 参数：
 
 ```json
 {
-  "ruleCodes": ["dashboard", "system.user"]
+  "ruleCodes": ["dashboard", "system.user"],
+  "extraPermissionCodes": ["menu:search.audit"]
 }
 ```
 
-注意：当前实现会用新 `ruleCodes` 替换组内规则码，但 `permissionCodes` 会与旧权限码合并。
+注意：当前实现会用新 `ruleCodes` 替换组内规则码，但 `permissionCodes` 会与旧权限码合并。`extraPermissionCodes` 会一并参与合并。
+
+```text
+permissionCodes = 已有值 ∪ ruleCodes 推导值 ∪ extraPermissionCodes
+```
+
+前端可从 `GET /api/api-map/list` 获取可选的 `permissionCode`，在权限组新建/编辑页中作为 API 端点权限选择器使用。
 
 ### `PUT /api/group/{groupCode}/status`
 

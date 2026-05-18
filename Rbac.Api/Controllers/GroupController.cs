@@ -137,7 +137,16 @@ public sealed partial class GroupController : ControllerBase
                 ? new List<PermissionCode> { new("*") }
                 : selectedRules.Select(r => r.PermissionCode).ToList();
 
-            group.UpdateRules(newRuleCodes, derivedPermCodes);
+            // ExtraPermissionCodes comes from api-map and is unioned with permissions derived from ruleCodes.
+            var extraPerms = (req.ExtraPermissionCodes ?? Array.Empty<string>())
+                .Where(p => !string.IsNullOrWhiteSpace(p));
+            var finalPermCodes = derivedPermCodes
+                .Select(p => p.Value)
+                .Union(extraPerms, StringComparer.OrdinalIgnoreCase)
+                .Select(p => new PermissionCode(p))
+                .ToList();
+
+            group.UpdateRules(newRuleCodes, finalPermCodes);
             changedFields.Add("ruleCodes");
             changedFields.Add("permissionCodes");
         }
@@ -192,6 +201,10 @@ public sealed partial class GroupController : ControllerBase
 
         var mergedPermCodes = oldPermCodes
             .Union(derivedPermCodes, StringComparer.OrdinalIgnoreCase)
+            .Union(
+                (req.ExtraPermissionCodes ?? Array.Empty<string>())
+                    .Where(p => !string.IsNullOrWhiteSpace(p)),
+                StringComparer.OrdinalIgnoreCase)
             .Select(p => new PermissionCode(p))
             .ToList();
 
@@ -443,10 +456,16 @@ public sealed class CreateGroupRequest
     public string? Status { get; init; }
 
     public string[]? RuleCodes { get; init; }
+
+    /// <summary>
+    /// Extra permissionCodes from api-map. They are unioned with permissionCodes derived from RuleCodes.
+    /// </summary>
+    public string[]? ExtraPermissionCodes { get; init; }
 }
 
 public sealed record UpdateGroupRulesRequest(
-    string[]? RuleCodes);
+    string[]? RuleCodes,
+    string[]? ExtraPermissionCodes = null);
 
 public sealed record ChangeGroupStatusRequest(
     string Status);
