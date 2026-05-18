@@ -74,6 +74,7 @@ public static class RbacCompatibilityMappers
             Extend = rule.Extend ?? string.Empty,
             Remark = rule.Remark ?? string.Empty,
             Keepalive = rule.Keepalive,
+            Weigh = rule.Weigh,
             PermissionCode = rule.PermissionCode.Value,
             RuleCode = rule.RuleCode.Value,
             Children = allRules.ToMenuTree(rule.RuleCode.Value),

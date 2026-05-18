@@ -72,6 +72,10 @@ public sealed class MenuNodeDto
     [JsonPropertyName("keepalive")]
     public bool Keepalive { get; init; }
 
+    /// <summary>排序权重，数值越小越靠前。</summary>
+    [JsonPropertyName("weigh")]
+    public int Weigh { get; init; }
+
     /// <summary>
     /// 子节点列表（递归结构）。
     /// 按钮节点为空数组，前端通过遍历此结构生成 authNode。

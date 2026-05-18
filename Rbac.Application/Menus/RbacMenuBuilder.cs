@@ -124,6 +124,7 @@ public sealed class RbacMenuBuilder
                     Extend = node.Extend,
                     Remark = node.Remark,
                     Keepalive = node.Keepalive,
+                    Weigh = node.Weigh,
                     PermissionCode = node.PermissionCode,
                     RuleCode = node.RuleCode,
                     Children = prunedChildren,
