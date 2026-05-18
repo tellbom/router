@@ -132,7 +132,7 @@ public sealed partial class RuleController : ControllerBase
             operatorUserid: ctx.Userid,
             ct);
 
-        return ApiResponse<object>.Ok(new { ruleCode = rule.RuleCode.Value });
+        return ApiResponse<object>.Ok(new { ruleCode = rule.RuleCode.Value, weigh = rule.Weigh });
     }
 
     // ── 状态变更 ──────────────────────────────────────────────────

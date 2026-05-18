@@ -360,7 +360,7 @@ Query 参数：
 | `status` | string | `Active` / `Disabled` |
 | `page` / `pageSize` | int | 分页 |
 
-响应项字段：`ruleCode`、`permissionCode`、`title`、`type`、`status`、`icon`、`remark`。
+响应项字段：`ruleCode`、`permissionCode`、`title`、`type`、`status`、`icon`、`remark`、`weigh`。
 
 ### `POST /api/rule`
 
@@ -404,7 +404,7 @@ Query 参数：
 | `keepalive` | bool | 否 | 默认 `false` |
 | `weigh` | int | 否 | 默认 `0` |
 
-响应 `data`：`{ "ruleCode": "system.user" }`
+响应 `data`：`{ "ruleCode": "system.user", "weigh": 10 }`
 
 ### `PUT /api/rule/{ruleCode}`
 
@@ -478,6 +478,8 @@ Query 参数：
 
 API 映射用于维护运行时鉴权所需的 `HTTP route -> permissionCode/action` 关系。变更会触发 api-map 缓存失效和版本递增。
 
+前端管理页建议使用 `GET /api/api-map/records` 作为增删改查列表数据源，因为它直接读取 MySQL 真相表并返回 `id`。`GET /api/api-map/list` 是 ES 权限视图，只适合只读展示和搜索，不返回可编辑记录的完整字段。
+
 ### `GET /api/api-map/list`
 
 分页查询权限视图，等价于 `/api/search/permission-view` 的业务查询入口。
@@ -493,9 +495,42 @@ Query 参数：
 | `status` | string | 状态过滤 |
 | `page` / `pageSize` | int | 分页 |
 
+响应项字段：`permissionCode`、`action`、`resourceType`、`title`。
+
+### `GET /api/api-map/records`
+
+分页查询 API 映射完整记录。该接口用于 APIMap 管理页的列表、编辑回显和删除定位。
+
+Query 参数：
+| 参数 | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `keyword` | string | - | 按 `routePattern` 或 `permissionCode` 模糊查询 |
+| `status` | string | - | `Active` / `Disabled` |
+| `page` | int | `1` | 页码，从 1 开始 |
+| `pageSize` | int | `20` | 每页条数，最大 `100` |
+
+响应 `data`：
+```json
+{
+  "list": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "httpMethod": "GET",
+      "routePattern": "/api/admin/list",
+      "permissionCode": "menu:system.user",
+      "action": "read",
+      "status": "Active",
+      "createdAt": "2026-05-18T12:00:00+00:00",
+      "updatedAt": "2026-05-18T12:00:00+00:00"
+    }
+  ],
+  "total": 1
+}
+```
+
 ### `POST /api/api-map`
 
-新增 API 权限映射。
+新增 API 权限映射。新增后会写入 MySQL 真相表，并通过 Outbox 触发当前 project 的 api-map 缓存失效。
 
 ```json
 {
@@ -506,22 +541,38 @@ Query 参数：
 }
 ```
 
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `httpMethod` | string | 是 | 允许 `GET` / `POST` / `PUT` / `DELETE` / `PATCH`，服务端会规范为大写 |
+| `routePattern` | string | 是 | ASP.NET Core route template，例如 `/api/admin/{userid}` |
+| `permissionCode` | string | 是 | 运行时鉴权使用的权限码 |
+| `action` | string | 是 | 允许 `read` / `create` / `update` / `delete` / `execute` / `access`，服务端会规范为小写 |
+
 响应 `data`：`{ "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6" }`
 
 ### `PUT /api/api-map/{id}`
 
-更新权限码或动作。`id` 为 Guid。
+更新 API 映射的权限码或动作。`id` 为 `GET /api/api-map/records` 返回的 Guid。当前接口只更新 `permissionCode` 和 `action`；如果需要修改 `httpMethod` 或 `routePattern`，请删除后重新新增。
 
 ```json
 {
   "permissionCode": "menu:system.user.edit",
-  "action": "write"
+  "action": "update"
 }
 ```
+
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `permissionCode` | string | 否 | 为 `null` 时保持原值 |
+| `action` | string | 否 | 为 `null` 时保持原值；允许值同新增接口 |
+
+成功响应：`data` 为 `null`。
 
 ### `DELETE /api/api-map/{id}`
 
 删除 API 权限映射。
+
+`id` 为 `GET /api/api-map/records` 返回的 Guid。删除后会写入 Outbox，触发当前 project 的 api-map 缓存失效和版本递增。
 
 ## 查询接口 `/api/search`
 
@@ -622,6 +673,7 @@ Query 参数：`project` 可选。
 | Project 授权 | DELETE | `/api/project-grant/{userid}` | 撤销授权 |
 | Project 授权 | PUT | `/api/project-grant/{userid}/super` | 切换 super |
 | API 映射 | GET | `/api/api-map/list` | 权限视图列表 |
+| API 映射 | GET | `/api/api-map/records` | 完整映射记录列表 |
 | API 映射 | POST | `/api/api-map` | 新建映射 |
 | API 映射 | PUT | `/api/api-map/{id}` | 更新映射 |
 | API 映射 | DELETE | `/api/api-map/{id}` | 删除映射 |
