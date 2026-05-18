@@ -142,6 +142,7 @@ public sealed partial class RuleController : ControllerBase
     public async Task<ApiResponse<object>> ChangeStatus(
         string ruleCode, [FromBody] ChangeRuleStatusRequest req, CancellationToken ct)
     {
+        ruleCode = DecodeRouteRuleCode(ruleCode);
         var ctx = RequireContext();
 
         var rule = await _guard.LoadRuleByCodeAsync(ruleCode, ctx.Project, ct);
@@ -167,6 +168,7 @@ public sealed partial class RuleController : ControllerBase
     public async Task<ApiResponse<object>> UpdateWeigh(
         string ruleCode, [FromBody] UpdateWeighRequest req, CancellationToken ct)
     {
+        ruleCode = DecodeRouteRuleCode(ruleCode);
         var ctx = RequireContext();
 
         var rule = await _guard.LoadRuleByCodeAsync(ruleCode, ctx.Project, ct);
@@ -190,6 +192,7 @@ public sealed partial class RuleController : ControllerBase
     [HttpDelete("{ruleCode}")]
     public async Task<ApiResponse<object>> Delete(string ruleCode, CancellationToken ct)
     {
+        ruleCode = DecodeRouteRuleCode(ruleCode);
         var ctx = RequireContext();
 
         var rule = await _guard.LoadRuleByCodeAsync(ruleCode, ctx.Project, ct);
@@ -208,6 +211,9 @@ public sealed partial class RuleController : ControllerBase
 
     private CurrentRbacContext RequireContext() =>
         _ctx.Context ?? throw new InvalidOperationException("RbacContext missing");
+
+    private static string DecodeRouteRuleCode(string ruleCode) =>
+        Uri.UnescapeDataString(ruleCode);
 
     private static ApiResponse<object> Fail(int code, string msg) =>
         ApiResponse<object>.Fail(code, msg);

@@ -269,6 +269,7 @@ public sealed partial class RuleController
     public async Task<ApiResponse<object>> Update(
         string ruleCode, [FromBody] UpdateRuleRequest req, CancellationToken ct)
     {
+        ruleCode = DecodeRouteRuleCode(ruleCode);
         var ctx = RequireContext();
 
         var rule = await _guard.LoadRuleByCodeAsync(ruleCode, ctx.Project, ct);
