@@ -10,43 +10,42 @@
     - EF Core must match Pomelo.EntityFrameworkCore.MySql major version.
     - FusionCache backplane must match StackExchange.Redis major version.
   -->
-
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
-
   <ItemGroup>
     <!-- ASP.NET Core / Hosting -->
+    <PackageVersion Include="DM.DmProvider">
+      <Version>8.3.1.47463</Version>
+    </PackageVersion>
+    <PackageVersion Include="DM.Microsoft.EntityFrameworkCore">
+      <Version>6.0.0.33671</Version>
+    </PackageVersion>
+    <PackageVersion Include="DMStorage.Hangfire">
+      <Version>1.0.0.6</Version>
+    </PackageVersion>
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.36" />
     <PackageVersion Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-
     <!-- ORM / MySQL -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="6.0.36" />
     <PackageVersion Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.3" />
     <PackageVersion Include="Dapper" Version="2.1.28" />
-
     <!-- Redis -->
     <PackageVersion Include="StackExchange.Redis" Version="2.7.33" />
-
     <!-- FusionCache + Redis backplane -->
     <PackageVersion Include="ZiggyCreatures.FusionCache" Version="1.0.0" />
     <PackageVersion Include="ZiggyCreatures.FusionCache.Backplane.StackExchangeRedis" Version="1.0.0" />
-
     <!-- Elasticsearch - MUST stay on 7.17.x -->
     <PackageVersion Include="NEST" Version="7.17.5" />
-
     <!-- NetCasbin -->
     <PackageVersion Include="Casbin.Net" Version="2.5.0" />
-
     <!-- Hangfire -->
     <PackageVersion Include="Hangfire.Core" Version="1.8.14" />
     <PackageVersion Include="Hangfire.MySqlStorage" Version="2.0.3" />
-
     <!-- Serialization -->
     <PackageVersion Include="System.Text.Json" Version="6.0.10" />
-
     <!-- Analyzers -->
     <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0" />
   </ItemGroup>

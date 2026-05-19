@@ -11,6 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DM.DmProvider" />
+    <PackageReference Include="DM.Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="DMStorage.Hangfire" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Dapper" />
