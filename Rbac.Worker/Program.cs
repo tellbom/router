@@ -33,11 +33,11 @@ var host = Host.CreateDefaultBuilder(args)
         var config = ctx.Configuration;
 
         // ── Options ───────────────────────────────────────────────
-        // ── Infrastructure: MySQL ─────────────────────────────────
+        // ── Infrastructure: relational database ───────────────────
         services.AddDbContext<RbacDbContext>(opt =>
-            opt.UseMySql(
-                config.GetConnectionString("Rbac")!,
-                ServerVersion.AutoDetect(config.GetConnectionString("Rbac")!)));
+            opt.UseRbacRelationalDatabase(
+                config["Database:Provider"],
+                config.GetConnectionString("Rbac")!));
 
         // Outbox（同一 Scoped 实例实现两个接口）
         services.AddScoped<OutboxReaderWriter>();

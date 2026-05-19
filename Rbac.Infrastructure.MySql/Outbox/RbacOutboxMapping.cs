@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rbac.Application.Outbox;
+using Rbac.Infrastructure.MySql.Mapping;
 
 namespace Rbac.Infrastructure.MySql.Outbox;
 
@@ -36,6 +37,13 @@ public sealed class OutboxEventEntity
 /// </summary>
 public sealed class OutboxEventMapping : IEntityTypeConfiguration<OutboxEventEntity>
 {
+    private readonly string? _providerName;
+
+    public OutboxEventMapping(string? providerName = null)
+    {
+        _providerName = providerName;
+    }
+
     public void Configure(EntityTypeBuilder<OutboxEventEntity> b)
     {
         b.ToTable("rbac_outbox");
@@ -46,12 +54,15 @@ public sealed class OutboxEventMapping : IEntityTypeConfiguration<OutboxEventEnt
         b.Property(x => x.Project).HasColumnName("project").HasMaxLength(64).IsRequired();
         b.Property(x => x.Userid).HasColumnName("userid").HasMaxLength(128);
         b.Property(x => x.GroupCode).HasColumnName("group_code").HasMaxLength(128);
-        b.Property(x => x.Payload).HasColumnName("payload").HasColumnType("longtext").IsRequired();
+        b.Property(x => x.Payload)
+            .HasColumnName("payload")
+            .HasColumnType(RbacRelationalDatabaseOptions.OutboxPayloadColumnType(_providerName))
+            .IsRequired();
         b.Property(x => x.Status).HasColumnName("status").HasMaxLength(16).IsRequired();
         b.Property(x => x.RetryCount).HasColumnName("retry_count").HasDefaultValue(0);
-        b.Property(x => x.NextRetryAt).HasColumnName("next_retry_at");
-        b.Property(x => x.CreatedAt).HasColumnName("created_at");
-        b.Property(x => x.ProcessedAt).HasColumnName("processed_at");
+        b.Property(x => x.NextRetryAt).HasColumnName("next_retry_at").HasUtcDateTimeOffsetConversion();
+        b.Property(x => x.CreatedAt).HasColumnName("created_at").HasUtcDateTimeOffsetConversion();
+        b.Property(x => x.ProcessedAt).HasColumnName("processed_at").HasUtcDateTimeOffsetConversion();
 
         // 轮询查询优化索引
         b.HasIndex(x => x.Status).HasDatabaseName("ix_outbox_status");

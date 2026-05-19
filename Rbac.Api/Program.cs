@@ -83,11 +83,11 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ── Infrastructure: MySQL ─────────────────────────────────────────
+// ── Infrastructure: relational database ───────────────────────────
 builder.Services.AddDbContext<RbacDbContext>(opt =>
-    opt.UseMySql(
-        builder.Configuration.GetConnectionString("Rbac")!,
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Rbac")!)));
+    opt.UseRbacRelationalDatabase(
+        builder.Configuration["Database:Provider"],
+        builder.Configuration.GetConnectionString("Rbac")!));
 
 // Outbox（同一 Scoped 实例实现两个接口）
 builder.Services.AddScoped<OutboxReaderWriter>();

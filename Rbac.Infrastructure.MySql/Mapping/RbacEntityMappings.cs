@@ -39,7 +39,7 @@ public sealed class RbacDbContext : DbContext
         modelBuilder.ApplyConfiguration(new RuleMapping());
         modelBuilder.ApplyConfiguration(new ProjectGrantMapping());
         modelBuilder.ApplyConfiguration(new ApiPermissionMapMapping());
-        modelBuilder.ApplyConfiguration(new OutboxEventMapping());    // PATCH-08
+        modelBuilder.ApplyConfiguration(new OutboxEventMapping(Database.ProviderName));    // PATCH-08
     }
 }
 
@@ -51,15 +51,19 @@ internal sealed class AdministratorMapping : IEntityTypeConfiguration<RbacAdmini
     {
         b.ToTable("rbac_administrator");
         b.HasKey(x => x.Id);
-        b.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+        b.Property(x => x.Id)
+            .HasColumnName("id")
+            .HasConversion(v => v.ToString(), s => Guid.Parse(s))
+            .HasMaxLength(36)
+            .ValueGeneratedNever();
         b.Property(x => x.Userid)
             .HasColumnName("userid").HasMaxLength(128)
             .HasConversion(v => v.Value, s => new UserId(s)).IsRequired();
         b.Property(x => x.Username).HasColumnName("username").HasMaxLength(128).IsRequired();
         b.Property(x => x.Status)
             .HasColumnName("status").HasConversion<string>().HasMaxLength(16).IsRequired();
-        b.Property(x => x.CreatedAt).HasColumnName("created_at");
-        b.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+        b.Property(x => x.CreatedAt).HasColumnName("created_at").HasUtcDateTimeOffsetConversion();
+        b.Property(x => x.UpdatedAt).HasColumnName("updated_at").HasUtcDateTimeOffsetConversion();
         b.HasIndex(x => x.Userid).IsUnique().HasDatabaseName("ux_admin_userid");
     }
 }
@@ -72,7 +76,11 @@ internal sealed class GroupMapping : IEntityTypeConfiguration<RbacGroup>
     {
         b.ToTable("rbac_group");
         b.HasKey(x => x.Id);
-        b.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+        b.Property(x => x.Id)
+            .HasColumnName("id")
+            .HasConversion(v => v.ToString(), s => Guid.Parse(s))
+            .HasMaxLength(36)
+            .ValueGeneratedNever();
         b.Property(x => x.GroupCode)
             .HasColumnName("group_code").HasMaxLength(128)
             .HasConversion(v => v.Value, s => new GroupCode(s)).IsRequired();
@@ -103,8 +111,8 @@ internal sealed class GroupMapping : IEntityTypeConfiguration<RbacGroup>
                     .Select(p => new PermissionCode(p)).ToList());
         b.Property(x => x.Status)
             .HasColumnName("status").HasConversion<string>().HasMaxLength(16).IsRequired();
-        b.Property(x => x.CreatedAt).HasColumnName("created_at");
-        b.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+        b.Property(x => x.CreatedAt).HasColumnName("created_at").HasUtcDateTimeOffsetConversion();
+        b.Property(x => x.UpdatedAt).HasColumnName("updated_at").HasUtcDateTimeOffsetConversion();
         b.HasIndex(new[] { "GroupCode", "Project" }).IsUnique().HasDatabaseName("ux_group_code_project");
     }
 }
@@ -118,7 +126,11 @@ internal sealed class GroupMemberMapping : IEntityTypeConfiguration<RbacGroupMem
         b.ToTable("rbac_group_member");
         b.HasKey(x => x.Id);
 
-        b.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+        b.Property(x => x.Id)
+            .HasColumnName("id")
+            .HasConversion(v => v.ToString(), s => Guid.Parse(s))
+            .HasMaxLength(36)
+            .ValueGeneratedNever();
 
         b.Property(x => x.Userid)
             .HasColumnName("userid").HasMaxLength(128)
@@ -135,8 +147,8 @@ internal sealed class GroupMemberMapping : IEntityTypeConfiguration<RbacGroupMem
         b.Property(x => x.GrantedBy)
             .HasColumnName("granted_by").HasMaxLength(128).IsRequired();
 
-        b.Property(x => x.CreatedAt).HasColumnName("created_at");
-        b.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+        b.Property(x => x.CreatedAt).HasColumnName("created_at").HasUtcDateTimeOffsetConversion();
+        b.Property(x => x.UpdatedAt).HasColumnName("updated_at").HasUtcDateTimeOffsetConversion();
 
         // (userid, groupCode, project) 唯一：一个用户在同一 project 下同一个组只能出现一次
         b.HasIndex(new[] { "Userid", "GroupCode", "Project" })
@@ -157,7 +169,11 @@ internal sealed class RuleMapping : IEntityTypeConfiguration<RbacRule>
     {
         b.ToTable("rbac_rule");
         b.HasKey(x => x.Id);
-        b.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+        b.Property(x => x.Id)
+            .HasColumnName("id")
+            .HasConversion(v => v.ToString(), s => Guid.Parse(s))
+            .HasMaxLength(36)
+            .ValueGeneratedNever();
         b.Property(x => x.Project)
             .HasColumnName("project").HasMaxLength(64)
             .HasConversion(v => v.Value, s => new ProjectCode(s)).IsRequired();
@@ -188,8 +204,8 @@ internal sealed class RuleMapping : IEntityTypeConfiguration<RbacRule>
         b.Property(x => x.Weigh).HasColumnName("weigh");
         b.Property(x => x.Status)
             .HasColumnName("status").HasConversion<string>().HasMaxLength(16).IsRequired();
-        b.Property(x => x.CreatedAt).HasColumnName("created_at");
-        b.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+        b.Property(x => x.CreatedAt).HasColumnName("created_at").HasUtcDateTimeOffsetConversion();
+        b.Property(x => x.UpdatedAt).HasColumnName("updated_at").HasUtcDateTimeOffsetConversion();
         b.HasIndex(new[] { "RuleCode", "Project" }).IsUnique().HasDatabaseName("ux_rule_code_project");
     }
 }
@@ -202,7 +218,11 @@ internal sealed class ProjectGrantMapping : IEntityTypeConfiguration<RbacProject
     {
         b.ToTable("rbac_project_grant");
         b.HasKey(x => x.Id);
-        b.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+        b.Property(x => x.Id)
+            .HasColumnName("id")
+            .HasConversion(v => v.ToString(), s => Guid.Parse(s))
+            .HasMaxLength(36)
+            .ValueGeneratedNever();
         b.Property(x => x.Userid)
             .HasColumnName("userid").HasMaxLength(128)
             .HasConversion(v => v.Value, s => new UserId(s)).IsRequired();
@@ -211,8 +231,8 @@ internal sealed class ProjectGrantMapping : IEntityTypeConfiguration<RbacProject
             .HasConversion(v => v.Value, s => new ProjectCode(s)).IsRequired();
         b.Property(x => x.IsSuper).HasColumnName("is_super");
         b.Property(x => x.GrantedBy).HasColumnName("granted_by").HasMaxLength(128).IsRequired();
-        b.Property(x => x.GrantedAt).HasColumnName("granted_at");
-        b.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+        b.Property(x => x.GrantedAt).HasColumnName("granted_at").HasUtcDateTimeOffsetConversion();
+        b.Property(x => x.UpdatedAt).HasColumnName("updated_at").HasUtcDateTimeOffsetConversion();
         b.HasIndex(new[] { "Userid", "Project" }).IsUnique().HasDatabaseName("ux_grant_userid_project");
     }
 }
@@ -225,7 +245,11 @@ internal sealed class ApiPermissionMapMapping : IEntityTypeConfiguration<RbacApi
     {
         b.ToTable("rbac_api_permission_map");
         b.HasKey(x => x.Id);
-        b.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+        b.Property(x => x.Id)
+            .HasColumnName("id")
+            .HasConversion(v => v.ToString(), s => Guid.Parse(s))
+            .HasMaxLength(36)
+            .ValueGeneratedNever();
         b.Property(x => x.Project)
             .HasColumnName("project").HasMaxLength(64)
             .HasConversion(v => v.Value, s => new ProjectCode(s)).IsRequired();
@@ -237,8 +261,8 @@ internal sealed class ApiPermissionMapMapping : IEntityTypeConfiguration<RbacApi
         b.Property(x => x.Action).HasColumnName("action").HasMaxLength(16).IsRequired();
         b.Property(x => x.Status)
             .HasColumnName("status").HasConversion<string>().HasMaxLength(16).IsRequired();
-        b.Property(x => x.CreatedAt).HasColumnName("created_at");
-        b.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+        b.Property(x => x.CreatedAt).HasColumnName("created_at").HasUtcDateTimeOffsetConversion();
+        b.Property(x => x.UpdatedAt).HasColumnName("updated_at").HasUtcDateTimeOffsetConversion();
         b.HasIndex(new[] { "Project", "HttpMethod", "RoutePattern" })
             .IsUnique().HasDatabaseName("ux_api_map_project_method_route");
     }
