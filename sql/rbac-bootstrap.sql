@@ -149,6 +149,7 @@ INSERT IGNORE INTO `rbac_api_permission_map`
     (`id`, `project`, `http_method`, `route_pattern`, `permission_code`, `action`, `status`, `created_at`, `updated_at`)
 VALUES
     (UUID(), @project, 'GET',    '/api/api-map/list',  'menu:apimap.list',     'read',   'Active', NOW(6), NOW(6)),
+    (UUID(), @project, 'GET',    '/api/api-map/records','menu:apimap.list',    'read',   'Active', NOW(6), NOW(6)),
     (UUID(), @project, 'POST',   '/api/api-map',       'button:apimap.create', 'create', 'Active', NOW(6), NOW(6)),
     (UUID(), @project, 'PUT',    '/api/api-map/{id}',  'button:apimap.edit',   'update', 'Active', NOW(6), NOW(6)),
     (UUID(), @project, 'DELETE', '/api/api-map/{id}',  'button:apimap.delete', 'delete', 'Active', NOW(6), NOW(6));
