@@ -78,6 +78,16 @@ public sealed class RbacEsAliasBootstrapper
             return;
         }
 
+        var concreteIndexExists = await _esClient.Indices.ExistsAsync(alias, ct: ct);
+        if (concreteIndexExists.Exists)
+        {
+            _logger.LogError(
+                "Cannot bootstrap alias {Alias}: a concrete index with the same name exists. " +
+                "Reindex it to a versioned index, delete the conflicting concrete index, then add the alias.",
+                alias);
+            return;
+        }
+
         var initialIndex = $"{alias}_v{DateTimeOffset.UtcNow:yyyyMMdd}_000";
         _logger.LogInformation("Creating initial index {Index} for alias {Alias}", initialIndex, alias);
 
@@ -138,6 +148,17 @@ public sealed class RbacEsAliasPreflightChecker
 
         if (!aliasResp.IsValid || aliasResp.Indices is null || aliasResp.Indices.Count == 0)
         {
+            var concreteIndexExists = await _esClient.Indices.ExistsAsync(alias, ct: ct);
+            if (concreteIndexExists.Exists)
+            {
+                _logger.LogWarning(
+                    "Preflight: alias {Alias} is blocked by a concrete index with the same name.",
+                    alias);
+                return AliasPreflightResult.Fail(alias,
+                    "A concrete index exists with the same name as the alias. " +
+                    "Reindex it to a versioned index, delete the conflicting concrete index, then add the alias.");
+            }
+
             _logger.LogWarning("Preflight: alias {Alias} does not exist.", alias);
             return AliasPreflightResult.Fail(alias, "Alias does not exist. Run bootstrap first.");
         }
