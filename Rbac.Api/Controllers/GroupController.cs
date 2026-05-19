@@ -81,14 +81,25 @@ public sealed partial class GroupController : ControllerBase
         });
     }
 
-    /// <summary>GET /api/group/list — ES 分页查询权限组列表。</summary>
+    /// <summary>GET /api/group/list — 查询当前 project 下的权限组平铺列表。</summary>
     [HttpGet("list")]
     public async Task<ApiResponse<PagedData<GroupSearchResult>>> List(
         [FromQuery] GroupSearchQuery query, CancellationToken ct)
     {
-        query.Project = RequireContext().Project;
+        var ctx = RequireContext();
+        var groups = await _groupRepo.FindByProjectAsync(new ProjectCode(ctx.Project), ct);
+        var rows = FilterGroupList(groups, query)
+            .Select(ToGroupSearchResult)
+            .OrderBy(r => r.GroupName, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(r => r.GroupCode, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
         return ApiResponse<PagedData<GroupSearchResult>>.Ok(
-            await _search.SearchGroupsAsync(query, ct));
+            new PagedData<GroupSearchResult>
+            {
+                List = rows,
+                Total = rows.Count,
+            });
     }
 
     // ── 创建 ──────────────────────────────────────────────────────
@@ -339,6 +350,43 @@ public sealed partial class GroupController : ControllerBase
             .ToList();
     }
 
+    private static IReadOnlyList<RbacGroup> FilterGroupList(
+        IReadOnlyList<RbacGroup> groups, GroupSearchQuery query)
+    {
+        IEnumerable<RbacGroup> filtered = groups;
+
+        if (!string.IsNullOrWhiteSpace(query.Status)
+            && Enum.TryParse<GroupStatus>(query.Status, ignoreCase: true, out var status))
+        {
+            filtered = filtered.Where(g => g.Status == status);
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.GroupCode))
+        {
+            filtered = filtered.Where(g => string.Equals(
+                g.GroupCode.Value, query.GroupCode, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.PermissionCode))
+        {
+            filtered = filtered.Where(g => g.PermissionCodes.Any(p => string.Equals(
+                p.Value, query.PermissionCode, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.Keyword))
+        {
+            var keyword = query.Keyword.Trim();
+            filtered = filtered.Where(g =>
+                g.GroupCode.Value.Contains(keyword, StringComparison.OrdinalIgnoreCase)
+                || g.GroupName.Contains(keyword, StringComparison.OrdinalIgnoreCase)
+                || (g.ParentGroupCode?.Value.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false)
+                || g.RuleCodes.Any(r => r.Value.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                || g.PermissionCodes.Any(p => p.Value.Contains(keyword, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        return filtered.ToList();
+    }
+
     private static GroupIndexRowDto ToGroupRow(RbacGroup group)
     {
         return new GroupIndexRowDto
@@ -355,6 +403,17 @@ public sealed partial class GroupController : ControllerBase
             Children = new List<GroupIndexRowDto>()
         };
     }
+
+    private static GroupSearchResult ToGroupSearchResult(RbacGroup group) =>
+        new()
+        {
+            GroupCode = group.GroupCode.Value,
+            GroupName = group.GroupName,
+            Project = group.Project.Value,
+            ParentGroupCode = group.ParentGroupCode?.Value,
+            Status = group.Status.ToString(),
+            PermissionCodes = group.PermissionCodes.Select(p => p.Value).ToList(),
+        };
 
     private static string FormatRules(RbacGroup group)
     {

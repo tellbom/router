@@ -69,14 +69,26 @@ public sealed class RbacManagementSearchService : IRbacManagementSearchService
         return Map(response, query, RbacRuleIndexMapping.IndexName,
             doc => new RuleSearchResult
             {
+                Id = doc.Id,
+                Project = doc.Project,
                 RuleCode = doc.RuleCode,
                 PermissionCode = doc.PermissionCode,
+                ParentRuleCode = doc.ParentRuleCode,
                 Title = doc.Title,
-                Type = doc.Type,
-                Status = doc.Status,
+                Name = doc.Name,
+                Path = doc.Path,
                 Icon = doc.Icon ?? string.Empty,
+                Type = doc.Type,
+                MenuType = doc.MenuType,
+                Component = doc.Component ?? string.Empty,
+                Url = doc.Url ?? string.Empty,
+                Extend = doc.Extend ?? string.Empty,
                 Remark = doc.Remark ?? string.Empty,
+                Keepalive = bool.TryParse(doc.Keepalive, out var keepalive) && keepalive,
+                Status = doc.Status,
                 Weigh = doc.Weigh,
+                CreatedAt = doc.CreatedAt,
+                UpdatedAt = doc.UpdatedAt,
             });
     }
 
