@@ -260,22 +260,39 @@ public sealed class ApiPermissionMapRepository : IApiPermissionMapRepository
             q = q.Where(m => m.Status == parsedStatus);
         }
 
-        if (!string.IsNullOrWhiteSpace(keyword))
+        if (string.IsNullOrWhiteSpace(keyword))
         {
-            var kw = keyword.Trim();
-            q = q.Where(m =>
-                EF.Functions.Like(m.RoutePattern, $"%{kw}%") ||
-                EF.Functions.Like(m.PermissionCode.Value, $"%{kw}%"));
+            var dbTotal = await q.CountAsync(ct);
+            var dbItems = await q
+                .OrderBy(m => m.HttpMethod)
+                .ThenBy(m => m.RoutePattern)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(ct);
+
+            return (dbItems, dbTotal);
         }
 
-        var total = await q.CountAsync(ct);
-        var items = await q
+        var kw = keyword.Trim();
+        var all = await q
+            .OrderBy(m => m.HttpMethod)
+            .ThenBy(m => m.RoutePattern)
+            .ToListAsync(ct);
+
+        var filtered = all
+            .Where(m =>
+                m.RoutePattern.Contains(kw, StringComparison.OrdinalIgnoreCase) ||
+                m.PermissionCode.Value.Contains(kw, StringComparison.OrdinalIgnoreCase))
             .OrderBy(m => m.Project.Value)
             .ThenBy(m => m.HttpMethod)
             .ThenBy(m => m.RoutePattern)
+            .ToList();
+
+        var total = filtered.Count;
+        var items = filtered
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .ToListAsync(ct);
+            .ToList();
 
         return (items, total);
     }

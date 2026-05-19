@@ -492,7 +492,7 @@ public sealed class GroupIndexRowDto
     [JsonIgnore]
     public string GroupCode { get; init; } = string.Empty;
 
-    [JsonIgnore]
+    [JsonPropertyName("parent_group_code")]
     public string? ParentGroupCode { get; init; }
 
     [JsonPropertyName("pid")]
@@ -525,6 +525,9 @@ public sealed class GroupIndexOptionDto
     [JsonPropertyName("pid")]
     public string Pid { get; init; } = "0";
 
+    [JsonPropertyName("parent_group_code")]
+    public string? ParentGroupCode { get; init; }
+
     [JsonPropertyName("name")]
     public string Name { get; init; } = string.Empty;
 
@@ -545,6 +548,7 @@ public sealed class GroupIndexOptionDto
         {
             Id = row.Id,
             Pid = row.Pid,
+            ParentGroupCode = row.ParentGroupCode,
             Name = name,
             Rules = row.Rules,
             Status = row.Status,

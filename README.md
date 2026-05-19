@@ -224,6 +224,7 @@ Query 参数：
     {
       "id": "1234567890123456789",
       "pid": "0",
+      "parent_group_code": null,
       "name": "管理员组",
       "rules": "3 permissions",
       "status": "1",
@@ -238,7 +239,7 @@ Query 参数：
 }
 ```
 
-`select=true` 响应 `data`：`{ "options": [...] }`
+`select=true` 响应 `data`：`{ "options": [...] }`，每个 option 同样包含 `parent_group_code`。
 
 ### `GET /api/group/list`
 
@@ -254,7 +255,7 @@ Query 参数：
 | `status` | string | `Active` / `Disabled` |
 | `page` / `pageSize` | int | 分页 |
 
-响应项字段：`groupCode`、`groupName`、`project`、`status`、`permissionCodes`。
+响应项字段：`groupCode`、`groupName`、`project`、`parent_group_code`、`status`、`permissionCodes`。
 
 ### `POST /api/group`
 

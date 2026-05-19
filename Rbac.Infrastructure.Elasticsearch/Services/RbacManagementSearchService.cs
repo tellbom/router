@@ -56,6 +56,7 @@ public sealed class RbacManagementSearchService : IRbacManagementSearchService
                 GroupCode = doc.GroupCode,
                 GroupName = doc.GroupName,
                 Project = doc.Project,
+                ParentGroupCode = doc.ParentGroupCode,
                 Status = doc.Status,
                 PermissionCodes = doc.PermissionCodes,
             });

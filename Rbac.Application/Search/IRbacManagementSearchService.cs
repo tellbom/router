@@ -1,4 +1,5 @@
 using Rbac.Application.Contracts.Common;
+using System.Text.Json.Serialization;
 
 namespace Rbac.Application.Search;
 
@@ -15,7 +16,7 @@ public interface IRbacManagementSearchService
 }
 
 public sealed class UserSearchResult { public string Userid { get; init; } = string.Empty; public string Username { get; init; } = string.Empty; public string Status { get; init; } = string.Empty; public IList<string> ProjectCodes { get; init; } = new List<string>(); public IList<string> GroupCodes { get; init; } = new List<string>(); public IList<string> GroupNames { get; init; } = new List<string>(); public IList<string> SuperProjects { get; init; } = new List<string>(); public bool IsSuper { get; init; } }
-public sealed class GroupSearchResult { public string GroupCode { get; init; } = string.Empty; public string GroupName { get; init; } = string.Empty; public string Project { get; init; } = string.Empty; public string Status { get; init; } = string.Empty; public IList<string> PermissionCodes { get; init; } = new List<string>(); }
+public sealed class GroupSearchResult { public string GroupCode { get; init; } = string.Empty; public string GroupName { get; init; } = string.Empty; public string Project { get; init; } = string.Empty; [JsonPropertyName("parent_group_code")] public string? ParentGroupCode { get; init; } public string Status { get; init; } = string.Empty; public IList<string> PermissionCodes { get; init; } = new List<string>(); }
 public sealed class RuleSearchResult { public string RuleCode { get; init; } = string.Empty; public string PermissionCode { get; init; } = string.Empty; public string Title { get; init; } = string.Empty; public string Type { get; init; } = string.Empty; public string Status { get; init; } = string.Empty; public string Icon { get; init; } = string.Empty; public string Remark { get; init; } = string.Empty; public int Weigh { get; init; } }
 public sealed class PermissionViewSearchResult { public string PermissionCode { get; init; } = string.Empty; public string Action { get; init; } = string.Empty; public string ResourceType { get; init; } = string.Empty; public string Title { get; init; } = string.Empty; }
 public sealed class AuditLogSearchResult { public string AuditId { get; init; } = string.Empty; public string Userid { get; init; } = string.Empty; public string Project { get; init; } = string.Empty; public string PermissionCode { get; init; } = string.Empty; public string Result { get; init; } = string.Empty; public string Reason { get; init; } = string.Empty; public DateTimeOffset CreatedAt { get; init; } }
