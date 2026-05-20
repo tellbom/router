@@ -257,6 +257,7 @@ USING (
     UNION ALL SELECT 'POST',   '/api/group/{groupCode}/members',     'button:group.member.add', 'create' FROM dual
     UNION ALL SELECT 'DELETE', '/api/group/{groupCode}/members/{userid}', 'button:group.member.del', 'delete' FROM dual
     UNION ALL SELECT 'DELETE', '/api/group/{groupCode}',             'button:group.delete',     'delete' FROM dual
+    UNION ALL SELECT 'GET',    '/api/group/index',                   'auth.group',              'read'   FROM dual
     UNION ALL SELECT 'GET',    '/api/rule/tree',           'menu:rule.tree',       'read'   FROM dual
     UNION ALL SELECT 'GET',    '/api/rule/list',           'menu:rule.list',       'read'   FROM dual
     UNION ALL SELECT 'POST',   '/api/rule',                'button:rule.create',   'create' FROM dual
@@ -281,6 +282,12 @@ ON (
     AND t."http_method" = s."http_method"
     AND t."route_pattern" = s."route_pattern"
 )
+WHEN MATCHED THEN
+    UPDATE SET
+        t."permission_code" = s."permission_code",
+        t."action" = s."action",
+        t."status" = 'Active',
+        t."updated_at" = CURRENT_TIMESTAMP
 WHEN NOT MATCHED THEN
     INSERT ("id", "project", "http_method", "route_pattern", "permission_code",
             "action", "status", "created_at", "updated_at")

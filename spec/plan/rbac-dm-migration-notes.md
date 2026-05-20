@@ -24,6 +24,7 @@
 - DM schema script: `sql/rbac-init-dm.sql`.
 - DM bootstrap script: `sql/rbac-bootstrap-dm.sql`.
 - The DM bootstrap script seeds only the `auth` permission-management rules and the `dashboard` rules. Chinese menu titles are written as normal string literals because the script is intended to be executed from a database management tool.
+- The DM bootstrap script seeds all API permission maps from the old MySQL `oversia` project (33 rows), including `GET /api/group/index` with permission code `auth.group`.
 
 Suggested schema execution:
 
