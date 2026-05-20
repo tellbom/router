@@ -56,7 +56,7 @@ builder.Services.Configure<RbacOpsOptions>(
 var jwtSection = builder.Configuration.GetSection(RbacJwtOptions.SectionName);
 var jwtMode = jwtSection["Mode"] ?? "Oidc";
 var authBuilder = builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
-
+// 后续分厂校验使用Oidc
 if (string.Equals(jwtMode, "TrustedJwt", StringComparison.OrdinalIgnoreCase))
 {
     authBuilder.AddScheme<AuthenticationSchemeOptions, TrustedJwtAuthenticationHandler>(
