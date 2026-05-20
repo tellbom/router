@@ -71,13 +71,14 @@ public sealed class RbacCacheInvalidator : IRbacCacheInvalidator
 
     public async Task DeleteUserCacheAsync(string project, string userid, CancellationToken ct = default)
     {
-        var snapshotKey = RbacRedisKeys.Snapshot(project, userid);
-        var permsetKey = RbacRedisKeys.Permset(project, userid);
-        var menusKey = RbacRedisKeys.Menus(project, userid);
+        var snapshotKey    = RbacRedisKeys.Snapshot(project, userid);
+        var permsetKey     = RbacRedisKeys.Permset(project, userid);
+        var menusKey       = RbacRedisKeys.Menus(project, userid);
+        // rbac:user-projects:{userid} 存储 ProjectGrantInfo（含 IsSuper），
+        // super 升降权后必须同步删除，否则下次 L1 miss 时从 Redis Hash 回填旧值，
+        // 导致升权后最长 20 分钟内 IsSuper 仍为 false（或降权后仍为 true）。
         var userProjectsKey = RbacRedisKeys.UserProjects(userid);
 
-        // ProjectGrantInfo contains IsSuper. If it survives a grant change, the next
-        // FusionCache miss can refill L1 from stale Redis data.
         await _db.KeyDeleteAsync(new RedisKey[]
         {
             snapshotKey,

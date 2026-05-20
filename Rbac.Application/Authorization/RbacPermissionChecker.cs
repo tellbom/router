@@ -47,12 +47,12 @@ public sealed class RbacPermissionChecker : IRbacPermissionChecker
             return PermissionCheckResult.Allow(PermissionCheckSource.ProjectSuper);
         }
 
-        // 2. 版本校驗
+        // 2. SnapshotService owns version validation and rebuilds stale snapshots.
         var snapshot = await _snapshotService.GetSnapshotAsync(ctx.Userid, ctx.Project, ct);
-        var isVersionStale = snapshot is null || snapshot.Versions.Policy != ctx.PolicyVersion;
+        var hasFreshSnapshot = snapshot is not null;
 
         // 3. Redis permset SISMEMBER
-        if (!isVersionStale)
+        if (hasFreshSnapshot)
         {
             try
             {

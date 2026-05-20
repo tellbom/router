@@ -79,14 +79,27 @@ public sealed class RbacSnapshotService : IRbacSnapshotService
 
         if (snapshot is not null)
         {
-            _logger.LogDebug("Snapshot L1 hit userid={U} project={P}", userid, project);
-            return snapshot;
+            if (await IsSnapshotFreshAsync(snapshot))
+            {
+                _logger.LogDebug("Snapshot L1 hit userid={U} project={P}", userid, project);
+                return snapshot;
+            }
+
+            await _fusionCache.EvictSnapshotAsync(project, userid);
+            _logger.LogDebug("Snapshot L1 stale userid={U} project={P}", userid, project);
         }
 
         // 2. Redis L2（直接 GET，JSON 反序列化）
         snapshot = await ReadFromRedisAsync(project, userid);
         if (snapshot is not null)
         {
+            if (!await IsSnapshotFreshAsync(snapshot))
+            {
+                await _redisDb.KeyDeleteAsync(RbacRedisKeys.Snapshot(project, userid));
+                _logger.LogDebug("Snapshot Redis stale userid={U} project={P}", userid, project);
+                return await RebuildSnapshotAsync(userid, project, ct);
+            }
+
             _logger.LogDebug("Snapshot Redis hit userid={U} project={P}", userid, project);
             // 回填 L1
             await _fusionCache.GetSnapshotAsync(project, userid,
@@ -106,7 +119,9 @@ public sealed class RbacSnapshotService : IRbacSnapshotService
         string userid, string project, CancellationToken ct = default)
     {
         // 重建开始前记录版本
-        var versionAtStart = await _versionStore.ReadUserVersionAsync(project, userid);
+        var userVersionAtStart = await _versionStore.ReadUserVersionAsync(project, userid);
+        var projectVersionAtStart = await _versionStore.ReadProjectVersionAsync(project);
+        var policyVersionAtStart = await _versionStore.ReadPolicyVersionAsync(project);
         var projectCode    = new ProjectCode(project);
 
         // 读取 project 授权（isSuper / policyVersion）
@@ -134,16 +149,21 @@ public sealed class RbacSnapshotService : IRbacSnapshotService
 
         // 版本 compare-before-write
         var versionNow = await _versionStore.ReadUserVersionAsync(project, userid);
-        if (versionNow != versionAtStart)
+        var projectVersionNow = await _versionStore.ReadProjectVersionAsync(project);
+        var policyVersionNow = await _versionStore.ReadPolicyVersionAsync(project);
+        if (versionNow != userVersionAtStart
+            || projectVersionNow != projectVersionAtStart
+            || policyVersionNow != policyVersionAtStart)
         {
             _logger.LogWarning(
-                "Snapshot rebuild discarded (version conflict) userid={U} project={P} start={VS} now={VN}",
-                userid, project, versionAtStart, versionNow);
+                "Snapshot rebuild discarded (version conflict) userid={U} project={P} " +
+                "userStart={US} userNow={UN} projectStart={PS} projectNow={PN} policyStart={POL} policyNow={PON}",
+                userid, project,
+                userVersionAtStart, versionNow,
+                projectVersionAtStart, projectVersionNow,
+                policyVersionAtStart, policyVersionNow);
             return null;
         }
-
-        var policyVersion   = await _versionStore.ReadPolicyVersionAsync(project);
-        var projectVersion  = await _versionStore.ReadProjectVersionAsync(project);
 
         var snapshot = new UserPermissionSnapshot
         {
@@ -156,8 +176,8 @@ public sealed class RbacSnapshotService : IRbacSnapshotService
             Versions = new SnapshotVersions
             {
                 User    = versionNow,
-                Project = projectVersion,
-                Policy  = policyVersion,
+                Project = projectVersionNow,
+                Policy  = policyVersionNow,
             },
             CreatedAt = DateTimeOffset.UtcNow,
         };
@@ -239,5 +259,19 @@ public sealed class RbacSnapshotService : IRbacSnapshotService
             _logger.LogWarning(ex, "Snapshot Redis write failed userid={U} project={P}", userid, project);
             // 写失败不抛出，调用方仍可拿到内存中的快照
         }
+    }
+
+    private async Task<bool> IsSnapshotFreshAsync(UserPermissionSnapshot snapshot)
+    {
+        var projectVersion = await _versionStore.ReadProjectVersionAsync(snapshot.Project);
+        if (snapshot.Versions.Project < projectVersion)
+            return false;
+
+        var userVersion = await _versionStore.ReadUserVersionAsync(snapshot.Project, snapshot.Userid);
+        if (snapshot.Versions.User < userVersion)
+            return false;
+
+        var policyVersion = await _versionStore.ReadPolicyVersionAsync(snapshot.Project);
+        return snapshot.Versions.Policy >= policyVersion;
     }
 }

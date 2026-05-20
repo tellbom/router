@@ -331,11 +331,16 @@ public sealed class CasbinPolicyRepository : ICasbinPolicyRepository
     public async Task<IReadOnlyList<(string Userid, string GroupCode, string Project)>>
         GetGroupingPoliciesAsync(ProjectCode project, CancellationToken ct = default)
     {
-        // g policy锛氱敤鎴?缁勫叧绯伙紝褰撳墠鐢?Casbin 绛栫暐鏂囦欢绠＄悊
-        // 姝ゅ杩斿洖绌洪泦鍚堬紝绛夊緟 user_group_member 琛ㄥ缓绔嬪悗鏇挎崲
-        // 锛堜笌 CasbinMySqlGroupingPolicyReader 淇濇寔涓€鑷达級
-        await Task.CompletedTask;
-        return Array.Empty<(string, string, string)>();
+        var query = _db.GroupMembers.AsQueryable();
+        if (project.Value != "*")
+            query = query.Where(m => m.Project == project);
+
+        return await query
+            .Select(m => ValueTuple.Create(
+                m.Userid.Value,
+                m.GroupCode.Value,
+                m.Project.Value))
+            .ToListAsync(ct);
     }
 
     public async Task<IReadOnlyList<(string GroupCode, string Project, string PermissionCode, string Action)>>
