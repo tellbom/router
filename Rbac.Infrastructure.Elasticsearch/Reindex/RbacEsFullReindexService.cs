@@ -254,6 +254,7 @@ public sealed class RbacEsFullReindexService
                 return new PermissionViewDocument
                 {
                     Project        = m.Project.Value,
+                    HttpMethod     = m.HttpMethod,
                     PermissionCode = m.PermissionCode.Value,
                     RuleCode       = string.Empty,          // permission_view 不关联 ruleCode
                     Action         = m.Action,

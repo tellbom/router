@@ -30,6 +30,8 @@ public static class RbacPermissionViewIndexMapping
                 .Properties(p => p
                     .Keyword(k => k.Name(n => n.Project)
                         .CopyTo(c => c.Field(f => f.AllText)))
+                    .Keyword(k => k.Name(n => n.HttpMethod)
+                        .CopyTo(c => c.Field(f => f.AllText)))
                     .Keyword(k => k.Name(n => n.PermissionCode)
                         .CopyTo(c => c.Field(f => f.AllText)))
                     .Keyword(k => k.Name(n => n.RuleCode)

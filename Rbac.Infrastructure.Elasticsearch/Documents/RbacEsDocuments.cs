@@ -168,6 +168,9 @@ public sealed class PermissionViewDocument
     [Keyword(Name = "project")]
     public string Project { get; set; } = string.Empty;
 
+    [Keyword(Name = "httpMethod")]
+    public string HttpMethod { get; set; } = string.Empty;
+
     [Keyword(Name = "permissionCode")]
     public string PermissionCode { get; set; } = string.Empty;
 

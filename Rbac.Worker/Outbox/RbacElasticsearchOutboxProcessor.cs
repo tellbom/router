@@ -23,6 +23,7 @@ public sealed class RbacElasticsearchOutboxProcessor
     private readonly IGroupMemberRepository _groupMemberRepo;
     private readonly IProjectGrantRepository _projectGrantRepo;
     private readonly IRuleRepository _ruleRepo;
+    private readonly IApiPermissionMapRepository _apiMapRepo;
     private readonly ILogger<RbacElasticsearchOutboxProcessor> _logger;
 
     public RbacElasticsearchOutboxProcessor(
@@ -32,6 +33,7 @@ public sealed class RbacElasticsearchOutboxProcessor
         IGroupMemberRepository groupMemberRepo,
         IProjectGrantRepository projectGrantRepo,
         IRuleRepository ruleRepo,
+        IApiPermissionMapRepository apiMapRepo,
         ILogger<RbacElasticsearchOutboxProcessor> logger)
     {
         _esClient = esClient;
@@ -40,6 +42,7 @@ public sealed class RbacElasticsearchOutboxProcessor
         _groupMemberRepo = groupMemberRepo;
         _projectGrantRepo = projectGrantRepo;
         _ruleRepo = ruleRepo;
+        _apiMapRepo = apiMapRepo;
         _logger = logger;
     }
 
@@ -60,8 +63,11 @@ public sealed class RbacElasticsearchOutboxProcessor
             case RbacOutboxEventTypes.MenuChanged:
                 await HandleMenuChangedAsync(entity, ct);
                 break;
+            case RbacOutboxEventTypes.ApiMapChanged:
+                await HandleApiMapChangedAsync(entity, ct);
+                break;
             default:
-                // PolicyChanged / ApiMapChanged / ProjectGrantChanged 瑙﹀彂鐢ㄦ埛鏂囨。鏇存柊
+                // PolicyChanged / ProjectGrantChanged 触发用户文档更新
                 if (entity.Userid is not null)
                     await HandleUserChangedAsync(entity, ct);
                 break;
@@ -207,6 +213,54 @@ public sealed class RbacElasticsearchOutboxProcessor
         await IndexDocumentAsync(RbacRuleIndexMapping.IndexName, rule.Id.ToString(), doc, ct);
     }
 
+    private async Task HandleApiMapChangedAsync(OutboxEventEntity entity, CancellationToken ct)
+    {
+        var payload = Deserialize<ApiMapChangedPayload>(entity.Payload);
+        if (payload is null) return;
+
+        if (payload.ChangeKind == "Deleted")
+        {
+            await DeletePermissionViewByPayloadAsync(payload, ct);
+            return;
+        }
+
+        var maps = await _apiMapRepo.FindActiveByProjectAsync(new ProjectCode(entity.Project), ct);
+        var map = maps.FirstOrDefault(m =>
+            string.Equals(m.HttpMethod, payload.HttpMethod, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(m.RoutePattern, payload.RoutePattern, StringComparison.OrdinalIgnoreCase));
+
+        if (map is null)
+        {
+            await DeletePermissionViewByPayloadAsync(payload, ct);
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(payload.OldPermissionCode)
+            || !string.IsNullOrWhiteSpace(payload.OldAction))
+        {
+            await DeletePermissionViewByPayloadAsync(payload, ct);
+        }
+
+        var doc = new PermissionViewDocument
+        {
+            Project = map.Project.Value,
+            HttpMethod = map.HttpMethod,
+            PermissionCode = map.PermissionCode.Value,
+            RuleCode = string.Empty,
+            Action = map.Action,
+            ResourceType = "api",
+            Path = map.RoutePattern,
+            Status = map.Status.ToString(),
+            UpdatedAt = map.UpdatedAt,
+        };
+
+        await IndexDocumentAsync(
+            RbacPermissionViewIndexMapping.IndexName,
+            PermissionViewDocumentId(map.Project.Value, map.HttpMethod, map.RoutePattern),
+            doc,
+            ct);
+    }
+
     // 鈹€鈹€ 杈呭姪 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
     private async Task IndexDocumentAsync<T>(string index, string id, T doc, CancellationToken ct)
@@ -237,6 +291,57 @@ public sealed class RbacElasticsearchOutboxProcessor
                 index, id, response.ServerError?.Error?.Reason);
         }
     }
+
+    private async Task DeletePermissionViewByPayloadAsync(ApiMapChangedPayload payload, CancellationToken ct)
+    {
+        var project = payload.Project;
+        var permissionCode = payload.OldPermissionCode ?? payload.NewPermissionCode;
+        var action = payload.OldAction ?? payload.NewAction;
+
+        await DeleteDocumentAsync<PermissionViewDocument>(
+            RbacPermissionViewIndexMapping.IndexName,
+            PermissionViewDocumentId(project, payload.HttpMethod, payload.RoutePattern),
+            ct);
+
+        var response = await _esClient.DeleteByQueryAsync<PermissionViewDocument>(d => d
+            .Index(RbacPermissionViewIndexMapping.IndexName)
+            .Query(q => q.Bool(b =>
+            {
+                var filters = new List<Func<QueryContainerDescriptor<PermissionViewDocument>, QueryContainer>>
+                {
+                    f => f.Term(t => t.Field(x => x.Project).Value(project)),
+                    f => f.Term(t => t.Field(x => x.Path.Suffix("keyword")).Value(payload.RoutePattern)),
+                    f => f.Term(t => t.Field(x => x.ResourceType).Value("api")),
+                };
+
+                if (!string.IsNullOrWhiteSpace(permissionCode))
+                    filters.Add(f => f.Term(t => t.Field(x => x.PermissionCode).Value(permissionCode)));
+
+                if (!string.IsNullOrWhiteSpace(action))
+                    filters.Add(f => f.Term(t => t.Field(x => x.Action).Value(action)));
+
+                if (!string.IsNullOrWhiteSpace(payload.HttpMethod))
+                    filters.Add(f => f.Bool(bb => bb.Should(
+                        s => s.Term(t => t.Field(x => x.HttpMethod).Value(payload.HttpMethod)),
+                        s => s.Bool(m => m.MustNot(n => n.Exists(e => e.Field(x => x.HttpMethod)))))
+                        .MinimumShouldMatch(1)));
+
+                return b.Filter(filters);
+            })), ct);
+
+        if (!response.IsValid)
+        {
+            _logger.LogError(
+                "ES delete-by-query failed index={Index} route={Route} error={Err}",
+                RbacPermissionViewIndexMapping.IndexName,
+                payload.RoutePattern,
+                response.ServerError?.Error?.Reason);
+            throw new InvalidOperationException($"ES delete-by-query failed: {response.ServerError?.Error?.Reason}");
+        }
+    }
+
+    private static string PermissionViewDocumentId(string project, string method, string routePattern) =>
+        $"{project}:{method.ToUpperInvariant()}:{routePattern}".Replace("/", "~");
 
     private T? Deserialize<T>(string? payload) where T : class
     {
