@@ -102,195 +102,110 @@ USING (
     FROM "rbac_bootstrap_config" cfg
     CROSS JOIN (
     SELECT 'auth' AS "rule_code", 'menu:auth' AS "permission_code", CAST(NULL AS VARCHAR2(128)) AS "parent_rule_code",
-           'MenuDir' AS "type", UNISTR('\6743\9650\7BA1\7406') AS "title", 'auth' AS "name", 'auth' AS "path",
+           'MenuDir' AS "type", '权限管理' AS "title", 'auth' AS "name", 'auth' AS "path",
            '' AS "icon", CAST(NULL AS VARCHAR2(16)) AS "menu_type", CAST(NULL AS VARCHAR2(512)) AS "url",
            CAST(NULL AS VARCHAR2(256)) AS "component", 'none' AS "extend", '' AS "remark",
            0 AS "keepalive", 10 AS "weigh", 'Active' AS "status" FROM dual
     UNION ALL SELECT 'auth/apiMap', 'menu:auth/apiMap', 'auth',
-           'Menu', UNISTR('\7AEF\70B9\6388\6743'), 'auth/apiMap', 'auth/apiMap',
+           'Menu', '端点授权', 'auth/apiMap', 'auth/apiMap',
            NULL, 'Tab', NULL,
            '/src/views/backend/auth/apiMap/index.vue', NULL, NULL,
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/projectGrant', 'menu:auth/projectGrant', 'auth',
-           'Menu', UNISTR('\8D85\7BA1\6388\6743'), 'auth/projectGrant', 'auth/projectGrant',
+           'Menu', '超管授权', 'auth/projectGrant', 'auth/projectGrant',
            NULL, 'Tab', NULL,
            '/src/views/backend/auth/projectGrant/index.vue', NULL, NULL,
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/rule', 'menu:auth/rule', 'auth',
-           'Menu', UNISTR('\83DC\5355\89C4\5219\7BA1\7406'), 'auth/rule', 'auth/rule',
+           'Menu', '菜单规则管理', 'auth/rule', 'auth/rule',
            '', 'Tab', NULL,
            '/src/views/backend/auth/rule/index.vue', 'none', '',
            0, 97, 'Active' FROM dual
     UNION ALL SELECT 'auth/admin', 'menu:auth/admin', 'auth',
-           'Menu', UNISTR('\7BA1\7406\5458\7BA1\7406'), 'auth/admin', 'auth/admin',
+           'Menu', '管理员管理', 'auth/admin', 'auth/admin',
            '', 'Tab', NULL,
            '/src/views/backend/auth/admin/index.vue', 'none', '',
            0, 98, 'Active' FROM dual
     UNION ALL SELECT 'auth/group', 'menu:auth/group', 'auth',
-           'Menu', UNISTR('\89D2\8272\7EC4\7BA1\7406'), 'auth/group', 'auth/group',
+           'Menu', '角色组管理', 'auth/group', 'auth/group',
            '', 'Tab', NULL,
            '/src/views/backend/auth/group/index.vue', 'none', '',
            0, 99, 'Active' FROM dual
     UNION ALL SELECT 'auth/admin/add', 'button:auth/admin/add', 'auth/admin',
-           'Button', UNISTR('\6DFB\52A0'), 'auth/admin/add', '',
+           'Button', '添加', 'auth/admin/add', '',
            '', NULL, NULL,
            NULL, NULL, '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/admin/del', 'button:auth/admin/del', 'auth/admin',
-           'Button', UNISTR('\5220\9664'), 'auth/admin/del', '',
+           'Button', '删除', 'auth/admin/del', '',
            '', NULL, NULL,
            NULL, NULL, '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/admin/edit', 'button:auth/admin/edit', 'auth/admin',
-           'Button', UNISTR('\7F16\8F91'), 'auth/admin/edit', '',
+           'Button', '编辑', 'auth/admin/edit', '',
            '', NULL, NULL,
            NULL, NULL, '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/admin/index', 'button:auth/admin/index', 'auth/admin',
-           'Button', UNISTR('\67E5\770B'), 'auth/admin/index', '',
+           'Button', '查看', 'auth/admin/index', '',
            '', NULL, NULL,
            NULL, NULL, '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/group/add', 'button:auth/group/add', 'auth/group',
-           'Button', UNISTR('\6DFB\52A0'), 'auth/group/add', '',
+           'Button', '添加', 'auth/group/add', '',
            '', NULL, NULL,
            NULL, NULL, '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/group/del', 'button:auth/group/del', 'auth/group',
-           'Button', UNISTR('\5220\9664'), 'auth/group/del', '',
+           'Button', '删除', 'auth/group/del', '',
            '', NULL, NULL,
            NULL, NULL, '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/group/edit', 'button:auth/group/edit', 'auth/group',
-           'Button', UNISTR('\7F16\8F91'), 'auth/group/edit', '',
+           'Button', '编辑', 'auth/group/edit', '',
            '', NULL, NULL,
            NULL, NULL, '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/group/index', 'button:auth/group/index', 'auth/group',
-           'Button', UNISTR('\67E5\770B'), 'auth/group/index', '',
+           'Button', '查看', 'auth/group/index', '',
            '', NULL, NULL,
            NULL, NULL, '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/rule/add', 'button:auth/rule/add', 'auth/rule',
-           'Button', UNISTR('\6DFB\52A0'), 'auth/rule/add', '',
+           'Button', '添加', 'auth/rule/add', '',
            '', NULL, NULL,
            NULL, NULL, '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/rule/del', 'button:auth/rule/del', 'auth/rule',
-           'Button', UNISTR('\5220\9664'), 'auth/rule/del', '',
+           'Button', '删除', 'auth/rule/del', '',
            '', NULL, NULL,
            NULL, NULL, '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/rule/edit', 'button:auth/rule/edit', 'auth/rule',
-           'Button', UNISTR('\7F16\8F91'), 'auth/rule/edit', '',
+           'Button', '编辑', 'auth/rule/edit', '',
            '', NULL, NULL,
            NULL, NULL, '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/rule/index', 'button:auth/rule/index', 'auth/rule',
-           'Button', UNISTR('\67E5\770B'), 'auth/rule/index', '',
+           'Button', '查看', 'auth/rule/index', '',
            '', NULL, NULL,
            NULL, NULL, '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'auth/rule/sortable', 'button:auth/rule/sortable', 'auth/rule',
-           'Button', UNISTR('\5FEB\901F\6392\5E8F'), 'auth/rule/sortable', '',
+           'Button', '快速排序', 'auth/rule/sortable', '',
            '', NULL, NULL,
            NULL, NULL, '',
-           0, 0, 'Active' FROM dual
-    UNION ALL SELECT 'buildadmin', 'menu:buildadmin', CAST(NULL AS VARCHAR2(128)),
-           'Menu', 'BuildAdmin', 'buildadmin', 'buildadmin',
-           '', 'Link', 'https://doc.buildadmin.com',
-           CAST(NULL AS VARCHAR2(256)), 'none', '',
-           0, 0, 'Disabled' FROM dual
-    UNION ALL SELECT 'dashboard/index', 'button:dashboard/index', 'dashboard',
-           'Button', UNISTR('\67E5\770B'), 'dashboard/index', '',
-           '', NULL, NULL,
-           NULL, NULL, '',
-           0, 0, 'Active' FROM dual
-    UNION ALL SELECT 'inspection/briefing', 'menu:inspection/briefing', 'inspection',
-           'Menu', UNISTR('\5DE1\524D\901A\62A5'), 'inspection/briefing', 'inspection/briefing',
-           '', 'Tab', NULL,
-           '/src/views/backend/inspection/briefing/PreInspectionBriefingPage.vue', 'none', '',
-           0, 0, 'Active' FROM dual
-    UNION ALL SELECT 'inspection/plan', 'menu:inspection/plan', 'inspection',
-           'Menu', UNISTR('\5DE1\5BDF\8BA1\5212'), 'inspection/plan', 'inspection/plan',
-           '', 'Tab', NULL,
-           '/src/views/backend/inspection/plan/Inspectionplan.vue', 'none', '',
-           0, 0, 'Active' FROM dual
-    UNION ALL SELECT 'inspection/secondment', 'menu:inspection/secondment', 'inspection',
-           'Menu', UNISTR('\4EBA\5458\9009\8C03'), 'inspection/secondment', 'inspection/secondment',
-           '', 'Tab', NULL,
-           '/src/views/backend/inspection/secondment/SecondmentView.vue', 'none', '',
-           0, 0, 'Active' FROM dual
-    UNION ALL SELECT 'inspectionprep/lnspectionpreppage', 'menu:inspectionprep/lnspectionpreppage', 'inspection',
-           'Menu', UNISTR('\5DE1\5BDF\51C6\5907'), 'inspectionprep/lnspectionpreppage', 'inspectionprep/lnspectionpreppage',
-           '', 'Tab', NULL,
-           '/src/views/backend/inspection/inspectionprep/Inspectionpreppage.vue', 'none', '',
-           0, 0, 'Active' FROM dual
-    UNION ALL SELECT 'issue/page/add', 'button:issue/page/add', 'issue/page',
-           'Button', UNISTR('\95EE\9898\5165\5E93'), 'issue/page/add', '',
-           '', NULL, NULL,
-           NULL, NULL, '',
-           0, 0, 'Active' FROM dual
-    UNION ALL SELECT 'issue/page/view', 'button:issue/page/view', 'issue/page',
-           'Button', UNISTR('\95EE\9898\67E5\770B'), 'issue/page/view', '',
-           '', NULL, NULL,
-           NULL, NULL, '',
-           0, 0, 'Active' FROM dual
-    UNION ALL SELECT 'talentpool/pool', 'menu:talentpool/pool', 'talent',
-           'Menu', UNISTR('\5DE1\5BDF\961F\4F0D'), 'talentpool/pool', 'talentpool/pool',
-           '', 'Tab', NULL,
-           '/src/views/backend/talentpool/pool/TalentPoolPage.vue', 'none', '',
            0, 0, 'Active' FROM dual
     UNION ALL SELECT 'dashboard', 'menu:dashboard', CAST(NULL AS VARCHAR2(128)),
-           'Menu', UNISTR('\9996\9875'), 'dashboard', 'dashboard',
+           'Menu', '首页', 'dashboard', 'dashboard',
            '', 'Tab', NULL,
            '/src/views/backend/dashboard.vue', 'none', '',
            0, 1, 'Active' FROM dual
-    UNION ALL SELECT 'dailybulletin/dailybulletinpage', 'menu:dailybulletin/dailybulletinpage', CAST(NULL AS VARCHAR2(128)),
-           'Menu', UNISTR('\65E5\5E38\901A\62A5'), 'dailybulletin/dailybulletinpage', 'dailybulletin/dailybulletinpage',
-           '', 'Tab', NULL,
-           '/src/views/backend/dailybulletin/DailyBulletinPage.vue', 'none', '',
-           0, 20, 'Active' FROM dual
-    UNION ALL SELECT 'supervisionissue/page', 'menu:supervisionissue/page', CAST(NULL AS VARCHAR2(128)),
-           'Menu', UNISTR('\4E0A\7EA7\5DE1\89C6'), 'supervisionissue/page', 'supervisionissue/page',
-           '', 'Tab', NULL,
-           '/src/views/backend/supervisionissue/Supervisionissuepage.vue', 'none', '',
-           0, 30, 'Active' FROM dual
-    UNION ALL SELECT 'inspection', 'menu:inspection', CAST(NULL AS VARCHAR2(128)),
-           'MenuDir', UNISTR('\5DE1\5BDF\8BA1\5212\7BA1\7406'), 'inspection', '',
-           '', 'Tab', NULL,
-           NULL, 'none', '',
-           0, 80, 'Active' FROM dual
-    UNION ALL SELECT 'issue/page', 'menu:issue/page', CAST(NULL AS VARCHAR2(128)),
-           'Menu', UNISTR('\95EE\9898\6574\6539\5E93'), 'issue/page', 'issue/page',
-           '', 'Tab', NULL,
-           '/src/views/backend/issue/issuepage.vue', 'none', '',
-           0, 80, 'Active' FROM dual
-    UNION ALL SELECT 'inspectionprocess/page', 'menu:inspectionprocess/page', CAST(NULL AS VARCHAR2(128)),
-           'Menu', UNISTR('\5DE1\5BDF\8FC7\7A0B\7BA1\63A7'), 'inspectionprocess/page', 'inspectionprocess/page',
-           '', 'Tab', NULL,
-           '/src/views/backend/inspectionprocess/Inspectionprocesspage.vue', 'none', '',
-           0, 90, 'Active' FROM dual
-    UNION ALL SELECT 'process', 'menu:process', CAST(NULL AS VARCHAR2(128)),
-           'MenuDir', UNISTR('\5F85\529E\4E2D\5FC3'), 'process', 'process',
-           '', 'Tab', NULL,
-           NULL, 'none', '',
-           0, 90, 'Active' FROM dual
-    UNION ALL SELECT 'process/myapplication', 'menu:process/myapplication', 'process',
-           'Menu', UNISTR('\6211\7684\7533\8BF7'), 'process/myapplication', 'process/myapplication',
-           '', 'Tab', NULL,
-           '/src/views/backend/todo/MyApplication.vue', 'none', '',
-           0, 91, 'Active' FROM dual
-    UNION ALL SELECT 'process/mytodo', 'menu:process/mytodo', 'process',
-           'Menu', UNISTR('\6211\7684\5F85\529E'), 'process/mytodo', 'process/mytodo',
-           '', 'Tab', NULL,
-           '/src/views/backend/todo/MyTodo.vue', 'none', '',
-           0, 94, 'Active' FROM dual
-    UNION ALL SELECT 'talent', 'menu:talent', CAST(NULL AS VARCHAR2(128)),
-           'MenuDir', UNISTR('\4EBA\624D\961F\4F0D'), 'talent', 'talent',
-           '', 'Tab', NULL,
-           NULL, 'none', '',
-           0, 100, 'Active' FROM dual
+    UNION ALL SELECT 'dashboard/index', 'button:dashboard/index', 'dashboard',
+           'Button', '查看', 'dashboard/index', '',
+           '', NULL, NULL,
+           NULL, NULL, '',
+           0, 0, 'Active' FROM dual
     ) m
 ) s
 ON (t."rule_code" = s."rule_code" AND t."project" = s."project")
@@ -396,6 +311,8 @@ UNION ALL
 SELECT 'rbac_rule', COUNT(*)
 FROM "rbac_rule"
 WHERE "project" = (SELECT "project" FROM "rbac_bootstrap_config")
+  AND ("rule_code" = 'auth' OR "rule_code" LIKE 'auth/%'
+       OR "rule_code" = 'dashboard' OR "rule_code" = 'dashboard/index')
 UNION ALL
 SELECT 'api_permission_map', COUNT(*)
 FROM "rbac_api_permission_map"

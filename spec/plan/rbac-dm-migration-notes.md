@@ -23,7 +23,7 @@
 
 - DM schema script: `sql/rbac-init-dm.sql`.
 - DM bootstrap script: `sql/rbac-bootstrap-dm.sql`.
-- The DM bootstrap script seeds the full route/menu rule set copied from the old MySQL `oversia` project: all `rbac_rule` rows for that project (38 rows). Chinese menu titles are written with `UNISTR(...)` to avoid `disql` pipe encoding issues.
+- The DM bootstrap script seeds only the `auth` permission-management rules and the `dashboard` rules. Chinese menu titles are written as normal string literals because the script is intended to be executed from a database management tool.
 
 Suggested schema execution:
 
