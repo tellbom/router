@@ -4,7 +4,7 @@ namespace Rbac.Application.Repositories;
 
 /// <summary>
 /// 用户所有 project 授权的内存映射。
-/// 由 IProjectGrantMySqlReader 和 RbacProjectGrantCache 共同使用。
+/// 由 IProjectGrantDMReader 和 RbacProjectGrantCache 共同使用。
 /// </summary>
 public sealed class UserProjectGrantMap
 {
@@ -13,11 +13,11 @@ public sealed class UserProjectGrantMap
 }
 
 /// <summary>
-/// 从 MySQL 读取用户 project 授权数据的契约。
+/// 从 DM 读取用户 project 授权数据的契约。
 /// 定义在 Application 层，由 Rbac.Infrastructure.DM 实现。
-/// Rbac.Infrastructure.Redis 的 RbacProjectGrantCache 依赖此接口做 MySQL 兜底。
+/// Rbac.Infrastructure.Redis 的 RbacProjectGrantCache 依赖此接口做 DM 兜底。
 /// </summary>
-public interface IProjectGrantMySqlReader
+public interface IProjectGrantDMReader
 {
     /// <summary>
     /// 读取 userid 的全部 project 授权（含 super 标志和 policyVersion）。

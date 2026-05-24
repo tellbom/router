@@ -69,7 +69,7 @@ public sealed class RbacPermsetLazyRebuildCoordinator
             Project = project,
             Members = members,
             VersionAtBuildTime = versionAtStart,
-            Source = PermsetInputSource.MySqlCasbinDerived,
+            Source = PermsetInputSource.DMCasbinDerived,
         };
 
         var written = await _permsetBuilder.BuildAndWriteAsync(input, ct);

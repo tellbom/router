@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <PackageReference Include="Hangfire.Core" />
-    <PackageReference Include="Hangfire.MySqlStorage" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>
 

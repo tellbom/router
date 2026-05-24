@@ -13,7 +13,7 @@ namespace Rbac.Infrastructure.Redis;
 /// <summary>
 /// PATCH-05: IRbacSnapshotService 的实现。
 ///
-/// 读取顺序：FusionCache L1 → Redis STRING GET → MySQL/Casbin 重建。
+/// 读取顺序：FusionCache L1 → Redis STRING GET → DM/Casbin 重建。
 /// 快照存储在 rbac:snapshot:{project}:{userid}，JSON 序列化，TTL 30 min。
 ///
 /// 重建约束（设计文档 ADR-001 §5.3）：
@@ -132,7 +132,7 @@ public sealed class RbacSnapshotService : IRbacSnapshotService
             return null;
         }
 
-        // 从 MySQL 读取 g policy（用户-组关系）和 p policy（组-权限码）
+        // 从 DM 读取 g policy（用户-组关系）和 p policy（组-权限码）
         var groupings   = await _groupingReader.LoadAsync(projectCode, ct);
         var permissions = await _permissionReader.LoadAsync(projectCode, ct);
 
@@ -202,7 +202,7 @@ public sealed class RbacSnapshotService : IRbacSnapshotService
             Project           = project,
             Members           = permsetMembers,
             VersionAtBuildTime = versionNow,
-            Source            = PermsetInputSource.MySqlCasbinDerived,
+            Source            = PermsetInputSource.DMCasbinDerived,
         }, ct);
 
         _logger.LogDebug(

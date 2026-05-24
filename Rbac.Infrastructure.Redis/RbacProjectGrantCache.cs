@@ -9,7 +9,7 @@ namespace Rbac.Infrastructure.Redis;
 
 /// <summary>
 /// <see cref="IProjectGrantStore"/> 的缓存实现。
-/// 读取顺序：FusionCache L1 → Redis rbac:user-projects:{userid} → MySQL（通过回调）。
+/// 读取顺序：FusionCache L1 → Redis rbac:user-projects:{userid} → DM（通过回调）。
 ///
 /// 约束：
 /// - FusionCache 包装 project 授权关系对象读取（中等粒度，适合 L1 缓存）。
@@ -20,7 +20,7 @@ public sealed class RbacProjectGrantCache : IProjectGrantStore
 {
     private readonly IFusionCache _fusionCache;
     private readonly IDatabase _redisDb;
-    private readonly IProjectGrantMySqlReader _mysqlReader;
+    private readonly IProjectGrantDMReader _dmReader;
     private readonly ILogger<RbacProjectGrantCache> _logger;
 
     // FusionCache key 前缀（L1 缓存用，不是 Redis key）
@@ -29,12 +29,12 @@ public sealed class RbacProjectGrantCache : IProjectGrantStore
     public RbacProjectGrantCache(
         IFusionCache fusionCache,
         IDatabase redisDb,
-        IProjectGrantMySqlReader mysqlReader,
+        IProjectGrantDMReader dmReader,
         ILogger<RbacProjectGrantCache> logger)
     {
         _fusionCache = fusionCache;
         _redisDb = redisDb;
-        _mysqlReader = mysqlReader;
+        _dmReader = dmReader;
         _logger = logger;
     }
 
@@ -46,7 +46,7 @@ public sealed class RbacProjectGrantCache : IProjectGrantStore
     {
         var fcKey = $"{FcKeyPrefix}{userid}";
 
-        // FusionCache 包装：L1 命中直接返回，L2 miss 时回调从 Redis/MySQL 重建
+        // FusionCache 包装：L1 命中直接返回，L2 miss 时回调从 Redis/DM 重建
         var grants = await _fusionCache.GetOrSetAsync<UserProjectGrantMap?>(
             fcKey,
             async (ctx, token) =>
@@ -55,12 +55,12 @@ public sealed class RbacProjectGrantCache : IProjectGrantStore
                 var fromRedis = await LoadFromRedisAsync(userid, token);
                 if (fromRedis is not null) return fromRedis;
 
-                // Redis miss：从 MySQL 读取并回写 Redis
-                var fromMysql = await _mysqlReader.GetUserGrantsAsync(userid, token);
-                if (fromMysql is not null)
-                    await WriteToRedisAsync(userid, fromMysql, token);
+                // Redis miss：从 DM 读取并回写 Redis
+                var fromDm = await _dmReader.GetUserGrantsAsync(userid, token);
+                if (fromDm is not null)
+                    await WriteToRedisAsync(userid, fromDm, token);
 
-                return fromMysql;
+                return fromDm;
             },
             new FusionCacheEntryOptions
             {
@@ -118,4 +118,4 @@ public sealed class RbacProjectGrantCache : IProjectGrantStore
     }
 }
 
-// UserProjectGrantMap 定义在 Rbac.Application.Repositories.IProjectGrantMySqlReader.cs
+// UserProjectGrantMap 定义在 Rbac.Application.Repositories.IProjectGrantDMReader.cs

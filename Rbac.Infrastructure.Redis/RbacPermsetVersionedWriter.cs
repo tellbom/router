@@ -43,7 +43,7 @@ public sealed class RbacPermsetVersionedWriter
     /// <returns>写入成功返回 true；版本冲突丢弃返回 false。</returns>
     public async Task<bool> WriteIfVersionMatchAsync(PermsetBuildInput input)
     {
-        if (input.Source != PermsetInputSource.MySqlCasbinDerived)
+        if (input.Source != PermsetInputSource.DMCasbinDerived)
         {
             _logger.LogError(
                 "Rejected illegal permset source={S} userid={U}", input.Source, input.Userid);

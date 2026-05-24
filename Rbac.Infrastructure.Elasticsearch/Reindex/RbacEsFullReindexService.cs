@@ -20,7 +20,7 @@ namespace Rbac.Infrastructure.Elasticsearch.Reindex;
 /// 0. [PATCH-11] Alias preflight 检查（alias 存在且指向唯一索引）。
 /// 1. 创建新物理索引（版本化命名）。
 /// 2. 应用 mapping 和 settings。
-/// 3. 从 MySQL 全量读取数据并写入新索引。
+/// 3. 从 DM 全量读取数据并写入新索引。
 /// 4. 校验文档数量。
 /// 5. 校验通过后原子切换 alias。
 /// 6. 切换失败或校验失败时保留旧索引，不影响当前查询。
@@ -206,7 +206,7 @@ public sealed class RbacEsFullReindexService
     /// <summary>
     /// PATCH-10: 重建权限视图索引（permission_view）。
     ///
-    /// 数据来源：rbac_api_permission_map（MySQL 真相）+ rbac_group（groupCodes/groupNames 关联）。
+    /// 数据来源：rbac_api_permission_map（DM 真相）+ rbac_group（groupCodes/groupNames 关联）。
     /// permission_view 是一个管理端可观性视图，不是运行态鉴权真相。
     ///
     /// ProjectCode("*") 表示全项目读取，由 ApiPermissionMapRepository.FindActiveByProjectAsync 实现。
@@ -221,7 +221,7 @@ public sealed class RbacEsFullReindexService
         {
             var projectCode = new ProjectCode(project ?? "*");
 
-            // 从 MySQL 读取所有 active API 权限映射
+            // 从 DM 读取所有 active API 权限映射
             var maps = await _apiMapRepo.FindActiveByProjectAsync(projectCode, ct);
 
             // 读取所有 active 组，用于关联 permissionCode → groupCodes / groupNames
@@ -275,14 +275,14 @@ public sealed class RbacEsFullReindexService
     /// <summary>
     /// PATCH-10: 重建审计日志索引（audit_log）。
     ///
-    /// audit_log 的真相数据在 MySQL 的审计表中，或由实时 Channel 写入 ES。
+    /// audit_log 的真相数据在 DM 的审计表中，或由实时 Channel 写入 ES。
     /// 全量重建场景（audit_log 索引损坏/恢复）：
-    ///   - 如果有独立审计 MySQL 表，从中读取并写入。
+    ///   - 如果有独立审计 DM 表，从中读取并写入。
     ///   - 如果审计数据只存在于 ES（当前架构），全量重建时重新建空索引+切换 alias 即可，
     ///     保留已有数据靠 SwitchAliasAsync 不删除原索引文档（alias 切换后旧索引保留）。
     ///
     /// 当前实现：创建新空索引 + 切换 alias（保证 alias 指向唯一索引）。
-    /// 后续扩展：如有审计 MySQL 表，在此方法中回读并 bulk 写入。
+    /// 后续扩展：如有审计 DM 表，在此方法中回读并 bulk 写入。
     /// </summary>
     public async Task<ReindexResult> ReindexAuditLogAsync(
         string? project = null, CancellationToken ct = default)
@@ -290,7 +290,7 @@ public sealed class RbacEsFullReindexService
         var alias    = RbacAuditLogIndexMapping.IndexName;
         var newIndex = BuildVersionedIndexName(alias);
 
-        // 审计日志的全量重建是"确保索引和 alias 健康"，而非从 MySQL 批量回填
+        // 审计日志的全量重建是"确保索引和 alias 健康"，而非从 DM 批量回填
         // 因为 audit_log 数据量通常极大，且写入是实时流式的
         return await ExecuteReindexAsync(alias, newIndex, ct, async () =>
         {
@@ -349,7 +349,7 @@ public sealed class RbacEsFullReindexService
                 if (esCount < docCount * 0.99)
                 {
                     _logger.LogError(
-                        "Reindex count mismatch alias={Alias} mysql={Mysql} es={Es}",
+                        "Reindex count mismatch alias={Alias} source={Source} es={Es}",
                         alias, docCount, esCount);
                     await _esClient.Indices.DeleteAsync(newIndex, ct: ct);
                     return ReindexResult.Failure(alias, newIndex,

@@ -103,13 +103,13 @@ builder.Services.AddScoped<IRuleRepository,            RuleRepository>();
 builder.Services.AddScoped<IProjectGrantRepository,    ProjectGrantRepository>();
 builder.Services.AddScoped<IApiPermissionMapRepository, ApiPermissionMapRepository>();
 builder.Services.AddScoped<ICasbinPolicyRepository,    CasbinPolicyRepository>();
-builder.Services.AddScoped<IProjectGrantMySqlReader,   ProjectGrantMySqlReader>();
+builder.Services.AddScoped<IProjectGrantDMReader,    ProjectGrantDMReader>();
 builder.Services.AddScoped<RbacManagementWriteGuard>();
 builder.Services.AddScoped<IRbacManagementWriteService, RbacManagementWriteService>();
 
 // Casbin policy readers（PATCH-06）
-builder.Services.AddScoped<ICasbinGroupingPolicyReader,   CasbinMySqlGroupingPolicyReader>();
-builder.Services.AddScoped<ICasbinPermissionPolicyReader, CasbinMySqlPermissionPolicyReader>();
+builder.Services.AddScoped<ICasbinGroupingPolicyReader,   CasbinDMGroupingPolicyReader>();
+builder.Services.AddScoped<ICasbinPermissionPolicyReader, CasbinDMPermissionPolicyReader>();
 
 // ── Infrastructure: Redis + FusionCache ───────────────────────────
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>

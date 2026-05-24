@@ -9,7 +9,7 @@ using Rbac.Infrastructure.DM.Mapping;
 namespace Rbac.Infrastructure.DM.Policies;
 
 /// <summary>
-/// ICasbinGroupingPolicyReader 的真实 MySQL 实现。
+/// ICasbinGroupingPolicyReader 的真实 DM 实现。
 ///
 /// 数据来源：rbac_group_member 表（RbacGroupMember 聚合根）。
 /// 该表是 Casbin `g` policy 的唯一真相来源，对应三元组 (userid, groupCode, project)。
@@ -18,14 +18,14 @@ namespace Rbac.Infrastructure.DM.Policies;
 /// 禁止从 rbac_project_grant × rbac_group 做笛卡尔积推导（会导致越权）。
 /// 禁止从 Redis permset 或 ES 反向加载。
 /// </summary>
-public sealed class CasbinMySqlGroupingPolicyReader : ICasbinGroupingPolicyReader
+public sealed class CasbinDMGroupingPolicyReader : ICasbinGroupingPolicyReader
 {
     private readonly RbacDbContext _db;
-    private readonly ILogger<CasbinMySqlGroupingPolicyReader> _logger;
+    private readonly ILogger<CasbinDMGroupingPolicyReader> _logger;
 
-    public CasbinMySqlGroupingPolicyReader(
+    public CasbinDMGroupingPolicyReader(
         RbacDbContext db,
-        ILogger<CasbinMySqlGroupingPolicyReader> logger)
+        ILogger<CasbinDMGroupingPolicyReader> logger)
     {
         _db     = db;
         _logger = logger;
@@ -59,19 +59,19 @@ public sealed class CasbinMySqlGroupingPolicyReader : ICasbinGroupingPolicyReade
 }
 
 /// <summary>
-/// ICasbinPermissionPolicyReader 的 MySQL 实现。（与 Wave 1 实现一致，未修改）
+/// ICasbinPermissionPolicyReader 的 DM 实现。（与 Wave 1 实现一致，未修改）
 ///
 /// 从 rbac_group.permission_codes 展开 p policy（组-权限码-action 四元组）。
 /// action 从 rbac_api_permission_map 的 action 字段查找；未命中时默认 "access"。
 /// </summary>
-public sealed class CasbinMySqlPermissionPolicyReader : ICasbinPermissionPolicyReader
+public sealed class CasbinDMPermissionPolicyReader : ICasbinPermissionPolicyReader
 {
     private readonly RbacDbContext _db;
-    private readonly ILogger<CasbinMySqlPermissionPolicyReader> _logger;
+    private readonly ILogger<CasbinDMPermissionPolicyReader> _logger;
 
-    public CasbinMySqlPermissionPolicyReader(
+    public CasbinDMPermissionPolicyReader(
         RbacDbContext db,
-        ILogger<CasbinMySqlPermissionPolicyReader> logger)
+        ILogger<CasbinDMPermissionPolicyReader> logger)
     {
         _db     = db;
         _logger = logger;

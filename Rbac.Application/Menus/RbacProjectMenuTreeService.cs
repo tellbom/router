@@ -9,7 +9,7 @@ namespace Rbac.Application.Menus;
 
 /// <summary>
 /// project 全量菜單樹服務。
-/// 读取顺序：IMenuTreeCache(FusionCache L1) → Redis L2 → MySQL 重建。
+/// 读取顺序：IMenuTreeCache(FusionCache L1) → Redis L2 → DM 重建。
 /// 不引用 Infrastructure.Redis，通過 IMenuTreeCache 接口訪問緩存。
 /// </summary>
 public sealed class RbacProjectMenuTreeService
@@ -35,8 +35,8 @@ public sealed class RbacProjectMenuTreeService
             project,
             async token =>
             {
-                _logger.LogDebug("MenuTree cache miss, loading from MySQL project={Project}", project);
-                return await BuildFromMySqlAsync(project, token);
+                _logger.LogDebug("MenuTree cache miss, loading from DM project={Project}", project);
+                return await BuildFromDMAsync(project, token);
             },
             ct) ?? Array.Empty<MenuNodeDto>();
     }
@@ -44,7 +44,7 @@ public sealed class RbacProjectMenuTreeService
     public Task InvalidateAsync(string project) =>
         _menuTreeCache.EvictMenuTreeAsync(project);
 
-    private async Task<IReadOnlyList<MenuNodeDto>> BuildFromMySqlAsync(
+    private async Task<IReadOnlyList<MenuNodeDto>> BuildFromDMAsync(
         string project, CancellationToken ct)
     {
         var rules = await _ruleRepository.FindActiveByProjectAsync(new ProjectCode(project), ct);

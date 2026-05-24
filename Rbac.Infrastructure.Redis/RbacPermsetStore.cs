@@ -66,7 +66,7 @@ public sealed class RbacPermsetStore : IRbacPermsetBuilder
     /// <inheritdoc/>
     public async Task<bool> BuildAndWriteAsync(PermsetBuildInput input, CancellationToken ct = default)
     {
-        if (input.Source != PermsetInputSource.MySqlCasbinDerived)
+        if (input.Source != PermsetInputSource.DMCasbinDerived)
         {
             _logger.LogError(
                 "Rejected permset write with illegal source={Source} userid={Userid} project={Project}",

@@ -6,8 +6,8 @@ namespace Rbac.Infrastructure.DM.Mapping;
 
 public static class RbacRelationalDatabaseOptions
 {
-    public const string MySqlProvider = "MySql";
     public const string DmProvider = "DM";
+    public const string MySqlProvider = "MySql";
 
     public static void UseRbacRelationalDatabase(
         this DbContextOptionsBuilder options,
@@ -27,12 +27,13 @@ public static class RbacRelationalDatabaseOptions
     public static string NormalizeProvider(string? provider)
     {
         if (string.IsNullOrWhiteSpace(provider))
-            return MySqlProvider;
+            return DmProvider;
 
         return provider.Trim().ToLowerInvariant() switch
         {
             "dm" or "dameng" or "damengdb" => DmProvider,
-            _ => MySqlProvider,
+            "mysql" => MySqlProvider,
+            _ => DmProvider,
         };
     }
 

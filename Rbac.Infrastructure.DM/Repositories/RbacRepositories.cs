@@ -16,7 +16,7 @@ namespace Rbac.Infrastructure.DM.Repositories;
 // 鈹€鈹€ 绠＄悊鍛?Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: IAdministratorRepository 鐨?MySQL/EF Core 瀹炵幇銆?/// ProjectCode("*") 绾﹀畾锛氳烦杩?project 杩囨护锛岃鍙栨墍鏈?project 涓嬬殑璁板綍銆?/// </summary>
+/// PATCH-07: IAdministratorRepository 鐨?DM/EF Core 瀹炵幇銆?/// ProjectCode("*") 绾﹀畾锛氳烦杩?project 杩囨护锛岃鍙栨墍鏈?project 涓嬬殑璁板綍銆?/// </summary>
 public sealed class AdministratorRepository : IAdministratorRepository
 {
     private readonly RbacDbContext _db;
@@ -70,7 +70,7 @@ public sealed class AdministratorRepository : IAdministratorRepository
 // 鈹€鈹€ 鏉冮檺缁?Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: IGroupRepository 鐨?MySQL/EF Core 瀹炵幇銆?/// </summary>
+/// PATCH-07: IGroupRepository 鐨?DM/EF Core 瀹炵幇銆?/// </summary>
 public sealed class GroupRepository : IGroupRepository
 {
     private readonly RbacDbContext _db;
@@ -116,7 +116,7 @@ public sealed class GroupRepository : IGroupRepository
 // 鈹€鈹€ 瑙勫垯 Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: IRuleRepository 鐨?MySQL/EF Core 瀹炵幇銆?/// </summary>
+/// PATCH-07: IRuleRepository 鐨?DM/EF Core 瀹炵幇銆?/// </summary>
 
 public sealed class RuleRepository : IRuleRepository
 {
@@ -179,7 +179,7 @@ public sealed class RuleRepository : IRuleRepository
 // 鈹€鈹€ ProjectGrant Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: IProjectGrantRepository 鐨?MySQL/EF Core 瀹炵幇銆?/// </summary>
+/// PATCH-07: IProjectGrantRepository 鐨?DM/EF Core 瀹炵幇銆?/// </summary>
 public sealed class ProjectGrantRepository : IProjectGrantRepository
 {
     private readonly RbacDbContext _db;
@@ -223,7 +223,7 @@ public sealed class ProjectGrantRepository : IProjectGrantRepository
 // 鈹€鈹€ ApiPermissionMap Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: IApiPermissionMapRepository 鐨?MySQL/EF Core 瀹炵幇銆?/// </summary>
+/// PATCH-07: IApiPermissionMapRepository 鐨?DM/EF Core 瀹炵幇銆?/// </summary>
 public sealed class ApiPermissionMapRepository : IApiPermissionMapRepository
 {
     private readonly RbacDbContext _db;
@@ -321,7 +321,7 @@ public sealed class ApiPermissionMapRepository : IApiPermissionMapRepository
 // 鈹€鈹€ CasbinPolicy Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 /// <summary>
-/// PATCH-07: ICasbinPolicyRepository 鐨?MySQL/EF Core 瀹炵幇銆?/// 澶嶇敤 GroupRepository 涓殑鏌ヨ閫昏緫锛岄€氳繃 EF Core 鐩存帴鏌ヨ銆?/// </summary>
+/// PATCH-07: ICasbinPolicyRepository 鐨?DM/EF Core 瀹炵幇銆?/// 澶嶇敤 GroupRepository 涓殑鏌ヨ閫昏緫锛岄€氳繃 EF Core 鐩存帴鏌ヨ銆?/// </summary>
 public sealed class CasbinPolicyRepository : ICasbinPolicyRepository
 {
     private readonly RbacDbContext _db;
@@ -377,16 +377,18 @@ public sealed class CasbinPolicyRepository : ICasbinPolicyRepository
     }
 }
 
-// 鈹€鈹€ ProjectGrantMySqlReader 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ProjectGrantDMReader
 
 /// <summary>
-/// PATCH-07: IProjectGrantMySqlReader 鐨?MySQL/EF Core 瀹炵幇銆?/// 渚?RbacProjectGrantCache 鍦?FusionCache/Redis 鍧囨湭鍛戒腑鏃跺仛 MySQL 鍏滃簳銆?/// </summary>
-public sealed class ProjectGrantMySqlReader : IProjectGrantMySqlReader
+/// IProjectGrantDMReader 的 DM/EF Core 实现。
+/// 供 RbacProjectGrantCache 在 FusionCache/Redis 均未命中时做 DM 兜底。
+/// </summary>
+public sealed class ProjectGrantDMReader : IProjectGrantDMReader
 {
     private readonly RbacDbContext _db;
-    private readonly ILogger<ProjectGrantMySqlReader> _logger;
+    private readonly ILogger<ProjectGrantDMReader> _logger;
 
-    public ProjectGrantMySqlReader(RbacDbContext db, ILogger<ProjectGrantMySqlReader> logger)
+    public ProjectGrantDMReader(RbacDbContext db, ILogger<ProjectGrantDMReader> logger)
     {
         _db = db;
         _logger = logger;
@@ -395,7 +397,7 @@ public sealed class ProjectGrantMySqlReader : IProjectGrantMySqlReader
     public async Task<UserProjectGrantMap?> GetUserGrantsAsync(
         string userid, CancellationToken ct = default)
     {
-        _logger.LogDebug("MySQL fallback GetUserGrants userid={U}", userid);
+        _logger.LogDebug("DM fallback GetUserGrants userid={U}", userid);
 
         var userId = new UserId(userid);
         var admin = await _db.Administrators

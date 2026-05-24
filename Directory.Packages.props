@@ -7,7 +7,7 @@
     Constraints:
     - NEST must stay on 7.17.x (ES7 compatibility). Do NOT upgrade to Elastic.Clients.Elasticsearch.
     - NetCasbin (Casbin.Net) must be compatible with RBAC with domains model.conf.
-    - EF Core must match Pomelo.EntityFrameworkCore.MySql major version.
+    - EF Core provider packages must match the EF Core major version.
     - FusionCache backplane must match StackExchange.Redis major version.
   -->
   <PropertyGroup>
@@ -28,7 +28,7 @@
     <PackageVersion Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <!-- ORM / MySQL -->
+    <!-- ORM / relational database -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="6.0.36" />
     <PackageVersion Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.3" />
     <PackageVersion Include="Dapper" Version="2.1.28" />
@@ -43,7 +43,6 @@
     <PackageVersion Include="Casbin.Net" Version="2.5.0" />
     <!-- Hangfire -->
     <PackageVersion Include="Hangfire.Core" Version="1.8.14" />
-    <PackageVersion Include="Hangfire.MySqlStorage" Version="2.0.3" />
     <!-- Serialization -->
     <PackageVersion Include="System.Text.Json" Version="6.0.10" />
     <!-- Analyzers -->

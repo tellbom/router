@@ -52,13 +52,13 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IProjectGrantRepository,    ProjectGrantRepository>();
         services.AddScoped<IApiPermissionMapRepository, ApiPermissionMapRepository>();
         services.AddScoped<ICasbinPolicyRepository,    CasbinPolicyRepository>();
-        services.AddScoped<IProjectGrantMySqlReader,   ProjectGrantMySqlReader>();
+        services.AddScoped<IProjectGrantDMReader,    ProjectGrantDMReader>();
         services.AddScoped<RbacManagementWriteGuard>();
         services.AddScoped<IRbacManagementWriteService, RbacManagementWriteService>();
 
         // Casbin policy readers（PATCH-06）
-        services.AddScoped<ICasbinGroupingPolicyReader,   CasbinMySqlGroupingPolicyReader>();
-        services.AddScoped<ICasbinPermissionPolicyReader, CasbinMySqlPermissionPolicyReader>();
+        services.AddScoped<ICasbinGroupingPolicyReader,   CasbinDMGroupingPolicyReader>();
+        services.AddScoped<ICasbinPermissionPolicyReader, CasbinDMPermissionPolicyReader>();
 
         // ── Infrastructure: Redis + FusionCache ───────────────────
         services.AddSingleton<IConnectionMultiplexer>(_ =>
