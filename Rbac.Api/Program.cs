@@ -27,11 +27,11 @@ using Rbac.Infrastructure.Elasticsearch.Bootstrap;
 using Rbac.Infrastructure.Elasticsearch.Indexes;
 using Rbac.Infrastructure.Elasticsearch.Reindex;
 using Rbac.Infrastructure.Elasticsearch.Services;
-using Rbac.Infrastructure.MySql.Management;
-using Rbac.Infrastructure.MySql.Mapping;
-using Rbac.Infrastructure.MySql.Outbox;
-using Rbac.Infrastructure.MySql.Policies;
-using Rbac.Infrastructure.MySql.Repositories;
+using Rbac.Infrastructure.DM.Management;
+using Rbac.Infrastructure.DM.Mapping;
+using Rbac.Infrastructure.DM.Outbox;
+using Rbac.Infrastructure.DM.Policies;
+using Rbac.Infrastructure.DM.Repositories;
 using Rbac.Infrastructure.Redis;
 using Rbac.Application.Backend;
 

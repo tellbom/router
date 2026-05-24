@@ -3,7 +3,7 @@ using System.Text.Json;
 using Rbac.Application.Cache;
 using Rbac.Application.Outbox;
 using Rbac.Application.Serialization;
-using Rbac.Infrastructure.MySql.Outbox;
+using Rbac.Infrastructure.DM.Outbox;
 
 namespace Rbac.Worker.Outbox;
 

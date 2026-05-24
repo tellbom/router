@@ -7,7 +7,7 @@ using Rbac.Application.Serialization;
 using Rbac.Domain.ValueObjects;
 using Rbac.Infrastructure.Elasticsearch.Documents;
 using Rbac.Infrastructure.Elasticsearch.Indexes;
-using Rbac.Infrastructure.MySql.Outbox;
+using Rbac.Infrastructure.DM.Outbox;
 
 namespace Rbac.Worker.Outbox;
 

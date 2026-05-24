@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Rbac.Infrastructure.MySql.Outbox;
+using Rbac.Infrastructure.DM.Outbox;
 using Rbac.Worker.Outbox;
 
 namespace Rbac.Worker.Outbox;

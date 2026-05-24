@@ -5,7 +5,7 @@ using Rbac.Api.Filters;
 using Rbac.Application.Cache;
 using Rbac.Application.Outbox;
 using Rbac.Infrastructure.Elasticsearch.Reindex;
-using Rbac.Infrastructure.MySql.Mapping;
+using Rbac.Infrastructure.DM.Mapping;
 
 namespace Rbac.Api.Controllers;
 

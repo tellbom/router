@@ -8,10 +8,10 @@ using Rbac.Domain.Permissions;
 using Rbac.Domain.Projects;
 using Rbac.Domain.Rules;
 using Rbac.Domain.Users;
-using Rbac.Infrastructure.MySql.Mapping;
-using Rbac.Infrastructure.MySql.Outbox;
+using Rbac.Infrastructure.DM.Mapping;
+using Rbac.Infrastructure.DM.Outbox;
 
-namespace Rbac.Infrastructure.MySql.Management;
+namespace Rbac.Infrastructure.DM.Management;
 
 /// <summary>
 /// IRbacManagementWriteService 的 EF Core 实现。

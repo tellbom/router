@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Rbac.Application.Outbox;
-using Rbac.Infrastructure.MySql.Mapping;
+using Rbac.Infrastructure.DM.Mapping;
 
-namespace Rbac.Infrastructure.MySql.Outbox;
+namespace Rbac.Infrastructure.DM.Outbox;
 
 /// <summary>
 /// EF Core implementation of outbox administrative operations.

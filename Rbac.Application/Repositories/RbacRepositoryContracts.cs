@@ -117,7 +117,7 @@ public interface IApiPermissionMapRepository
 /// <summary>
 /// Casbin policy 读取接口。
 /// 提供 g（用户-组关系）和 p（组-权限码-action）两类策略的 MySQL 真相读取。
-/// 由 Rbac.Infrastructure.MySql 实现，供 Rbac.Infrastructure.Casbin 使用。
+/// 由 Rbac.Infrastructure.DM 实现，供 Rbac.Infrastructure.Casbin 使用。
 /// </summary>
 public interface ICasbinPolicyRepository
 {

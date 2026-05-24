@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Rbac.Infrastructure.MySql.Mapping;
+namespace Rbac.Infrastructure.DM.Mapping;
 
 public static class RbacRelationalDatabaseOptions
 {

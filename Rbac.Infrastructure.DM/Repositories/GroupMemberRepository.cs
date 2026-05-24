@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Rbac.Application.Repositories;
 using Rbac.Domain.Groups;
 using Rbac.Domain.ValueObjects;
-using Rbac.Infrastructure.MySql.Mapping;
+using Rbac.Infrastructure.DM.Mapping;
 
-namespace Rbac.Infrastructure.MySql.Repositories;
+namespace Rbac.Infrastructure.DM.Repositories;
 
 /// <summary>
 /// IGroupMemberRepository 的 EF Core 实现。

@@ -8,10 +8,10 @@ using Rbac.Domain.Projects;
 using Rbac.Domain.Rules;
 using Rbac.Domain.Users;
 using Rbac.Domain.ValueObjects;
-using Rbac.Infrastructure.MySql.Mapping;
-using Rbac.Infrastructure.MySql.Outbox;
+using Rbac.Infrastructure.DM.Mapping;
+using Rbac.Infrastructure.DM.Outbox;
 
-namespace Rbac.Infrastructure.MySql.Repositories;
+namespace Rbac.Infrastructure.DM.Repositories;
 
 // 鈹€鈹€ 绠＄悊鍛?Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 

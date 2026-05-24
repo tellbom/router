@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Rbac.Application.Outbox;
-using Rbac.Infrastructure.MySql.Mapping;
+using Rbac.Infrastructure.DM.Mapping;
 
-namespace Rbac.Infrastructure.MySql.Outbox;
+namespace Rbac.Infrastructure.DM.Outbox;
 
 /// <summary>
 /// PATCH-08: IOutboxWriter + IOutboxReader 的 EF Core 6 兼容实现。

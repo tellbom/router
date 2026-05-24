@@ -4,9 +4,9 @@ using Rbac.Application.Policies;
 using Rbac.Domain.Groups;
 using Rbac.Domain.Permissions;
 using Rbac.Domain.ValueObjects;
-using Rbac.Infrastructure.MySql.Mapping;
+using Rbac.Infrastructure.DM.Mapping;
 
-namespace Rbac.Infrastructure.MySql.Policies;
+namespace Rbac.Infrastructure.DM.Policies;
 
 /// <summary>
 /// ICasbinGroupingPolicyReader 的真实 MySQL 实现。

@@ -6,9 +6,9 @@ using Rbac.Domain.Projects;
 using Rbac.Domain.Rules;
 using Rbac.Domain.Users;
 using Rbac.Domain.ValueObjects;
-using Rbac.Infrastructure.MySql.Outbox;
+using Rbac.Infrastructure.DM.Outbox;
 
-namespace Rbac.Infrastructure.MySql.Mapping;
+namespace Rbac.Infrastructure.DM.Mapping;
 
 // ── DbContext ─────────────────────────────────────────────────────
 

@@ -14,7 +14,7 @@ public sealed class UserProjectGrantMap
 
 /// <summary>
 /// 从 MySQL 读取用户 project 授权数据的契约。
-/// 定义在 Application 层，由 Rbac.Infrastructure.MySql 实现。
+/// 定义在 Application 层，由 Rbac.Infrastructure.DM 实现。
 /// Rbac.Infrastructure.Redis 的 RbacProjectGrantCache 依赖此接口做 MySQL 兜底。
 /// </summary>
 public interface IProjectGrantMySqlReader

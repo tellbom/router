@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rbac.Application.Outbox;
-using Rbac.Infrastructure.MySql.Mapping;
+using Rbac.Infrastructure.DM.Mapping;
 
-namespace Rbac.Infrastructure.MySql.Outbox;
+namespace Rbac.Infrastructure.DM.Outbox;
 
 /// <summary>
 /// Outbox 事件持久化实体。

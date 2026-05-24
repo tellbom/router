@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rbac.Application", "Rbac.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rbac.Domain", "Rbac.Domain\Rbac.Domain.csproj", "{05957B8E-67C3-4B93-A273-55049B97430D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rbac.Infrastructure.MySql", "Rbac.Infrastructure.MySql\Rbac.Infrastructure.MySql.csproj", "{C00B8D86-7B40-477F-BBB2-F7C5A77541F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rbac.Infrastructure.DM", "Rbac.Infrastructure.DM\Rbac.Infrastructure.DM.csproj", "{C00B8D86-7B40-477F-BBB2-F7C5A77541F4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rbac.Infrastructure.Redis", "Rbac.Infrastructure.Redis\Rbac.Infrastructure.Redis.csproj", "{CA43553A-A70B-4824-A88B-1DD2B7ABAE89}"
 EndProject
