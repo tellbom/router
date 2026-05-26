@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Rbac.Application.Contracts.Common;
 using Rbac.Application.Management;
+using Rbac.Application.Mapping;
 using Rbac.Application.Menus;
 using Rbac.Application.Search;
 using Rbac.Application.Security;
@@ -75,7 +76,7 @@ public sealed partial class RuleController : ControllerBase
         if (string.IsNullOrWhiteSpace(req.PermissionCode)) return Fail(40001, "permissionCode 不能为空");
         if (string.IsNullOrWhiteSpace(req.Title)) return Fail(40001, "title 不能为空");
 
-        if (!Enum.TryParse<RuleType>(req.Type, ignoreCase: true, out var ruleType))
+        if (!RbacCompatibilityMappers.TryParseRuleType(req.Type, out var ruleType))
             return Fail(40001, $"无效的 type: {req.Type}");
 
         RbacRule rule;
@@ -101,7 +102,7 @@ public sealed partial class RuleController : ControllerBase
             RuleType parsedType = ruleType;
             MenuType? menuType = null;
             if (!string.IsNullOrWhiteSpace(req.MenuType) &&
-                Enum.TryParse<MenuType>(req.MenuType, ignoreCase: true, out var mt))
+                RbacCompatibilityMappers.TryParseMenuType(req.MenuType, out var mt))
                 menuType = mt;
 
             rule = RbacRule.CreateMenu(

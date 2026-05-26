@@ -8,6 +8,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Rbac.Application.Contracts.Common;
 using Rbac.Application.Management;
+using Rbac.Application.Mapping;
 using Rbac.Application.Repositories;
 using Rbac.Application.Security;
 using Rbac.Domain.Groups;
@@ -283,7 +284,7 @@ public sealed partial class RuleController
 
         MenuType? menuType = null;
         if (req.MenuType is not null &&
-            Enum.TryParse<MenuType>(req.MenuType, ignoreCase: true, out var mt))
+            RbacCompatibilityMappers.TryParseMenuType(req.MenuType, out var mt))
             menuType = mt;
 
         RuleStatus? status = null;

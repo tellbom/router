@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Nest;
 using System.Text.Json;
+using Rbac.Application.Mapping;
 using Rbac.Application.Outbox;
 using Rbac.Application.Repositories;
 using Rbac.Application.Serialization;
@@ -197,8 +198,8 @@ public sealed class RbacElasticsearchOutboxProcessor
             Name = rule.Name,
             Path = rule.Path,
             Icon = rule.Icon,
-            Type = rule.Type.ToString().ToLowerInvariant(),
-            MenuType = rule.MenuType?.ToString().ToLowerInvariant() ?? string.Empty,
+            Type = RbacCompatibilityMappers.ToFrontendRuleType(rule.Type),
+            MenuType = RbacCompatibilityMappers.ToFrontendMenuType(rule.MenuType),
             Component = rule.Component,
             Url = rule.Url,
             Extend = rule.Extend,

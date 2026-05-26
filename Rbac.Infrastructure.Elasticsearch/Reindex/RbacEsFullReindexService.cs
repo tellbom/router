@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Nest;
 using Rbac.Application.Auditing;
+using Rbac.Application.Mapping;
 using Rbac.Application.Repositories;
 using Rbac.Domain.ValueObjects;
 using Rbac.Infrastructure.Elasticsearch.Bootstrap;
@@ -183,8 +184,8 @@ public sealed class RbacEsFullReindexService
                 Name          = r.Name,
                 Path          = r.Path,
                 Icon          = r.Icon,
-                Type          = r.Type.ToString().ToLowerInvariant(),
-                MenuType      = r.MenuType?.ToString().ToLowerInvariant() ?? string.Empty,
+                Type          = RbacCompatibilityMappers.ToFrontendRuleType(r.Type),
+                MenuType      = RbacCompatibilityMappers.ToFrontendMenuType(r.MenuType),
                 Component     = r.Component,
                 Url           = r.Url,
                 Extend        = r.Extend,

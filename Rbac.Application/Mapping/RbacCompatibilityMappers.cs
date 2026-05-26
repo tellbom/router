@@ -67,8 +67,8 @@ public static class RbacCompatibilityMappers
             Name = rule.Name,
             Path = rule.Path,
             Icon = rule.Icon ?? string.Empty,
-            Type = rule.Type.ToString().ToLowerInvariant(),
-            MenuType = rule.MenuType?.ToString().ToLowerInvariant() ?? string.Empty,
+            Type = ToFrontendRuleType(rule.Type),
+            MenuType = ToFrontendMenuType(rule.MenuType),
             Url = rule.Url ?? string.Empty,
             Component = rule.Component ?? string.Empty,
             Extend = rule.Extend ?? string.Empty,
@@ -79,6 +79,41 @@ public static class RbacCompatibilityMappers
             RuleCode = rule.RuleCode.Value,
             Children = allRules.ToMenuTree(rule.RuleCode.Value),
         };
+
+    public static string ToFrontendRuleType(RuleType type) => type switch
+    {
+        RuleType.MenuDir => "menu_dir",
+        RuleType.Menu => "menu",
+        RuleType.Button => "button",
+        _ => type.ToString().ToLowerInvariant(),
+    };
+
+    public static string ToFrontendMenuType(MenuType? type) => type switch
+    {
+        MenuType.Tab => "tab",
+        MenuType.Link => "link",
+        MenuType.Iframe => "iframe",
+        null => string.Empty,
+        _ => type.ToString()!.ToLowerInvariant(),
+    };
+
+    public static bool TryParseRuleType(string? value, out RuleType type)
+    {
+        type = default;
+        if (string.IsNullOrWhiteSpace(value)) return false;
+
+        var normalized = value.Trim().Replace("_", string.Empty, StringComparison.Ordinal);
+        return Enum.TryParse(normalized, ignoreCase: true, out type);
+    }
+
+    public static bool TryParseMenuType(string? value, out MenuType type)
+    {
+        type = default;
+        if (string.IsNullOrWhiteSpace(value)) return false;
+
+        var normalized = value.Trim().Replace("_", string.Empty, StringComparison.Ordinal);
+        return Enum.TryParse(normalized, ignoreCase: true, out type);
+    }
 
     // ── 权限视图 ────────────────────────────────────────────────────
 
