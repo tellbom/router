@@ -236,15 +236,21 @@ public sealed partial class GroupController
                 .Select(r => r.PermissionCode.Value)
                 .ToList();
 
-            var mergedPermCodes = oldPermCodes
-                .Union(derivedPermCodes, StringComparer.OrdinalIgnoreCase)
+            var validApiPermCodes = (await _apiMapRepo
+                .FindActiveByProjectAsync(new ProjectCode(ctx.Project), ct))
+                .Select(m => m.PermissionCode.Value)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var extraPerms = (req.ExtraPermissionCodes ?? Array.Empty<string>())
+                .Where(p => !string.IsNullOrWhiteSpace(p) && validApiPermCodes.Contains(p));
+
+            var finalPermCodes = derivedPermCodes
                 .Union(
-                    (req.ExtraPermissionCodes ?? Array.Empty<string>())
-                        .Where(p => !string.IsNullOrWhiteSpace(p)),
+                    extraPerms,
                     StringComparer.OrdinalIgnoreCase)
                 .Select(p => new PermissionCode(p)).ToList();
 
-            group.UpdateRules(newRuleCodes, mergedPermCodes);
+            group.UpdateRules(newRuleCodes, finalPermCodes);
             changedFields.Add("ruleCodes");
             changedFields.Add("permissionCodes");
         }

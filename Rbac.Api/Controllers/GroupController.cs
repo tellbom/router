@@ -28,6 +28,7 @@ public sealed partial class GroupController : ControllerBase
     private readonly IGroupRepository _groupRepo;
     private readonly IRuleRepository _ruleRepo;
     private readonly IGroupMemberRepository _memberRepo;
+    private readonly IApiPermissionMapRepository _apiMapRepo;
 
     public GroupController(
         ICurrentRbacContextAccessor ctx,
@@ -36,7 +37,8 @@ public sealed partial class GroupController : ControllerBase
         RbacManagementWriteGuard guard,
         IGroupRepository groupRepo,
         IRuleRepository ruleRepo,
-        IGroupMemberRepository memberRepo)
+        IGroupMemberRepository memberRepo,
+        IApiPermissionMapRepository apiMapRepo)
     {
         _ctx = ctx;
         _search = search;
@@ -45,6 +47,7 @@ public sealed partial class GroupController : ControllerBase
         _groupRepo = groupRepo;
         _ruleRepo = ruleRepo;
         _memberRepo = memberRepo;
+        _apiMapRepo = apiMapRepo;
     }
 
     // ── 列表 ──────────────────────────────────────────────────────
@@ -148,9 +151,13 @@ public sealed partial class GroupController : ControllerBase
                 ? new List<PermissionCode> { new("*") }
                 : selectedRules.Select(r => r.PermissionCode).ToList();
 
-            // ExtraPermissionCodes comes from api-map and is unioned with permissions derived from ruleCodes.
+            var validApiPermCodes = (await _apiMapRepo
+                .FindActiveByProjectAsync(new ProjectCode(ctx.Project), ct))
+                .Select(m => m.PermissionCode.Value)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
             var extraPerms = (req.ExtraPermissionCodes ?? Array.Empty<string>())
-                .Where(p => !string.IsNullOrWhiteSpace(p));
+                .Where(p => !string.IsNullOrWhiteSpace(p) && validApiPermCodes.Contains(p));
             var finalPermCodes = derivedPermCodes
                 .Select(p => p.Value)
                 .Union(extraPerms, StringComparer.OrdinalIgnoreCase)
@@ -210,16 +217,22 @@ public sealed partial class GroupController : ControllerBase
             .Select(r => r.PermissionCode.Value)
             .ToList();
 
-        var mergedPermCodes = oldPermCodes
-            .Union(derivedPermCodes, StringComparer.OrdinalIgnoreCase)
+        var validApiPermCodes = (await _apiMapRepo
+            .FindActiveByProjectAsync(new ProjectCode(ctx.Project), ct))
+            .Select(m => m.PermissionCode.Value)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var extraPerms = (req.ExtraPermissionCodes ?? Array.Empty<string>())
+            .Where(p => !string.IsNullOrWhiteSpace(p) && validApiPermCodes.Contains(p));
+
+        var finalPermCodes = derivedPermCodes
             .Union(
-                (req.ExtraPermissionCodes ?? Array.Empty<string>())
-                    .Where(p => !string.IsNullOrWhiteSpace(p)),
+                extraPerms,
                 StringComparer.OrdinalIgnoreCase)
             .Select(p => new PermissionCode(p))
             .ToList();
 
-        group.UpdateRules(newRuleCodes, mergedPermCodes);
+        group.UpdateRules(newRuleCodes, finalPermCodes);
 
         // affectedUserids 由调用方提供；如未提供则从 MySQL 查询
         var members = await _memberRepo.FindByGroupCodeAndProjectAsync(
