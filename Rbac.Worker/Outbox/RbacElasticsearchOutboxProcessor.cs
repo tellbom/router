@@ -86,8 +86,11 @@ public sealed class RbacElasticsearchOutboxProcessor
         if (admin is null)
         {
             // 鐢ㄦ埛宸插垹闄わ細浠?ES 绉婚櫎
+            var docId = !string.IsNullOrWhiteSpace(payload.UserGuid)
+                ? payload.UserGuid
+                : payload.Userid;
             await DeleteDocumentAsync<UserDocument>(
-                RbacUserIndexMapping.IndexName, payload.Userid, ct);
+                RbacUserIndexMapping.IndexName, docId, ct);
             return;
         }
 

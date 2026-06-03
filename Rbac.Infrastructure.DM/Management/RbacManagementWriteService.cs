@@ -193,10 +193,38 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
 
         _db.GroupMembers.RemoveRange(members);
 
-        // 2. 删除管理员记录
+        // 2. Delete all project grants for this user.
+        var grants = await _db.ProjectGrants
+            .Where(g => g.Userid == admin.Userid)
+            .ToListAsync(ct);
+
+        foreach (var grant in grants)
+        {
+            _outbox.Append(new RbacOutboxEvent
+            {
+                EventType = RbacOutboxEventTypes.ProjectGrantChanged,
+                Project   = grant.Project.Value,
+                Userid    = admin.Userid.Value,
+                Payload   = Serialize(new ProjectGrantChangedPayload
+                {
+                    Project        = grant.Project.Value,
+                    Userid         = admin.Userid.Value,
+                    GrantKind      = "Revoked",
+                    OldProjects    = new[] { grant.Project.Value },
+                    NewProjects    = Array.Empty<string>(),
+                    OldSuper       = grant.IsSuper,
+                    NewSuper       = false,
+                    OperatorUserid = operatorUserid,
+                }),
+            });
+        }
+
+        _db.ProjectGrants.RemoveRange(grants);
+
+        // 3. 删除管理员记录
         _db.Administrators.Remove(admin);
 
-        // 3. UserChanged（变更类型 = deleted）
+        // 4. UserChanged（变更类型 = deleted）
         _outbox.Append(new RbacOutboxEvent
         {
             EventType = RbacOutboxEventTypes.UserChanged,
@@ -217,8 +245,8 @@ public sealed class RbacManagementWriteService : IRbacManagementWriteService
 
         await _db.SaveChangesAsync(ct);
         _logger.LogInformation(
-            "DeleteAdministrator userid={U} membersCleaned={N} operator={Op}",
-            admin.Userid.Value, members.Count, operatorUserid);
+            "DeleteAdministrator userid={U} membersCleaned={N} grantsCleaned={G} operator={Op}",
+            admin.Userid.Value, members.Count, grants.Count, operatorUserid);
     }
 
     // ── 2. 权限组 ─────────────────────────────────────────────────
