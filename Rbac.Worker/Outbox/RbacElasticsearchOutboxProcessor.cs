@@ -185,8 +185,11 @@ public sealed class RbacElasticsearchOutboxProcessor
 
         if (rule is null || payload.ChangeKind == "Deleted")
         {
+            var docId = !string.IsNullOrWhiteSpace(payload.RuleGuid)
+                ? payload.RuleGuid
+                : payload.RuleCode;
             await DeleteDocumentAsync<RuleDocument>(
-                RbacRuleIndexMapping.IndexName, payload.RuleCode, ct);
+                RbacRuleIndexMapping.IndexName, docId, ct);
             return;
         }
 

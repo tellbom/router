@@ -3,6 +3,7 @@ using Rbac.Application.Contracts.Common;
 using Rbac.Application.Management;
 using Rbac.Application.Mapping;
 using Rbac.Application.Menus;
+using Rbac.Application.Repositories;
 using Rbac.Application.Search;
 using Rbac.Application.Security;
 using Rbac.Domain.Rules;
@@ -26,19 +27,22 @@ public sealed partial class RuleController : ControllerBase
     private readonly IRbacManagementWriteService _write;
     private readonly RbacManagementWriteGuard _guard;
     private readonly RbacProjectMenuTreeService _menuTree;
+    private readonly IRuleRepository _ruleRepo;
 
     public RuleController(
         ICurrentRbacContextAccessor ctx,
         IRbacManagementSearchService search,
         IRbacManagementWriteService write,
         RbacManagementWriteGuard guard,
-        RbacProjectMenuTreeService menuTree)
+        RbacProjectMenuTreeService menuTree,
+        IRuleRepository ruleRepo)
     {
         _ctx = ctx;
         _search = search;
         _write = write;
         _guard = guard;
         _menuTree = menuTree;
+        _ruleRepo = ruleRepo;
     }
 
     // ── 全量菜单树 ─────────────────────────────────────────────────
@@ -198,6 +202,11 @@ public sealed partial class RuleController : ControllerBase
 
         var rule = await _guard.LoadRuleByCodeAsync(ruleCode, ctx.Project, ct);
         if (rule is null) return Fail(40400, "规则不存在");
+
+        var children = await _ruleRepo.FindChildrenByParentRuleCodeAsync(
+            rule.RuleCode, new ProjectCode(ctx.Project), ct);
+        if (children.Count > 0)
+            return Fail(40009, $"请先删除或迁移该规则下的 {children.Count} 个子规则");
 
         await _write.DeleteRuleAsync(
             rule,

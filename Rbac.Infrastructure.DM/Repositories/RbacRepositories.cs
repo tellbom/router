@@ -130,6 +130,12 @@ public sealed class RuleRepository : IRuleRepository
     public Task<RbacRule?> FindByRuleCodeAsync(RuleCode ruleCode, ProjectCode project, CancellationToken ct = default)
         => _db.Rules.FirstOrDefaultAsync(r => r.RuleCode == ruleCode && r.Project == project, ct);
 
+    public async Task<IReadOnlyList<RbacRule>> FindChildrenByParentRuleCodeAsync(
+        RuleCode parentRuleCode, ProjectCode project, CancellationToken ct = default)
+        => await _db.Rules
+            .Where(r => r.ParentRuleCode == parentRuleCode && r.Project == project)
+            .ToListAsync(ct);
+
     public async Task<IReadOnlyList<RbacRule>> FindActiveByProjectAsync(
         ProjectCode project, CancellationToken ct = default)
     {

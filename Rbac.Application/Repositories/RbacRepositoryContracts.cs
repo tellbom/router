@@ -58,6 +58,10 @@ public interface IRuleRepository
     Task<RbacRule?> FindByGuidAsync(Guid id, CancellationToken ct = default);
     Task<RbacRule?> FindByRuleCodeAsync(RuleCode ruleCode, ProjectCode project, CancellationToken ct = default);
 
+    /// <summary>查询指定父规则下的直接子规则，用于删除前置校验。</summary>
+    Task<IReadOnlyList<RbacRule>> FindChildrenByParentRuleCodeAsync(
+        RuleCode parentRuleCode, ProjectCode project, CancellationToken ct = default);
+
     /// <summary>获取 project 下所有启用的规则，用于构建菜单树。</summary>
     Task<IReadOnlyList<RbacRule>> FindActiveByProjectAsync(ProjectCode project, CancellationToken ct = default);
 
