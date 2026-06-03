@@ -385,6 +385,11 @@ public sealed class RbacEsFullReindexService
 
     private async Task CreateIndexAsync(string alias, string newIndex, CancellationToken ct)
     {
+        var existsResp = await _esClient.Indices.ExistsAsync(newIndex, ct: ct);
+        if (existsResp.Exists)
+            throw new InvalidOperationException(
+                $"Index {newIndex} already exists. Reindex aborted to avoid overwriting.");
+
         var response = alias switch
         {
             RbacUserIndexMapping.IndexName =>
@@ -474,9 +479,9 @@ public sealed class RbacEsFullReindexService
 
     private static string BuildVersionedIndexName(string alias)
     {
-        var date = DateTimeOffset.UtcNow.ToString("yyyyMMdd");
-        var seq  = DateTimeOffset.UtcNow.Ticks % 1000;
-        return $"{alias}_v{date}_{seq:000}";
+        var date = DateTimeOffset.UtcNow.ToString("yyyyMMdd_HHmmss");
+        var rand = Guid.NewGuid().ToString("N")[..4];
+        return $"{alias}_v{date}_{rand}";
     }
 }
 

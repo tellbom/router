@@ -91,6 +91,18 @@ public sealed class RbacEsAliasBootstrapper
         var initialIndex = $"{alias}_v{DateTimeOffset.UtcNow:yyyyMMdd}_000";
         _logger.LogInformation("Creating initial index {Index} for alias {Alias}", initialIndex, alias);
 
+        var initialExists = await _esClient.Indices.ExistsAsync(initialIndex, ct: ct);
+        if (initialExists.Exists)
+        {
+            _logger.LogWarning(
+                "Initial index {Index} already exists for alias {Alias}, binding alias directly.",
+                initialIndex, alias);
+            await _esClient.Indices.BulkAliasAsync(
+                b => b.Add(a => a.Index(initialIndex).Alias(alias)), ct);
+            _logger.LogInformation("Alias {Alias} -> {Index} bound (recovery).", alias, initialIndex);
+            return;
+        }
+
         // 根据 alias 应用对应 mapping
         var createResp = alias switch
         {
