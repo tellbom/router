@@ -153,8 +153,11 @@ public sealed class RbacElasticsearchOutboxProcessor
 
         if (group is null)
         {
+            var docId = !string.IsNullOrWhiteSpace(payload.GroupGuid)
+                ? payload.GroupGuid
+                : payload.GroupCode;
             await DeleteDocumentAsync<GroupDocument>(
-                RbacGroupIndexMapping.IndexName, payload.GroupCode, ct);
+                RbacGroupIndexMapping.IndexName, docId, ct);
             return;
         }
 
