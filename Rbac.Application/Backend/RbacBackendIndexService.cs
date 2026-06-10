@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
+using Rbac.Application.Authentication;
 using Rbac.Application.Contracts.Compatibility;
-using Rbac.Application.Contracts.Menus;
 using Rbac.Application.Menus;
 using Rbac.Application.Repositories;
 using Rbac.Application.Security;
@@ -64,7 +64,9 @@ public sealed class RbacBackendIndexService
             context.Userid, context.Project, context.IsProjectSuper, ct);
 
         // 3. 计算 routePath（第一个可见 menu 节点的 path）
-        var routePath = ResolveRoutePath(menus);
+        var routePath = RbacMenuRoutePathResolver.ResolveRoutePath(
+            menus,
+            RbacLoginResultFactory.DefaultDashboardPath);
 
         _logger.LogDebug(
             "BackendIndex built userid={U} project={P} menuRootCount={M} routePath={R}",
@@ -103,27 +105,4 @@ public sealed class RbacBackendIndexService
         };
     }
 
-    /// <summary>
-    /// 从菜单树中取第一个 type=menu 节点的 path 作为初始路由。
-    /// 若无可见菜单，返回 "/dashboard" 作为前端兜底路径。
-    /// </summary>
-    private static string ResolveRoutePath(IReadOnlyList<MenuNodeDto> menus)
-        => FindFirstMenuPath(menus) ?? "/dashboard";
-
-    private static string? FindFirstMenuPath(IReadOnlyList<MenuNodeDto> nodes)
-    {
-        foreach (var node in nodes)
-        {
-            if (string.Equals(node.Type, "menu", StringComparison.OrdinalIgnoreCase)
-                && !string.IsNullOrEmpty(node.Path))
-                return node.Path;
-
-            if (node.Children.Count > 0)
-            {
-                var found = FindFirstMenuPath(node.Children);
-                if (found is not null) return found;
-            }
-        }
-        return null;
-    }
 }

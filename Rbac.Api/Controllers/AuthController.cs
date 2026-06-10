@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Rbac.Application.Authentication;
 using Rbac.Application.Contracts.Common;
 using Rbac.Application.Contracts.Compatibility;
+using Rbac.Application.Menus;
 using Rbac.Application.Repositories;
 using Rbac.Application.Security;
 using Rbac.Domain.Users;
@@ -24,6 +25,7 @@ public sealed class AuthController : ControllerBase
     private readonly ICurrentRbacContextAccessor _contextAccessor;
     private readonly IRbacProjectResolver _projectResolver;
     private readonly IAdministratorRepository _adminRepository;
+    private readonly RbacMenuBuilder _menuBuilder;
     private readonly RbacLoginResultFactory _loginResultFactory;
 
     public AuthController(
@@ -31,12 +33,14 @@ public sealed class AuthController : ControllerBase
         ICurrentRbacContextAccessor contextAccessor,
         IRbacProjectResolver projectResolver,
         IAdministratorRepository adminRepository,
+        RbacMenuBuilder menuBuilder,
         RbacLoginResultFactory loginResultFactory)
     {
         _userIdentityResolver = userIdentityResolver;
         _contextAccessor = contextAccessor;
         _projectResolver = projectResolver;
         _adminRepository = adminRepository;
+        _menuBuilder = menuBuilder;
         _loginResultFactory = loginResultFactory;
     }
 
@@ -78,10 +82,19 @@ public sealed class AuthController : ControllerBase
         }
 
         var adminInfo = BuildAdminInfo(admin, rbacContext);
+        var menus = await _menuBuilder.BuildUserMenusAsync(
+            rbacContext.Userid,
+            rbacContext.Project,
+            rbacContext.IsProjectSuper,
+            ct);
+        var routePath = RbacMenuRoutePathResolver.ResolveRoutePath(
+            menus,
+            RbacLoginResultFactory.DefaultDashboardPath);
+
         var response = _loginResultFactory.BuildSuccess(
             ResolveBearerToken(),
             adminInfo,
-            RbacLoginResultFactory.DefaultDashboardPath);
+            routePath);
 
         return ApiResponse<LoginResponseDto>.Ok(response);
     }
