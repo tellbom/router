@@ -492,6 +492,149 @@ Query 参数：
 { "isSuper": true }
 ```
 
+## 统一权限中心全局接口 `/api/global`
+
+全局接口用于跨 project 查询和管理。调用方必须使用保留 project 进入统一权限中心：
+
+```http
+Authorization: Bearer <jwt>
+X-Project: __global__
+```
+
+授权方式仍复用现有 RBAC 管道：`__global__` 是一个普通 project，路由通过 `rbac_api_permission_map` 映射到 `rbac.global.*` 权限码。bootstrap 管理员通常在 `__global__` 下拥有 `is_super = true`。
+
+注意：
+
+- 全局接口的目标业务 project 来自 query、path 或 body，不来自 `X-Project`。
+- `__global__` 会被服务端排除，不会作为跨 project 写操作目标。
+- 写操作返回逐 project 结果报告，属于 best-effort 语义；某个 project 失败不会回滚已成功的 project。
+
+逐 project 写结果结构：
+
+```json
+{
+  "results": [
+    {
+      "project": "oversia",
+      "success": true,
+      "skipped": false,
+      "errorMessage": null
+    }
+  ],
+  "successCount": 1,
+  "failureCount": 0
+}
+```
+
+### `GET /api/global/project/list`
+
+获取所有已知业务 project 列表。数据来源为 `rbac_project_grant` 中的 distinct project，并自动排除 `__global__`。
+
+响应 `data`：
+
+```json
+{
+  "list": ["cms", "oversia"],
+  "total": 2
+}
+```
+
+### `GET /api/global/user/list`
+
+跨 project 查询管理员列表。参数与 `GET /api/admin/list` 基本一致；不传 `project` 时查询所有 project，传入 `project=oversia` 时仅查询指定 project。
+
+Query 参数：
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| `project` | string | 可选；目标 project，不传表示全项目 |
+| `userid` | string | 按用户 ID 过滤 |
+| `groupCode` | string | 按权限组编码过滤 |
+| `keyword` | string | 关键字 |
+| `status` | string | `Active` / `Disabled` |
+| `page` / `pageSize` | int | 分页 |
+
+### `PUT /api/global/user/{userid}/status`
+
+启用或禁用管理员账号。`rbac_administrator` 是全局账号表，因此该操作是单次全局写入，不按 project fan-out。
+
+```json
+{ "status": "Disabled" }
+```
+
+### `POST /api/global/user/{userid}/project-grants`
+
+将用户授权到多个业务 project。已存在的授权会返回 `skipped = true`。如果用户还不存在且提供了 `username`，服务端会先创建管理员账号。
+
+```json
+{
+  "username": "张三",
+  "targetProjects": ["cms", "oversia"],
+  "isSuper": false
+}
+```
+
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `username` | string | 否 | 用户不存在时用于自动创建管理员账号 |
+| `targetProjects` | string[] | 是 | 目标业务 project 列表；`__global__` 会被忽略 |
+| `isSuper` | bool | 否 | 是否授予目标 project 的 super |
+
+### `DELETE /api/global/user/{userid}/project-grants/{project}`
+
+撤销用户在指定业务 project 的授权。若授权不存在，则按幂等语义返回 `skipped = true`。
+
+### `GET /api/global/group/list`
+
+跨 project 查询权限组列表。参数与 `GET /api/group/list` 基本一致；不传 `project` 时查询所有 project。
+
+Query 参数：
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| `project` | string | 可选；目标 project，不传表示全项目 |
+| `groupCode` | string | 按组编码过滤 |
+| `permissionCode` | string | 按权限码过滤 |
+| `keyword` | string | 关键字 |
+| `status` | string | `Active` / `Disabled` |
+| `page` / `pageSize` | int | 分页 |
+
+### `POST /api/global/group/{groupCode}/members`
+
+将用户加入指定业务 project 内的权限组。目标 project 从 body 读取。
+
+```json
+{
+  "userid": "u001",
+  "targetProject": "oversia"
+}
+```
+
+### `DELETE /api/global/group/{groupCode}/members/{userid}`
+
+将用户从指定业务 project 内的权限组移除。目标 project 从 query 参数读取。
+
+```http
+DELETE /api/global/group/operator/members/u001?targetProject=oversia
+```
+
+### `GET /api/global/menu/list`
+
+跨 project 查询菜单/规则列表。参数与 `GET /api/rule/list` 基本一致；不传 `project` 时查询所有 project。
+
+Query 参数：
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| `project` | string | 可选；目标 project，不传表示全项目 |
+| `ruleCode` | string | 按规则码过滤 |
+| `permissionCode` | string | 按权限码过滤 |
+| `type` | string | `MenuDir` / `Menu` / `Button` |
+| `menuType` | string | `Tab` / `Link` / `Iframe` |
+| `keyword` | string | 关键字 |
+| `status` | string | `Active` / `Disabled` |
+| `page` / `pageSize` | int | 分页 |
+
 ## API 权限映射接口 `/api/api-map`
 
 API 映射用于维护运行时鉴权所需的 `HTTP route -> permissionCode/action` 关系。变更会触发 api-map 缓存失效和版本递增。
