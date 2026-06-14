@@ -13,6 +13,7 @@ using Rbac.Application.Authentication;
 using Rbac.Application.Auditing;
 using Rbac.Application.Authorization;
 using Rbac.Application.Cache;
+using Rbac.Application.Global;
 using Rbac.Application.Management;
 using Rbac.Application.Menus;
 using Rbac.Application.Outbox;
@@ -106,6 +107,7 @@ builder.Services.AddScoped<ICasbinPolicyRepository,    CasbinPolicyRepository>()
 builder.Services.AddScoped<IProjectGrantDMReader,    ProjectGrantDMReader>();
 builder.Services.AddScoped<RbacManagementWriteGuard>();
 builder.Services.AddScoped<IRbacManagementWriteService, RbacManagementWriteService>();
+builder.Services.AddScoped<IGlobalManagementService, GlobalManagementService>();
 
 // Casbin policy readers（PATCH-06）
 builder.Services.AddScoped<ICasbinGroupingPolicyReader,   CasbinDMGroupingPolicyReader>();

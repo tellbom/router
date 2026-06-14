@@ -447,7 +447,11 @@ USING (
     SELECT 'GET' AS "http_method", '/api/global/project/list' AS "route_pattern", 'rbac.global.admin' AS "permission_code", 'access' AS "action" FROM dual
     UNION ALL SELECT 'GET', '/api/global/user/list', 'rbac.global.user.manage', 'access' FROM dual
     UNION ALL SELECT 'PUT', '/api/global/user/{userid}/status', 'rbac.global.user.manage', 'write' FROM dual
+    UNION ALL SELECT 'POST', '/api/global/user/{userid}/project-grants', 'rbac.global.user.manage', 'write' FROM dual
+    UNION ALL SELECT 'DELETE', '/api/global/user/{userid}/project-grants/{project}', 'rbac.global.user.manage', 'write' FROM dual
     UNION ALL SELECT 'GET', '/api/global/group/list', 'rbac.global.group.manage', 'access' FROM dual
+    UNION ALL SELECT 'POST', '/api/global/group/{groupCode}/members', 'rbac.global.group.manage', 'write' FROM dual
+    UNION ALL SELECT 'DELETE', '/api/global/group/{groupCode}/members/{userid}', 'rbac.global.group.manage', 'write' FROM dual
     UNION ALL SELECT 'GET', '/api/global/menu/list', 'rbac.global.menu.manage', 'access' FROM dual
     ) m
 ) s

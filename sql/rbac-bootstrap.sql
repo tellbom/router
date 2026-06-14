@@ -245,7 +245,11 @@ VALUES
     (UUID(), @global_project, 'GET', '/api/global/project/list',        'rbac.global.admin',        'access', 'Active', NOW(6), NOW(6)),
     (UUID(), @global_project, 'GET', '/api/global/user/list',           'rbac.global.user.manage',  'access', 'Active', NOW(6), NOW(6)),
     (UUID(), @global_project, 'PUT', '/api/global/user/{userid}/status','rbac.global.user.manage',  'write',  'Active', NOW(6), NOW(6)),
+    (UUID(), @global_project, 'POST', '/api/global/user/{userid}/project-grants', 'rbac.global.user.manage', 'write', 'Active', NOW(6), NOW(6)),
+    (UUID(), @global_project, 'DELETE', '/api/global/user/{userid}/project-grants/{project}', 'rbac.global.user.manage', 'write', 'Active', NOW(6), NOW(6)),
     (UUID(), @global_project, 'GET', '/api/global/group/list',          'rbac.global.group.manage', 'access', 'Active', NOW(6), NOW(6)),
+    (UUID(), @global_project, 'POST', '/api/global/group/{groupCode}/members', 'rbac.global.group.manage', 'write', 'Active', NOW(6), NOW(6)),
+    (UUID(), @global_project, 'DELETE', '/api/global/group/{groupCode}/members/{userid}', 'rbac.global.group.manage', 'write', 'Active', NOW(6), NOW(6)),
     (UUID(), @global_project, 'GET', '/api/global/menu/list',           'rbac.global.menu.manage',  'access', 'Active', NOW(6), NOW(6));
 
 -- =============================================================

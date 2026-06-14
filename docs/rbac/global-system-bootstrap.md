@@ -29,7 +29,11 @@
 | `rbac.global.admin` | `GET /api/global/project/list` | `access` |
 | `rbac.global.user.manage` | `GET /api/global/user/list` | `access` |
 | `rbac.global.user.manage` | `PUT /api/global/user/{userid}/status` | `write` |
+| `rbac.global.user.manage` | `POST /api/global/user/{userid}/project-grants` | `write` |
+| `rbac.global.user.manage` | `DELETE /api/global/user/{userid}/project-grants/{project}` | `write` |
 | `rbac.global.group.manage` | `GET /api/global/group/list` | `access` |
+| `rbac.global.group.manage` | `POST /api/global/group/{groupCode}/members` | `write` |
+| `rbac.global.group.manage` | `DELETE /api/global/group/{groupCode}/members/{userid}` | `write` |
 | `rbac.global.menu.manage` | `GET /api/global/menu/list` | `access` |
 
 ---
@@ -40,7 +44,7 @@
 
 1. 在 `rbac_rule` 中创建 Global Console 菜单树（5 条规则，均属 `__global__`）。
 2. 在 `rbac_group` 中创建 `global_admins` 权限组，持有全部 4 个 `rbac.global.*` 权限码。
-3. 在 `rbac_api_permission_map` 中创建 5 条路由→权限码映射（`project = __global__`）。
+3. 在 `rbac_api_permission_map` 中创建 9 条路由→权限码映射（`project = __global__`）。
 4. 在 `rbac_administrator` 中创建第一个全局管理员账号。
 5. 在 `rbac_project_grant` 中将其授权到 `__global__`，`is_super = true`（bootstrap 粗粒度）。
 
