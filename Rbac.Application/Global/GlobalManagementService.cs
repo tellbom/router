@@ -52,7 +52,7 @@ public sealed class GlobalManagementService : IGlobalManagementService
         string userid,
         string? username,
         IReadOnlyList<string> targetProjects,
-        bool isSuper,
+        bool? isSuper,
         string operatorUserid,
         CancellationToken ct = default)
     {
@@ -101,9 +101,9 @@ public sealed class GlobalManagementService : IGlobalManagementService
         }
 
         // 预加载当前已有的 project 授权集合（用于计算 newProjects 字段）
-        var currentGrants = (await _grantRepo.FindByUseridAsync(admin.Userid, ct))
-            .Select(g => g.Project.Value)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var currentGrantMap = (await _grantRepo.FindByUseridAsync(admin.Userid, ct))
+            .ToDictionary(g => g.Project.Value, StringComparer.OrdinalIgnoreCase);
+        var currentGrants = currentGrantMap.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         foreach (var targetProject in targetProjects)
         {
@@ -116,20 +116,48 @@ public sealed class GlobalManagementService : IGlobalManagementService
 
             try
             {
-                // 幂等检查：已有授权则跳过
-                if (currentGrants.Contains(targetProject))
+                if (currentGrantMap.TryGetValue(targetProject, out var existingGrant))
                 {
-                    results.Add(Skip(targetProject));
+                    if (!isSuper.HasValue || existingGrant.IsSuper == isSuper.Value)
+                    {
+                        results.Add(Skip(targetProject));
+                        continue;
+                    }
+
+                    var oldSuper = existingGrant.IsSuper;
+                    if (isSuper.Value)
+                    {
+                        existingGrant.GrantSuper();
+                    }
+                    else
+                    {
+                        existingGrant.RevokeSuper();
+                    }
+
+                    await _write.SaveProjectGrantAsync(
+                        existingGrant,
+                        isSuper.Value ? "SuperGranted" : "SuperRevoked",
+                        oldProjects: new[] { targetProject },
+                        newProjects: new[] { targetProject },
+                        oldSuper,
+                        operatorUserid: operatorUserid,
+                        ct: ct);
+
+                    results.Add(Ok(targetProject));
+                    _logger.LogInformation(
+                        "GlobalManagementService: updated super userid={U} project={P} oldSuper={Old} newSuper={New} operator={Op}",
+                        userid, targetProject, oldSuper, isSuper.Value, operatorUserid);
                     continue;
                 }
 
-                var grantKind = isSuper ? "SuperGranted" : "Granted";
+                var newGrantIsSuper = isSuper == true;
+                var grantKind = newGrantIsSuper ? "SuperGranted" : "Granted";
                 var grant = RbacProjectGrant.Create(
                     Guid.NewGuid(),
                     admin.Userid,
                     new ProjectCode(targetProject),
                     grantedBy: operatorUserid,
-                    isSuper: isSuper);
+                    isSuper: newGrantIsSuper);
 
                 var newProjects = currentGrants.Append(targetProject).ToList();
 
@@ -143,10 +171,11 @@ public sealed class GlobalManagementService : IGlobalManagementService
                     ct: ct);
 
                 currentGrants.Add(targetProject); // 保存成功后再追踪，避免后续结果包含失败项目。
+                currentGrantMap[targetProject] = grant;
                 results.Add(Ok(targetProject));
                 _logger.LogInformation(
                     "GlobalManagementService: granted userid={U} project={P} super={S} operator={Op}",
-                    userid, targetProject, isSuper, operatorUserid);
+                    userid, targetProject, newGrantIsSuper, operatorUserid);
             }
             catch (Exception ex)
             {

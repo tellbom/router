@@ -152,4 +152,4 @@ public sealed record GlobalChangeStatusRequest(string Status);
 public sealed record GrantToProjectsRequest(
     IReadOnlyList<string> TargetProjects,
     string? Username = null,
-    bool IsSuper = false);
+    bool? IsSuper = null);

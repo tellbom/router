@@ -45,14 +45,14 @@ public interface IGlobalManagementService
     /// <summary>
     /// 将用户授权到指定 project 列表（fan-out）。
     /// 若用户不存在于 rbac_administrator：当 username 非空时自动创建，否则对该 project 记录失败。
-    /// 已有授权的 project 跳过（幂等）。
+    /// 已有授权的 project：isSuper 为 null 时跳过；显式 true/false 时切换 super 状态。
     /// 产生事件：UserChanged（仅新建账号时）+ N×ProjectGrantChanged。
     /// </summary>
     Task<PerProjectResultReport> GrantUserToProjectsAsync(
         string userid,
         string? username,
         IReadOnlyList<string> targetProjects,
-        bool isSuper,
+        bool? isSuper,
         string operatorUserid,
         CancellationToken ct = default);
 

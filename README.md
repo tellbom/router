@@ -564,7 +564,13 @@ Query 参数：
 
 ### `POST /api/global/user/{userid}/project-grants`
 
-将用户授权到多个业务 project。已存在的授权会返回 `skipped = true`。如果用户还不存在且提供了 `username`，服务端会先创建管理员账号。
+将用户授权到多个业务 project。如果用户还不存在且提供了 `username`，服务端会先创建管理员账号。
+
+`isSuper` 为三态语义：
+
+- 不传 `isSuper`：新增授权时按普通管理员创建；已有授权保持不变并返回 `skipped = true`
+- `isSuper: true`：新增授权时授予目标 project 超管；已有授权会升为超管
+- `isSuper: false`：新增授权时按普通管理员创建；已有超管授权会降为普通管理员
 
 ```json
 {
@@ -578,7 +584,7 @@ Query 参数：
 | --- | --- | --- | --- |
 | `username` | string | 否 | 用户不存在时用于自动创建管理员账号 |
 | `targetProjects` | string[] | 是 | 目标业务 project 列表；`__global__` 会被忽略 |
-| `isSuper` | bool | 否 | 是否授予目标 project 的 super |
+| `isSuper` | bool/null | 否 | 不传表示已有授权不变；`true` 升权；`false` 降权或新增普通授权 |
 
 ### `DELETE /api/global/user/{userid}/project-grants/{project}`
 
