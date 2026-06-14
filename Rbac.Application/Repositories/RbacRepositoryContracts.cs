@@ -87,6 +87,12 @@ public interface IProjectGrantRepository
 
     Task SaveAsync(RbacProjectGrant grant, CancellationToken ct = default);
     Task DeleteAsync(UserId userid, ProjectCode project, CancellationToken ct = default);
+
+    /// <summary>
+    /// 获取 rbac_project_grant 中所有不重复的 project 编码，按字母序排列。
+    /// 用于跨 project 目标列表解析和项目发现。
+    /// </summary>
+    Task<IReadOnlyList<string>> GetDistinctProjectsAsync(CancellationToken ct = default);
 }
 
 // ── API 权限映射 ──────────────────────────────────────────────────
