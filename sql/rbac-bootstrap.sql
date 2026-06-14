@@ -28,6 +28,7 @@
 SET NAMES utf8mb4;
 SET @userid  = _utf8mb4'196045' COLLATE utf8mb4_unicode_ci;
 SET @project = _utf8mb4'project' COLLATE utf8mb4_unicode_ci;
+SET @global_project = _utf8mb4'__global__' COLLATE utf8mb4_unicode_ci;
 
 -- =============================================================
 -- 1. bootstrap 管理员账号
@@ -87,6 +88,74 @@ VALUES (
     @userid,
     'system_admin',
     @project,
+    'bootstrap',
+    NOW(6), NOW(6)
+);
+
+-- =============================================================
+-- 4.1 Unified Permission Center 保留系统（__global__）
+--
+-- 说明：
+--   __global__ 是普通 RBAC project，用现有授权管道管理全局控制台。
+--   全局 bootstrap 用户复用 @userid；业务 project 仍使用 @project。
+--   跨 project 目标枚举必须排除 __global__，见 RbacGlobalConstants.IsReservedProject。
+-- =============================================================
+
+INSERT IGNORE INTO `rbac_project_grant`
+    (`id`, `userid`, `project`, `is_super`, `granted_by`, `granted_at`, `updated_at`)
+VALUES (
+    UUID(),
+    @userid,
+    @global_project,
+    1,
+    'bootstrap',
+    NOW(6), NOW(6)
+);
+
+INSERT IGNORE INTO `rbac_rule`
+    (`id`, `project`, `rule_code`, `permission_code`, `parent_rule_code`, `type`,
+     `title`, `name`, `path`, `icon`, `menu_type`, `url`, `component`, `extend`,
+     `remark`, `keepalive`, `weigh`, `status`, `created_at`, `updated_at`)
+VALUES
+    (UUID(), @global_project, 'global.console', 'rbac.global.admin', NULL,
+     'MenuDir', '统一权限中心', 'GlobalConsole', '/global',
+     'Monitor', NULL, NULL, 'LAYOUT', NULL, NULL, 0, 0, 'Active', NOW(6), NOW(6)),
+    (UUID(), @global_project, 'global.project', 'rbac.global.admin', 'global.console',
+     'Menu', '项目列表', 'GlobalProject', '/global/project',
+     'Grid', 'Tab', NULL, 'views/global/project/index', NULL, NULL, 0, 5, 'Active', NOW(6), NOW(6)),
+    (UUID(), @global_project, 'global.user', 'rbac.global.user.manage', 'global.console',
+     'Menu', '跨项目用户管理', 'GlobalUser', '/global/user',
+     'User', 'Tab', NULL, 'views/global/user/index', NULL, NULL, 0, 10, 'Active', NOW(6), NOW(6)),
+    (UUID(), @global_project, 'global.group', 'rbac.global.group.manage', 'global.console',
+     'Menu', '跨项目权限组管理', 'GlobalGroup', '/global/group',
+     'UserGroup', 'Tab', NULL, 'views/global/group/index', NULL, NULL, 0, 20, 'Active', NOW(6), NOW(6)),
+    (UUID(), @global_project, 'global.menu', 'rbac.global.menu.manage', 'global.console',
+     'Menu', '跨项目规则管理', 'GlobalMenu', '/global/menu',
+     'Menu', 'Tab', NULL, 'views/global/menu/index', NULL, NULL, 0, 30, 'Active', NOW(6), NOW(6));
+
+INSERT IGNORE INTO `rbac_group`
+    (`id`, `group_code`, `project`, `group_name`,
+     `parent_group_code`, `rule_codes`, `permission_codes`, `status`,
+     `created_at`, `updated_at`)
+VALUES (
+    UUID(),
+    'global_admins',
+    @global_project,
+    '全局管理员',
+    NULL,
+    '["global.console","global.project","global.user","global.group","global.menu"]',
+    '["rbac.global.admin","rbac.global.user.manage","rbac.global.group.manage","rbac.global.menu.manage"]',
+    'Active',
+    NOW(6), NOW(6)
+);
+
+INSERT IGNORE INTO `rbac_group_member`
+    (`id`, `userid`, `group_code`, `project`, `granted_by`, `created_at`, `updated_at`)
+VALUES (
+    UUID(),
+    @userid,
+    'global_admins',
+    @global_project,
     'bootstrap',
     NOW(6), NOW(6)
 );
@@ -169,6 +238,16 @@ VALUES
     (UUID(), @project, 'GET', '/api/search/audit-logs',     'menu:search.audit',      'read', 'Active', NOW(6), NOW(6)),
     (UUID(), @project, 'GET', '/api/search/permission-view','menu:search.permission', 'read', 'Active', NOW(6), NOW(6));
 
+-- ── Unified Permission Center 全局接口映射
+INSERT IGNORE INTO `rbac_api_permission_map`
+    (`id`, `project`, `http_method`, `route_pattern`, `permission_code`, `action`, `status`, `created_at`, `updated_at`)
+VALUES
+    (UUID(), @global_project, 'GET', '/api/global/project/list',        'rbac.global.admin',        'access', 'Active', NOW(6), NOW(6)),
+    (UUID(), @global_project, 'GET', '/api/global/user/list',           'rbac.global.user.manage',  'access', 'Active', NOW(6), NOW(6)),
+    (UUID(), @global_project, 'PUT', '/api/global/user/{userid}/status','rbac.global.user.manage',  'write',  'Active', NOW(6), NOW(6)),
+    (UUID(), @global_project, 'GET', '/api/global/group/list',          'rbac.global.group.manage', 'access', 'Active', NOW(6), NOW(6)),
+    (UUID(), @global_project, 'GET', '/api/global/menu/list',           'rbac.global.menu.manage',  'access', 'Active', NOW(6), NOW(6));
+
 -- =============================================================
 -- 执行完毕检查
 -- =============================================================
@@ -180,4 +259,14 @@ SELECT 'group', COUNT(*) FROM rbac_group WHERE group_code = 'system_admin' AND p
 UNION ALL
 SELECT 'group_member', COUNT(*) FROM rbac_group_member WHERE userid = @userid AND project = @project
 UNION ALL
-SELECT 'api_permission_map', COUNT(*) FROM rbac_api_permission_map WHERE project = @project;
+SELECT 'api_permission_map', COUNT(*) FROM rbac_api_permission_map WHERE project = @project
+UNION ALL
+SELECT 'global_project_grant', COUNT(*) FROM rbac_project_grant WHERE userid = @userid AND project = @global_project
+UNION ALL
+SELECT 'global_group', COUNT(*) FROM rbac_group WHERE group_code = 'global_admins' AND project = @global_project
+UNION ALL
+SELECT 'global_group_member', COUNT(*) FROM rbac_group_member WHERE userid = @userid AND group_code = 'global_admins' AND project = @global_project
+UNION ALL
+SELECT 'global_rule', COUNT(*) FROM rbac_rule WHERE project = @global_project AND rule_code LIKE 'global.%'
+UNION ALL
+SELECT 'global_api_permission_map', COUNT(*) FROM rbac_api_permission_map WHERE project = @global_project;
