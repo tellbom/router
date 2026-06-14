@@ -374,16 +374,28 @@ public sealed class CasbinPolicyRepository : ICasbinPolicyRepository
             .ToList();
 
         var actionLookup = apiMaps
-            .GroupBy(m => m.PermCode)
-            .ToDictionary(g => g.Key, g => g.First().Action, StringComparer.OrdinalIgnoreCase);
+            .GroupBy(m => m.PermCode, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                g => g.Key,
+                g => g
+                    .Select(m => m.Action)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList(),
+                StringComparer.OrdinalIgnoreCase);
 
         var result = new List<(string, string, string, string)>();
         foreach (var group in groups)
         {
             foreach (var permCode in group.PermissionCodes)
             {
-                var action = actionLookup.TryGetValue(permCode.Value, out var a) ? a : "access";
-                result.Add((group.GroupCode.Value, group.Project.Value, permCode.Value, action));
+                var actions = actionLookup.TryGetValue(permCode.Value, out var a)
+                    ? a
+                    : new List<string> { "access" };
+
+                foreach (var action in actions)
+                {
+                    result.Add((group.GroupCode.Value, group.Project.Value, permCode.Value, action));
+                }
             }
         }
         return result;

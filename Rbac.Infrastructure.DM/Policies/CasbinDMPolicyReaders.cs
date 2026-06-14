@@ -98,10 +98,13 @@ public sealed class CasbinDMPermissionPolicyReader : ICasbinPermissionPolicyRead
             .ToList();
 
         var actionLookup = apiMaps
-            .GroupBy(m => m.PermCode)
+            .GroupBy(m => m.PermCode, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(
                 g => g.Key,
-                g => g.First().Action,
+                g => g
+                    .Select(m => m.Action)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList(),
                 StringComparer.OrdinalIgnoreCase);
 
         var result = new List<(string, string, string, string)>();
@@ -109,8 +112,14 @@ public sealed class CasbinDMPermissionPolicyReader : ICasbinPermissionPolicyRead
         {
             foreach (var permCode in group.PermissionCodes)
             {
-                var action = actionLookup.TryGetValue(permCode.Value, out var a) ? a : "access";
-                result.Add((group.GroupCode.Value, group.Project.Value, permCode.Value, action));
+                var actions = actionLookup.TryGetValue(permCode.Value, out var a)
+                    ? a
+                    : new List<string> { "access" };
+
+                foreach (var action in actions)
+                {
+                    result.Add((group.GroupCode.Value, group.Project.Value, permCode.Value, action));
+                }
             }
         }
 

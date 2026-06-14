@@ -219,14 +219,17 @@ public sealed class GlobalManagementService : IGlobalManagementService
                     continue;
                 }
 
-                remainingProjects.Remove(targetProject);
+                var nextRemainingProjects = remainingProjects
+                    .Where(p => !string.Equals(p, targetProject, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
                 await _write.RevokeProjectGrantAsync(
                     grant,
-                    remainingProjects: remainingProjects.ToList(),
+                    remainingProjects: nextRemainingProjects,
                     operatorUserid: operatorUserid,
                     ct: ct);
 
+                remainingProjects.Remove(targetProject);
                 results.Add(Ok(targetProject));
                 _logger.LogInformation(
                     "GlobalManagementService: revoked userid={U} project={P} operator={Op}",
