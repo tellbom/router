@@ -562,6 +562,10 @@ Query 参数：
 { "status": "Disabled" }
 ```
 
+### `DELETE /api/global/user/{userid}`
+
+物理删除管理员账号。`rbac_administrator` 是全局账号表，因此该操作是单次全局写入；删除逻辑会同时清理该用户关联的权限组成员与 project 授权，并通过现有 Outbox 触发缓存、ES、Casbin 同步。
+
 ### `POST /api/global/user/{userid}/project-grants`
 
 将用户授权到多个业务 project。如果用户还不存在且提供了 `username`，服务端会先创建管理员账号。
@@ -585,6 +589,14 @@ Query 参数：
 | `username` | string | 否 | 用户不存在时用于自动创建管理员账号 |
 | `targetProjects` | string[] | 是 | 目标业务 project 列表；`__global__` 会被忽略 |
 | `isSuper` | bool/null | 否 | 不传表示已有授权不变；`true` 升权；`false` 降权或新增普通授权 |
+
+### `PUT /api/global/user/{userid}/project-grants/{project}/super`
+
+切换用户在指定业务 project 下的超管状态。目标 project 来自 path，不来自 `X-Project`；`__global__` 会被拒绝。该接口只修改已有授权记录，若用户尚未授权到该 project，会返回失败。
+
+```json
+{ "isSuper": true }
+```
 
 ### `DELETE /api/global/user/{userid}/project-grants/{project}`
 
