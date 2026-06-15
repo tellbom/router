@@ -226,11 +226,17 @@ public sealed class ProjectGrantRepository : IProjectGrantRepository
     }
 
     public async Task<IReadOnlyList<string>> GetDistinctProjectsAsync(CancellationToken ct = default)
-        => await _db.ProjectGrants
-            .Select(g => g.Project.Value)
-            .Distinct()
-            .OrderBy(p => p)
+    {
+        var grants = await _db.ProjectGrants
+            .AsNoTracking()
             .ToListAsync(ct);
+
+        return grants
+            .Select(g => g.Project.Value)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(p => p, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
 }
 
 // 鈹€鈹€ ApiPermissionMap Repository 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
