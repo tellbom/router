@@ -554,6 +554,34 @@ Query 参数：
 | `status` | string | `Active` / `Disabled` |
 | `page` / `pageSize` | int | 分页 |
 
+### `POST /api/global/user`
+
+新建全局管理员账号，并将其授权到一个或多个业务 project。该接口是对现有管理员创建和 project 授权能力的全局封装：调用时仍使用 `X-Project: __global__` 做全局控制台鉴权，真正写入的目标业务 project 来自 `targetProjects`。
+
+```json
+{
+  "userid": "u002",
+  "username": "李四",
+  "targetProjects": ["contest"],
+  "isSuper": false
+}
+```
+
+写入链路复用现有 `IRbacManagementWriteService`，会产生 `UserChanged` 和 `ProjectGrantChanged` Outbox 事件。
+
+### `PUT /api/global/user/{userid}`
+
+更新管理员账号基础信息。`rbac_administrator` 是全局账号表，因此此接口只更新账号本体；用户与业务 project 的授权关系请使用 project-grants 相关接口维护。
+
+```json
+{
+  "username": "新名称",
+  "status": "Active"
+}
+```
+
+会产生 `UserChanged` Outbox 事件。
+
 ### `PUT /api/global/user/{userid}/status`
 
 启用或禁用管理员账号。`rbac_administrator` 是全局账号表，因此该操作是单次全局写入，不按 project fan-out。
@@ -617,6 +645,49 @@ Query 参数：
 | `status` | string | `Active` / `Disabled` |
 | `page` / `pageSize` | int | 分页 |
 
+### `POST /api/global/group`
+
+在指定业务 project 下新建权限组。该接口是对 `POST /api/group` 的全局封装，关键差异是 body 中必须传 `targetProject` 告知服务端在哪个业务 project 创建；不会使用 `X-Project` 作为目标 project。
+
+```json
+{
+  "targetProject": "contest",
+  "groupCode": "operator",
+  "groupName": "操作员组",
+  "parentGroupCode": null,
+  "status": "Active",
+  "ruleCodes": ["dashboard"],
+  "extraPermissionCodes": []
+}
+```
+
+会写入 `rbac_group`，并通过现有写服务产生 `GroupChanged`；权限码变化时同步产生 `PolicyChanged`。
+
+### `PUT /api/global/group/{groupCode}`
+
+在指定业务 project 下更新权限组。`targetProject` 来自 body，其余字段语义与 `PUT /api/group/{groupCode}` 一致。
+
+```json
+{
+  "targetProject": "contest",
+  "groupName": "新权限组名称",
+  "parentGroupCode": "",
+  "status": "Active",
+  "ruleCodes": ["dashboard"],
+  "extraPermissionCodes": []
+}
+```
+
+### `DELETE /api/global/group/{groupCode}`
+
+删除指定业务 project 下的权限组。`targetProject` 来自 query。
+
+```http
+DELETE /api/global/group/operator?targetProject=contest
+```
+
+删除前仍会校验子组和成员关系；删除通过现有写服务产生 `GroupChanged`。
+
 ### `POST /api/global/group/{groupCode}/members`
 
 将用户加入指定业务 project 内的权限组。目标 project 从 body 读取。
@@ -653,11 +724,57 @@ Query 参数：
 | `status` | string | `Active` / `Disabled` |
 | `page` / `pageSize` | int | 分页 |
 
+### `POST /api/global/menu`
+
+在指定业务 project 下新建菜单/权限规则。该接口是对 `POST /api/rule` 的全局封装，`targetProject` 指定真正写入的业务 project。
+
+```json
+{
+  "targetProject": "contest",
+  "ruleCode": "system.user",
+  "permissionCode": "menu:system.user",
+  "title": "用户管理",
+  "type": "Menu",
+  "name": "SystemUser",
+  "path": "/system/user",
+  "parentRuleCode": "system",
+  "menuType": "Tab",
+  "weigh": 10
+}
+```
+
+会写入 `rbac_rule`，并产生 `MenuChanged` Outbox 事件。
+
+### `PUT /api/global/menu/{ruleCode}`
+
+在指定业务 project 下更新菜单/权限规则。`targetProject` 来自 body，其余字段语义与 `PUT /api/rule/{ruleCode}` 一致。
+
+```json
+{
+  "targetProject": "contest",
+  "title": "新标题",
+  "path": "/new/path",
+  "status": "Active",
+  "permissionCode": "menu:new.code"
+}
+```
+
+### `DELETE /api/global/menu/{ruleCode}`
+
+删除指定业务 project 下的菜单/权限规则。`targetProject` 来自 query。
+
+```http
+DELETE /api/global/menu/system.user?targetProject=contest
+```
+
+删除前仍会校验子规则；删除通过现有写服务产生 `MenuChanged(Deleted)`。
+
 ## API 权限映射接口 `/api/api-map`
 
 API 映射用于维护运行时鉴权所需的 `HTTP route -> permissionCode/action` 关系。变更会触发 api-map 缓存失效和版本递增。
 
 前端管理页建议使用 `GET /api/api-map/records` 作为增删改查列表数据源，因为它直接读取 MySQL 真相表并返回 `id`。`GET /api/api-map/list` 是 ES 权限视图，只适合只读展示和搜索，不返回可编辑记录的完整字段。
+
 
 ### `GET /api/api-map/list`
 
@@ -791,22 +908,19 @@ Query 参数：`permissionCode`、`action`、`resourceType`、`keyword`、`statu
 
 ### `POST /ops/reindex`
 
-重建 Elasticsearch 索引。
+重建 Elasticsearch 索引。该接口固定按全部 project 重建，不再支持 `project` query 参数，避免项目级重建覆盖共享 alias 中其它项目的数据。
 
 Query 参数：
 
 | 参数 | 类型 | 说明 |
 | --- | --- | --- |
-| `project` | string | 可选；指定 project，不传则全部 |
 | `index` | string | 可选；指定索引别名，不传则重建全部 |
 
 支持的 `index`：`rbac_user_index`、`rbac_group_index`、`rbac_rule_index`、`rbac_permission_view_index`、`rbac_audit_log_index`。
 
 ### `POST /ops/cache-flush`
 
-清理菜单树、API 映射缓存并递增 project 版本。
-
-Query 参数：`project` 可选，不传则全部 project。
+清理全部已授权 project 的菜单树、API 映射缓存并递增 project 版本。该接口固定全量执行，不再支持 `project` query 参数。
 
 ### `POST /ops/outbox-retry`
 
@@ -862,3 +976,4 @@ Query 参数：`project` 可选。
 | 运维 | POST | `/ops/cache-flush` | 清理缓存 |
 | 运维 | POST | `/ops/outbox-retry` | 重试 Outbox |
 | 运维 | GET | `/ops/health` | 健康检查 |
+
