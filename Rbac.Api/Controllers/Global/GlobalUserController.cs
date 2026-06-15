@@ -58,6 +58,30 @@ public sealed class GlobalUserController : ControllerBase
         return ApiResponse<PagedData<UserSearchResult>>.Ok(data);
     }
 
+    [HttpPost]
+    public async Task<ApiResponse<PerProjectResultReport>> Create(
+        [FromBody] GlobalCreateUserRequest req, CancellationToken ct)
+    {
+        var ctx = RequireContext();
+
+        if (string.IsNullOrWhiteSpace(req.Userid))
+            return FailReport(40001, "userid 涓嶈兘涓虹┖");
+        if (string.IsNullOrWhiteSpace(req.Username))
+            return FailReport(40001, "username 涓嶈兘涓虹┖");
+        if (req.TargetProjects is null || req.TargetProjects.Count == 0)
+            return FailReport(40001, "targetProjects 涓嶈兘涓虹┖");
+
+        var report = await _globalService.GrantUserToProjectsAsync(
+            req.Userid,
+            req.Username,
+            req.TargetProjects,
+            req.IsSuper,
+            ctx.Userid,
+            ct);
+
+        return ApiResponse<PerProjectResultReport>.Ok(report);
+    }
+
     // ── 用户状态变更（全局单次写入，非 fan-out）───────────────────
 
     /// <summary>
@@ -85,6 +109,45 @@ public sealed class GlobalUserController : ControllerBase
             affectedGroupCodes: Array.Empty<string>(),
             operatorUserid: ctx.Userid,
             ct);
+
+        return ApiResponse<object>.Ok(null!);
+    }
+
+    [HttpPut("{userid}")]
+    public async Task<ApiResponse<object>> Update(
+        string userid, [FromBody] GlobalUpdateUserRequest req, CancellationToken ct)
+    {
+        var ctx = RequireContext();
+
+        var admin = await _guard.LoadAdminByUseridAsync(userid, ct);
+        if (admin is null) return Fail(40400, "绠＄悊鍛樹笉瀛樺湪");
+
+        var changedFields = new List<string>();
+        var oldStatus = admin.Status.ToString();
+
+        if (req.Username is not null && req.Username != admin.Username)
+        {
+            admin.UpdateUsername(req.Username);
+            changedFields.Add("username");
+        }
+
+        if (req.Status is not null && req.Status != admin.Status.ToString())
+        {
+            if (req.Status == "Disabled") admin.Disable();
+            else admin.Enable();
+            changedFields.Add("status");
+        }
+
+        if (changedFields.Count > 0)
+        {
+            await _write.SaveAdministratorAsync(
+                admin,
+                changedFields,
+                oldStatus,
+                affectedGroupCodes: Array.Empty<string>(),
+                operatorUserid: ctx.Userid,
+                ct);
+        }
 
         return ApiResponse<object>.Ok(null!);
     }
@@ -207,6 +270,16 @@ public sealed class GlobalUserController : ControllerBase
 public sealed record GlobalChangeStatusRequest(string Status);
 
 public sealed record GlobalToggleSuperRequest(bool IsSuper);
+
+public sealed record GlobalCreateUserRequest(
+    string Userid,
+    string Username,
+    IReadOnlyList<string> TargetProjects,
+    bool? IsSuper = null);
+
+public sealed record GlobalUpdateUserRequest(
+    string? Username,
+    string? Status);
 
 public sealed record GrantToProjectsRequest(
     IReadOnlyList<string> TargetProjects,

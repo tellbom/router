@@ -28,13 +28,23 @@
 |---|---|---|
 | `rbac.global.admin` | `GET /api/global/project/list` | `access` |
 | `rbac.global.user.manage` | `GET /api/global/user/list` | `access` |
+| `rbac.global.user.manage` | `POST /api/global/user` | `write` |
+| `rbac.global.user.manage` | `PUT /api/global/user/{userid}` | `write` |
 | `rbac.global.user.manage` | `PUT /api/global/user/{userid}/status` | `write` |
+| `rbac.global.user.manage` | `DELETE /api/global/user/{userid}` | `write` |
 | `rbac.global.user.manage` | `POST /api/global/user/{userid}/project-grants` | `write` |
+| `rbac.global.user.manage` | `PUT /api/global/user/{userid}/project-grants/{project}/super` | `write` |
 | `rbac.global.user.manage` | `DELETE /api/global/user/{userid}/project-grants/{project}` | `write` |
 | `rbac.global.group.manage` | `GET /api/global/group/list` | `access` |
+| `rbac.global.group.manage` | `POST /api/global/group` | `write` |
+| `rbac.global.group.manage` | `PUT /api/global/group/{groupCode}` | `write` |
+| `rbac.global.group.manage` | `DELETE /api/global/group/{groupCode}` | `write` |
 | `rbac.global.group.manage` | `POST /api/global/group/{groupCode}/members` | `write` |
 | `rbac.global.group.manage` | `DELETE /api/global/group/{groupCode}/members/{userid}` | `write` |
 | `rbac.global.menu.manage` | `GET /api/global/menu/list` | `access` |
+| `rbac.global.menu.manage` | `POST /api/global/menu` | `write` |
+| `rbac.global.menu.manage` | `PUT /api/global/menu/{ruleCode}` | `write` |
+| `rbac.global.menu.manage` | `DELETE /api/global/menu/{ruleCode}` | `write` |
 
 ---
 
