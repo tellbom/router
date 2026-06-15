@@ -27,40 +27,40 @@ public sealed class RbacEsReindexWorker
     /// 全量重建所有五个索引。
     /// 顺序：user → group → rule → permission_view → audit_log。
     /// </summary>
-    public async Task ReindexAllAsync(string? project = null, CancellationToken ct = default)
+    public async Task ReindexAllAsync(CancellationToken ct = default)
     {
-        _logger.LogInformation("ReindexAll started project={Project}", project ?? "ALL");
+        _logger.LogInformation("ReindexAll started project=ALL");
 
         var results = new List<ReindexResult>();
 
         results.Add(await SafeReindexAsync(
-            () => _reindexService.ReindexUsersAsync(project, ct),
+            () => _reindexService.ReindexUsersAsync(ct),
             "rbac_user_index"));
 
         results.Add(await SafeReindexAsync(
-            () => _reindexService.ReindexGroupsAsync(project, ct),
+            () => _reindexService.ReindexGroupsAsync(ct),
             "rbac_group_index"));
 
         results.Add(await SafeReindexAsync(
-            () => _reindexService.ReindexRulesAsync(project, ct),
+            () => _reindexService.ReindexRulesAsync(ct),
             "rbac_rule_index"));
 
         // PATCH-10: 新增
         results.Add(await SafeReindexAsync(
-            () => _reindexService.ReindexPermissionViewAsync(project, ct),
+            () => _reindexService.ReindexPermissionViewAsync(ct),
             "rbac_permission_view_index"));
 
         // PATCH-10: 新增（audit_log 空索引重建，确保 alias 健康）
         results.Add(await SafeReindexAsync(
-            () => _reindexService.ReindexAuditLogAsync(project, ct),
+            () => _reindexService.ReindexAuditLogAsync(ct),
             "rbac_audit_log_index"));
 
         var succeeded = results.Count(r => r.IsSuccess);
         var failed    = results.Count(r => !r.IsSuccess);
 
         _logger.LogInformation(
-            "ReindexAll completed project={Project} succeeded={S} failed={F}",
-            project ?? "ALL", succeeded, failed);
+            "ReindexAll completed project=ALL succeeded={S} failed={F}",
+            succeeded, failed);
 
         foreach (var r in results.Where(r => !r.IsSuccess))
         {
@@ -72,28 +72,28 @@ public sealed class RbacEsReindexWorker
 
     /// <summary>重建单个索引。</summary>
     public async Task<ReindexResult> ReindexSingleAsync(
-        string alias, string? project = null, CancellationToken ct = default)
+        string alias, CancellationToken ct = default)
     {
         _logger.LogInformation(
-            "ReindexSingle alias={Alias} project={Project}", alias, project ?? "ALL");
+            "ReindexSingle alias={Alias} project=ALL", alias);
 
         return alias switch
         {
             "rbac_user_index" =>
                 await SafeReindexAsync(
-                    () => _reindexService.ReindexUsersAsync(project, ct), alias),
+                    () => _reindexService.ReindexUsersAsync(ct), alias),
             "rbac_group_index" =>
                 await SafeReindexAsync(
-                    () => _reindexService.ReindexGroupsAsync(project, ct), alias),
+                    () => _reindexService.ReindexGroupsAsync(ct), alias),
             "rbac_rule_index" =>
                 await SafeReindexAsync(
-                    () => _reindexService.ReindexRulesAsync(project, ct), alias),
+                    () => _reindexService.ReindexRulesAsync(ct), alias),
             "rbac_permission_view_index" =>           // PATCH-10
                 await SafeReindexAsync(
-                    () => _reindexService.ReindexPermissionViewAsync(project, ct), alias),
+                    () => _reindexService.ReindexPermissionViewAsync(ct), alias),
             "rbac_audit_log_index" =>                 // PATCH-10
                 await SafeReindexAsync(
-                    () => _reindexService.ReindexAuditLogAsync(project, ct), alias),
+                    () => _reindexService.ReindexAuditLogAsync(ct), alias),
             _ => ReindexResult.Failure(alias, alias, $"Unknown alias: {alias}")
         };
     }

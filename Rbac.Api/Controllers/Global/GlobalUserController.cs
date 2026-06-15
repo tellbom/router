@@ -21,32 +21,26 @@ namespace Rbac.Api.Controllers.Global;
 public sealed class GlobalUserController : ControllerBase
 {
     private readonly ICurrentRbacContextAccessor _ctx;
+    private readonly IRbacManagementSearchService _search;
     private readonly IRbacManagementWriteService _write;
     private readonly RbacManagementWriteGuard _guard;
     private readonly IGlobalManagementService _globalService;
     private readonly IProjectGrantRepository _grantRepo;
-    private readonly IAdministratorRepository _adminRepo;
-    private readonly IGroupMemberRepository _memberRepo;
-    private readonly IGroupRepository _groupRepo;
 
     public GlobalUserController(
         ICurrentRbacContextAccessor ctx,
+        IRbacManagementSearchService search,
         IRbacManagementWriteService write,
         RbacManagementWriteGuard guard,
         IGlobalManagementService globalService,
-        IProjectGrantRepository grantRepo,
-        IAdministratorRepository adminRepo,
-        IGroupMemberRepository memberRepo,
-        IGroupRepository groupRepo)
+        IProjectGrantRepository grantRepo)
     {
         _ctx           = ctx;
+        _search        = search;
         _write         = write;
         _guard         = guard;
         _globalService = globalService;
         _grantRepo     = grantRepo;
-        _adminRepo     = adminRepo;
-        _memberRepo    = memberRepo;
-        _groupRepo     = groupRepo;
     }
 
     // ── 跨项目用户搜索 ──────────────────────────────────────────────
@@ -60,7 +54,7 @@ public sealed class GlobalUserController : ControllerBase
     public async Task<ApiResponse<PagedData<UserSearchResult>>> List(
         [FromQuery] UserSearchQuery query, CancellationToken ct)
     {
-        var data = await SearchUsersFromDmAsync(query, ct);
+        var data = await _search.SearchUsersAsync(query, ct);
         return ApiResponse<PagedData<UserSearchResult>>.Ok(data);
     }
 
@@ -200,104 +194,6 @@ public sealed class GlobalUserController : ControllerBase
 
     private CurrentRbacContext RequireContext() =>
         _ctx.Context ?? throw new InvalidOperationException("RbacContext missing");
-
-    private async Task<PagedData<UserSearchResult>> SearchUsersFromDmAsync(
-        UserSearchQuery query, CancellationToken ct)
-    {
-        var targetProject = RbacGlobalConstants.IsReservedProject(query.Project)
-            ? null
-            : query.Project;
-
-        var admins = string.IsNullOrWhiteSpace(targetProject)
-            ? await _adminRepo.FindByProjectAsync(new ProjectCode("*"), ct)
-            : await _adminRepo.FindByProjectAsync(new ProjectCode(targetProject), ct);
-
-        var rows = new List<UserSearchResult>();
-        foreach (var admin in admins)
-        {
-            var grants = await _grantRepo.FindByUseridAsync(admin.Userid, ct);
-            if (!string.IsNullOrWhiteSpace(targetProject) &&
-                !grants.Any(g => string.Equals(g.Project.Value, targetProject, StringComparison.OrdinalIgnoreCase)))
-                continue;
-
-            var projectCodes = grants.Select(g => g.Project.Value)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
-            var superProjects = grants.Where(g => g.IsSuper)
-                .Select(g => g.Project.Value)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
-
-            var groupCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            var groupNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var project in projectCodes)
-            {
-                var members = await _memberRepo.FindByUseridAndProjectAsync(
-                    admin.Userid.Value, project, ct);
-                foreach (var member in members)
-                {
-                    groupCodes.Add(member.GroupCode.Value);
-
-                    var group = await _groupRepo.FindByGroupCodeAsync(
-                        member.GroupCode, member.Project, ct);
-                    if (group is not null) groupNames.Add(group.GroupName);
-                }
-            }
-
-            rows.Add(new UserSearchResult
-            {
-                Userid = admin.Userid.Value,
-                Username = admin.Username,
-                Status = admin.Status.ToString(),
-                ProjectCodes = projectCodes,
-                GroupCodes = groupCodes.ToList(),
-                GroupNames = groupNames.ToList(),
-                SuperProjects = superProjects,
-                IsSuper = !string.IsNullOrWhiteSpace(targetProject)
-                    && superProjects.Contains(targetProject, StringComparer.OrdinalIgnoreCase),
-            });
-        }
-
-        rows = rows.Where(r => MatchesUserQuery(r, query, targetProject)).ToList();
-
-        return new PagedData<UserSearchResult>
-        {
-            List = rows.Skip(query.Offset).Take(query.PageSize).ToList(),
-            Total = rows.Count,
-        };
-    }
-
-    private static bool MatchesUserQuery(
-        UserSearchResult row, UserSearchQuery query, string? targetProject)
-    {
-        if (!string.IsNullOrWhiteSpace(query.Userid) &&
-            !string.Equals(row.Userid, query.Userid, StringComparison.OrdinalIgnoreCase))
-            return false;
-
-        if (!string.IsNullOrWhiteSpace(query.Status) &&
-            !string.Equals(row.Status, query.Status, StringComparison.OrdinalIgnoreCase))
-            return false;
-
-        if (!string.IsNullOrWhiteSpace(query.GroupCode) &&
-            !row.GroupCodes.Contains(query.GroupCode, StringComparer.OrdinalIgnoreCase))
-            return false;
-
-        if (!string.IsNullOrWhiteSpace(targetProject) &&
-            !row.ProjectCodes.Contains(targetProject, StringComparer.OrdinalIgnoreCase))
-            return false;
-
-        if (string.IsNullOrWhiteSpace(query.Keyword)) return true;
-
-        return Contains(row.Userid, query.Keyword)
-               || Contains(row.Username, query.Keyword)
-               || Contains(row.Status, query.Keyword)
-               || row.ProjectCodes.Any(v => Contains(v, query.Keyword))
-               || row.GroupCodes.Any(v => Contains(v, query.Keyword))
-               || row.GroupNames.Any(v => Contains(v, query.Keyword));
-    }
-
-    private static bool Contains(string value, string keyword) =>
-        value.Contains(keyword, StringComparison.OrdinalIgnoreCase);
 
     private static ApiResponse<object> Fail(int code, string msg) =>
         ApiResponse<object>.Fail(code, msg);

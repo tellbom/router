@@ -64,16 +64,14 @@ public sealed class RbacEsFullReindexService
 
     /// <summary>重建用户索引。</summary>
     public async Task<ReindexResult> ReindexUsersAsync(
-        string? project = null, CancellationToken ct = default)
+        CancellationToken ct = default)
     {
         var alias    = RbacUserIndexMapping.IndexName;
         var newIndex = BuildVersionedIndexName(alias);
 
         return await ExecuteReindexAsync(alias, newIndex, ct, async () =>
         {
-            var admins = project is not null
-                ? await _adminRepo.FindByProjectAsync(new ProjectCode(project), ct)
-                : await _adminRepo.FindByProjectAsync(new ProjectCode("*"), ct);
+            var admins = await _adminRepo.FindByProjectAsync(new ProjectCode("*"), ct);
 
             var docs = new List<UserDocument>();
             foreach (var admin in admins)
@@ -134,7 +132,7 @@ public sealed class RbacEsFullReindexService
     }
 
     public async Task<ReindexResult> ReindexGroupsAsync(
-        string? project = null, CancellationToken ct = default)
+        CancellationToken ct = default)
     {
         var alias    = RbacGroupIndexMapping.IndexName;
         var newIndex = BuildVersionedIndexName(alias);
@@ -142,7 +140,7 @@ public sealed class RbacEsFullReindexService
         return await ExecuteReindexAsync(alias, newIndex, ct, async () =>
         {
             var groups = await _groupRepo.FindByProjectAsync(
-                new ProjectCode(project ?? "*"), ct);
+                new ProjectCode("*"), ct);
 
             var docs = groups.Select(g => new GroupDocument
             {
@@ -163,7 +161,7 @@ public sealed class RbacEsFullReindexService
 
     /// <summary>重建规则索引。</summary>
     public async Task<ReindexResult> ReindexRulesAsync(
-        string? project = null, CancellationToken ct = default)
+        CancellationToken ct = default)
     {
         var alias    = RbacRuleIndexMapping.IndexName;
         var newIndex = BuildVersionedIndexName(alias);
@@ -171,7 +169,7 @@ public sealed class RbacEsFullReindexService
         return await ExecuteReindexAsync(alias, newIndex, ct, async () =>
         {
             var rules = await _ruleRepo.FindActiveByProjectAsync(
-                new ProjectCode(project ?? "*"), ct);
+                new ProjectCode("*"), ct);
 
             var docs = rules.Select(r => new RuleDocument
             {
@@ -213,14 +211,14 @@ public sealed class RbacEsFullReindexService
     /// ProjectCode("*") 表示全项目读取，由 ApiPermissionMapRepository.FindActiveByProjectAsync 实现。
     /// </summary>
     public async Task<ReindexResult> ReindexPermissionViewAsync(
-        string? project = null, CancellationToken ct = default)
+        CancellationToken ct = default)
     {
         var alias    = RbacPermissionViewIndexMapping.IndexName;
         var newIndex = BuildVersionedIndexName(alias);
 
         return await ExecuteReindexAsync(alias, newIndex, ct, async () =>
         {
-            var projectCode = new ProjectCode(project ?? "*");
+            var projectCode = new ProjectCode("*");
 
             // 从 DM 读取所有 active API 权限映射
             var maps = await _apiMapRepo.FindActiveByProjectAsync(projectCode, ct);
@@ -286,7 +284,7 @@ public sealed class RbacEsFullReindexService
     /// 后续扩展：如有审计 DM 表，在此方法中回读并 bulk 写入。
     /// </summary>
     public async Task<ReindexResult> ReindexAuditLogAsync(
-        string? project = null, CancellationToken ct = default)
+        CancellationToken ct = default)
     {
         var alias    = RbacAuditLogIndexMapping.IndexName;
         var newIndex = BuildVersionedIndexName(alias);

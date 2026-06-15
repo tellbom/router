@@ -51,17 +51,16 @@ public sealed class OpsController : ControllerBase
 
     [HttpPost("reindex")]
     public async Task<IActionResult> Reindex(
-        [FromQuery] string? project = null,
         [FromQuery] string? index = null,
         CancellationToken ct = default)
     {
         _logger.LogWarning(
-            "Ops reindex triggered project={Project} index={Index}",
-            project ?? "ALL", index ?? "ALL");
+            "Ops reindex triggered project=ALL index={Index}",
+            index ?? "ALL");
 
         if (!string.IsNullOrWhiteSpace(index))
         {
-            var result = await ReindexSingleAsync(index, project, ct);
+            var result = await ReindexSingleAsync(index, ct);
             return Ok(new
             {
                 code = result.IsSuccess ? 0 : 50000,
@@ -73,7 +72,7 @@ public sealed class OpsController : ControllerBase
         var results = new List<ReindexResult>();
         foreach (var alias in ReindexAliases)
         {
-            results.Add(await ReindexSingleAsync(alias, project, ct));
+            results.Add(await ReindexSingleAsync(alias, ct));
         }
 
         var allSucceeded = results.All(r => r.IsSuccess);
@@ -94,14 +93,15 @@ public sealed class OpsController : ControllerBase
 
     [HttpPost("cache-flush")]
     public async Task<IActionResult> CacheFlush(
-        [FromQuery] string? project = null,
         CancellationToken ct = default)
     {
-        _logger.LogWarning("Ops cache-flush triggered project={Project}", project ?? "ALL");
+        _logger.LogWarning("Ops cache-flush triggered project=ALL");
 
-        var projects = string.IsNullOrWhiteSpace(project)
-            ? await GetAllProjectsAsync(ct)
-            : new[] { project };
+        var grants = await _db.ProjectGrants.AsNoTracking().ToListAsync(ct);
+        var projects = grants.Select(g => g.Project.Value)
+            .Where(p => p != string.Empty)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
 
         foreach (var p in projects)
         {
@@ -120,7 +120,7 @@ public sealed class OpsController : ControllerBase
         {
             code = 0,
             msg = "ok",
-            data = new { project = project ?? "ALL", flushed = projects },
+            data = new { project = "ALL", flushed = projects },
         });
     }
 
@@ -177,32 +177,16 @@ public sealed class OpsController : ControllerBase
     }
 
     private Task<ReindexResult> ReindexSingleAsync(
-        string alias, string? project, CancellationToken ct) =>
+        string alias, CancellationToken ct) =>
         alias switch
         {
-            "rbac_user_index" => _reindexService.ReindexUsersAsync(project, ct),
-            "rbac_group_index" => _reindexService.ReindexGroupsAsync(project, ct),
-            "rbac_rule_index" => _reindexService.ReindexRulesAsync(project, ct),
-            "rbac_permission_view_index" => _reindexService.ReindexPermissionViewAsync(project, ct),
-            "rbac_audit_log_index" => _reindexService.ReindexAuditLogAsync(project, ct),
+            "rbac_user_index" => _reindexService.ReindexUsersAsync(ct),
+            "rbac_group_index" => _reindexService.ReindexGroupsAsync(ct),
+            "rbac_rule_index" => _reindexService.ReindexRulesAsync(ct),
+            "rbac_permission_view_index" => _reindexService.ReindexPermissionViewAsync(ct),
+            "rbac_audit_log_index" => _reindexService.ReindexAuditLogAsync(ct),
             _ => Task.FromResult(ReindexResult.Failure(alias, alias, $"Unknown index: {alias}")),
         };
-
-    private async Task<IReadOnlyList<string>> GetAllProjectsAsync(CancellationToken ct)
-    {
-        var grants = await _db.ProjectGrants.AsNoTracking().ToListAsync(ct);
-        var groups = await _db.Groups.AsNoTracking().ToListAsync(ct);
-        var rules = await _db.Rules.AsNoTracking().ToListAsync(ct);
-        var maps = await _db.ApiPermissionMaps.AsNoTracking().ToListAsync(ct);
-
-        return grants.Select(g => g.Project.Value)
-            .Concat(groups.Select(g => g.Project.Value))
-            .Concat(rules.Select(r => r.Project.Value))
-            .Concat(maps.Select(m => m.Project.Value))
-            .Where(p => p != string.Empty)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
-    }
 
     private static string? BuildSuggestion(
         OutboxStatusCounts outbox,
