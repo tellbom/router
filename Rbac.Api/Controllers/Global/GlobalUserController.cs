@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Rbac.Application.Contracts.Common;
 using Rbac.Application.Global;
 using Rbac.Application.Management;
+using Rbac.Application.Repositories;
 using Rbac.Application.Search;
 using Rbac.Application.Security;
 using Rbac.Domain.ValueObjects;
@@ -24,19 +25,22 @@ public sealed class GlobalUserController : ControllerBase
     private readonly IRbacManagementWriteService _write;
     private readonly RbacManagementWriteGuard _guard;
     private readonly IGlobalManagementService _globalService;
+    private readonly IProjectGrantRepository _grantRepo;
 
     public GlobalUserController(
         ICurrentRbacContextAccessor ctx,
         IRbacManagementSearchService search,
         IRbacManagementWriteService write,
         RbacManagementWriteGuard guard,
-        IGlobalManagementService globalService)
+        IGlobalManagementService globalService,
+        IProjectGrantRepository grantRepo)
     {
         _ctx           = ctx;
         _search        = search;
         _write         = write;
         _guard         = guard;
         _globalService = globalService;
+        _grantRepo     = grantRepo;
     }
 
     // ── 跨项目用户搜索 ──────────────────────────────────────────────
@@ -86,6 +90,23 @@ public sealed class GlobalUserController : ControllerBase
         return ApiResponse<object>.Ok(null!);
     }
 
+    /// <summary>
+    /// DELETE /api/global/user/{userid} — 物理删除管理员账号。
+    /// rbac_administrator 无 project 字段，删除为全局操作（单次写入）。
+    /// 权限码：rbac.global.user.manage : write
+    /// </summary>
+    [HttpDelete("{userid}")]
+    public async Task<ApiResponse<object>> Delete(string userid, CancellationToken ct)
+    {
+        var ctx = RequireContext();
+
+        var admin = await _guard.LoadAdminByUseridAsync(userid, ct);
+        if (admin is null) return Fail(40400, "管理员不存在");
+
+        await _write.DeleteAdministratorAsync(admin, operatorUserid: ctx.Userid, ct);
+        return ApiResponse<object>.Ok(null!);
+    }
+
     // ── 跨项目授权 fan-out ─────────────────────────────────────────
 
     /// <summary>
@@ -111,6 +132,43 @@ public sealed class GlobalUserController : ControllerBase
             ct);
 
         return ApiResponse<PerProjectResultReport>.Ok(report);
+    }
+
+    /// <summary>
+    /// PUT /api/global/user/{userid}/project-grants/{project}/super — 切换用户在指定 project 的 super 状态。
+    /// 目标 project 来自 path，不来自 X-Project。
+    /// 权限码：rbac.global.user.manage : write
+    /// </summary>
+    [HttpPut("{userid}/project-grants/{project}/super")]
+    public async Task<ApiResponse<object>> ToggleProjectSuper(
+        string userid, string project, [FromBody] GlobalToggleSuperRequest req, CancellationToken ct)
+    {
+        var ctx = RequireContext();
+
+        if (RbacGlobalConstants.IsReservedProject(project))
+            return Fail(40009, "不允许操作保留系统 project");
+
+        var grant = await _grantRepo.FindAsync(
+            new UserId(userid),
+            new ProjectCode(project),
+            ct);
+        if (grant is null) return Fail(40400, "未找到授权记录，请先授权用户到此 project");
+
+        var oldSuper = grant.IsSuper;
+        string grantKind;
+        if (req.IsSuper) { grant.GrantSuper(); grantKind = "SuperGranted"; }
+        else { grant.RevokeSuper(); grantKind = "SuperRevoked"; }
+
+        await _write.SaveProjectGrantAsync(
+            grant,
+            grantKind,
+            oldProjects: new[] { project },
+            newProjects: new[] { project },
+            oldSuper,
+            operatorUserid: ctx.Userid,
+            ct);
+
+        return ApiResponse<object>.Ok(null!);
     }
 
     /// <summary>
@@ -148,6 +206,8 @@ public sealed class GlobalUserController : ControllerBase
 // ── Request DTOs ───────────────────────────────────────────────────────
 
 public sealed record GlobalChangeStatusRequest(string Status);
+
+public sealed record GlobalToggleSuperRequest(bool IsSuper);
 
 public sealed record GrantToProjectsRequest(
     IReadOnlyList<string> TargetProjects,
