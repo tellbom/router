@@ -27,7 +27,7 @@ VALUES ('196045');
 MERGE INTO "rbac_administrator" t
 USING (
     SELECT
-        UUID() AS "id",
+        LOWER(REGEXP_REPLACE(GUID(), '([0-9A-F]{8})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{12})', '\1-\2-\3-\4-\5')) AS "id",
         "userid",
         'Global Bootstrap Admin' AS "username",
         'Active' AS "status"
@@ -41,7 +41,7 @@ WHEN NOT MATCHED THEN
 MERGE INTO "rbac_project_grant" t
 USING (
     SELECT
-        UUID() AS "id",
+        LOWER(REGEXP_REPLACE(GUID(), '([0-9A-F]{8})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{12})', '\1-\2-\3-\4-\5')) AS "id",
         "userid",
         '__global__' AS "project",
         1 AS "is_super",
@@ -56,7 +56,7 @@ WHEN NOT MATCHED THEN
 MERGE INTO "rbac_group" t
 USING (
     SELECT
-        UUID() AS "id",
+        LOWER(REGEXP_REPLACE(GUID(), '([0-9A-F]{8})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{12})', '\1-\2-\3-\4-\5')) AS "id",
         'global_admins' AS "group_code",
         '__global__' AS "project",
         'Global Administrators' AS "group_name",
@@ -82,7 +82,7 @@ WHEN NOT MATCHED THEN
 MERGE INTO "rbac_group_member" t
 USING (
     SELECT
-        UUID() AS "id",
+        LOWER(REGEXP_REPLACE(GUID(), '([0-9A-F]{8})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{12})', '\1-\2-\3-\4-\5')) AS "id",
         "userid",
         'global_admins' AS "group_code",
         '__global__' AS "project",
@@ -246,7 +246,7 @@ WHEN NOT MATCHED THEN
             "type", "title", "name", "path", "icon", "menu_type", "url",
             "component", "extend", "remark", "keepalive", "weigh", "status",
             "created_at", "updated_at")
-    VALUES (UUID(), s."project", s."rule_code", s."permission_code", s."parent_rule_code",
+    VALUES (LOWER(REGEXP_REPLACE(GUID(), '([0-9A-F]{8})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{12})', '\1-\2-\3-\4-\5')), s."project", s."rule_code", s."permission_code", s."parent_rule_code",
             s."type", s."title", s."name", s."path", s."icon", s."menu_type", s."url",
             s."component", s."extend", s."remark", s."keepalive", s."weigh", s."status",
             CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -295,7 +295,7 @@ WHEN MATCHED THEN
 WHEN NOT MATCHED THEN
     INSERT ("id", "project", "http_method", "route_pattern", "permission_code",
             "action", "status", "created_at", "updated_at")
-    VALUES (UUID(), s."project", s."http_method", s."route_pattern",
+    VALUES (LOWER(REGEXP_REPLACE(GUID(), '([0-9A-F]{8})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{12})', '\1-\2-\3-\4-\5')), s."project", s."http_method", s."route_pattern",
             s."permission_code", s."action", 'Active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 MERGE INTO "rbac_api_permission_map" t
@@ -356,7 +356,7 @@ WHEN MATCHED THEN
 WHEN NOT MATCHED THEN
     INSERT ("id", "project", "http_method", "route_pattern", "permission_code",
             "action", "status", "created_at", "updated_at")
-    VALUES (UUID(), s."project", s."http_method", s."route_pattern",
+    VALUES (LOWER(REGEXP_REPLACE(GUID(), '([0-9A-F]{8})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{12})', '\1-\2-\3-\4-\5')), s."project", s."http_method", s."route_pattern",
             s."permission_code", s."action", 'Active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 COMMIT;
