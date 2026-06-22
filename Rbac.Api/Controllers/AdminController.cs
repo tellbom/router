@@ -29,18 +29,24 @@ public sealed partial class AdminController : ControllerBase
     private readonly IRbacManagementSearchService _search;
     private readonly IRbacManagementWriteService _write;
     private readonly RbacManagementWriteGuard _guard;
+    private readonly IProjectGrantRepository _grantRepo;
+    private readonly IGroupMemberRepository _memberRepo;
     public AdminController(
         ICurrentRbacContextAccessor ctx,
         RbacBackendIndexService indexService,
         IRbacManagementSearchService search,
         IRbacManagementWriteService write,
-        RbacManagementWriteGuard guard)
+        RbacManagementWriteGuard guard,
+        IProjectGrantRepository grantRepo,
+        IGroupMemberRepository memberRepo)
     {
         _ctx = ctx;
         _indexService = indexService;
         _search = search;
         _write = write;
         _guard = guard;
+        _grantRepo = grantRepo;
+        _memberRepo = memberRepo;
     }
 
     // ── 后台首页初始化 ─────────────────────────────────────────────
@@ -83,24 +89,64 @@ public sealed partial class AdminController : ControllerBase
         if (string.IsNullOrWhiteSpace(req.Username))
             return Fail(40001, "username 不能为空");
 
-        var admin = RbacAdministrator.Create(
-            Guid.NewGuid(),
-            new UserId(req.Userid),
-            req.Username);
+        var userid = new UserId(req.Userid);
+        var project = new ProjectCode(ctx.Project);
+        var admin = await _guard.LoadAdminByUseridAsync(req.Userid, ct);
 
-        var grant = RbacProjectGrant.Create(
-            Guid.NewGuid(),
-            admin.Userid,
-            new ProjectCode(ctx.Project),
-            grantedBy: ctx.Userid,
-            isSuper: false);
+        if (admin is null)
+        {
+            admin = RbacAdministrator.Create(
+                Guid.NewGuid(),
+                userid,
+                req.Username);
 
-        await _write.CreateAdministratorWithGrantAsync(admin, grant, ctx.Userid, ct);
+            var grant = RbacProjectGrant.Create(
+                Guid.NewGuid(),
+                admin.Userid,
+                project,
+                grantedBy: ctx.Userid,
+                isSuper: false);
+
+            await _write.CreateAdministratorWithGrantAsync(admin, grant, ctx.Userid, ct);
+        }
+        else
+        {
+            var existingGrant = await _grantRepo.FindAsync(userid, project, ct);
+            if (existingGrant is null)
+            {
+                var currentProjects = (await _grantRepo.FindByUseridAsync(userid, ct))
+                    .Select(g => g.Project.Value)
+                    .Append(ctx.Project)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                var grant = RbacProjectGrant.Create(
+                    Guid.NewGuid(),
+                    admin.Userid,
+                    project,
+                    grantedBy: ctx.Userid,
+                    isSuper: false);
+
+                await _write.SaveProjectGrantAsync(
+                    grant,
+                    grantKind: "Granted",
+                    oldProjects: Array.Empty<string>(),
+                    newProjects: currentProjects,
+                    oldSuper: false,
+                    operatorUserid: ctx.Userid,
+                    ct);
+            }
+        }
 
         if (req.GroupCode is not null)
         {
             var groupRepo = HttpContext.RequestServices
                 .GetRequiredService<IGroupRepository>();
+            var existingMembers = await _memberRepo
+                .FindByUseridAndProjectAsync(admin.Userid.Value, ctx.Project, ct);
+            var existingGroupCodes = existingMembers
+                .Select(m => m.GroupCode.Value)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             var targetCodes = req.GroupCode
                 .Where(g => !string.IsNullOrWhiteSpace(g))
@@ -109,8 +155,9 @@ public sealed partial class AdminController : ControllerBase
             foreach (var code in targetCodes)
             {
                 var group = await groupRepo.FindByGroupCodeAsync(
-                    new GroupCode(code), new ProjectCode(ctx.Project), ct);
+                    new GroupCode(code), project, ct);
                 if (group is null) continue;
+                if (existingGroupCodes.Contains(group.GroupCode.Value)) continue;
 
                 var member = RbacGroupMember.Create(
                     Guid.NewGuid(), admin.Userid, group.GroupCode, group.Project,
@@ -122,6 +169,7 @@ public sealed partial class AdminController : ControllerBase
                     groupPermissionCodes: group.PermissionCodes.Select(p => p.Value).ToList(),
                     operatorUserid: ctx.Userid,
                     ct);
+                existingGroupCodes.Add(group.GroupCode.Value);
             }
         }
 
