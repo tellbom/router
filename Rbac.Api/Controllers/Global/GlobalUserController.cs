@@ -26,6 +26,8 @@ public sealed class GlobalUserController : ControllerBase
     private readonly RbacManagementWriteGuard _guard;
     private readonly IGlobalManagementService _globalService;
     private readonly IProjectGrantRepository _grantRepo;
+    private readonly IGroupMemberRepository _memberRepo;
+    private readonly IGroupRepository _groupRepo;
 
     public GlobalUserController(
         ICurrentRbacContextAccessor ctx,
@@ -33,7 +35,9 @@ public sealed class GlobalUserController : ControllerBase
         IRbacManagementWriteService write,
         RbacManagementWriteGuard guard,
         IGlobalManagementService globalService,
-        IProjectGrantRepository grantRepo)
+        IProjectGrantRepository grantRepo,
+        IGroupMemberRepository memberRepo,
+        IGroupRepository groupRepo)
     {
         _ctx           = ctx;
         _search        = search;
@@ -41,6 +45,8 @@ public sealed class GlobalUserController : ControllerBase
         _guard         = guard;
         _globalService = globalService;
         _grantRepo     = grantRepo;
+        _memberRepo    = memberRepo;
+        _groupRepo     = groupRepo;
     }
 
     // ── 跨项目用户搜索 ──────────────────────────────────────────────
@@ -55,6 +61,56 @@ public sealed class GlobalUserController : ControllerBase
         [FromQuery] UserSearchQuery query, CancellationToken ct)
     {
         var data = await _search.SearchUsersAsync(query, ct);
+
+        // ES stores group fields aggregated across all projects. For a scoped
+        // project view, replace them with relational truth from that project so
+        // roles from another system are not displayed as implicit roles here.
+        if (!string.IsNullOrWhiteSpace(query.Project) && data.List.Count > 0)
+        {
+            var project = query.Project;
+            var membersTask = _memberRepo.FindByProjectAsync(project, ct);
+            var groupsTask = _groupRepo.FindByProjectAsync(new ProjectCode(project), ct);
+            await Task.WhenAll(membersTask, groupsTask);
+
+            var groupNames = groupsTask.Result.ToDictionary(
+                g => g.GroupCode.Value,
+                g => g.GroupName,
+                StringComparer.OrdinalIgnoreCase);
+            var memberships = membersTask.Result
+                .GroupBy(m => m.Userid.Value, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(m => m.GroupCode.Value)
+                        .Distinct(StringComparer.OrdinalIgnoreCase)
+                        .ToList(),
+                    StringComparer.OrdinalIgnoreCase);
+
+            data = new PagedData<UserSearchResult>
+            {
+                Total = data.Total,
+                List = data.List.Select(user =>
+                {
+                    var codes = memberships.TryGetValue(user.Userid, out var scopedCodes)
+                        ? scopedCodes
+                        : new List<string>();
+                    return new UserSearchResult
+                    {
+                        Userid = user.Userid,
+                        Username = user.Username,
+                        Status = user.Status,
+                        ProjectCodes = user.ProjectCodes,
+                        GroupCodes = codes,
+                        GroupNames = codes
+                            .Where(groupNames.ContainsKey)
+                            .Select(code => groupNames[code])
+                            .ToList(),
+                        SuperProjects = user.SuperProjects,
+                        IsSuper = user.IsSuper,
+                    };
+                }).ToList(),
+            };
+        }
+
         return ApiResponse<PagedData<UserSearchResult>>.Ok(data);
     }
 

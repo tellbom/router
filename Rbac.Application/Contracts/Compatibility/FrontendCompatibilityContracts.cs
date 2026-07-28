@@ -22,6 +22,13 @@ public sealed class AdminInfoDto
 
     [JsonPropertyName("project")]
     public string Project { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Current authenticated request's client IP after trusted reverse-proxy
+    /// forwarding has been applied. This is not a persisted last-login value.
+    /// </summary>
+    [JsonPropertyName("loginIp")]
+    public string LoginIp { get; init; } = string.Empty;
 }
 
 /// <summary>

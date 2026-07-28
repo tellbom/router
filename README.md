@@ -80,7 +80,8 @@
     "userid": "u001",
     "username": "张三",
     "super": false,
-    "project": "oversia"
+    "project": "oversia",
+    "loginIp": "192.168.48.1"
   }
 }
 ```
@@ -123,6 +124,30 @@
   "routePath": "/system"
 }
 ```
+
+`adminInfo.loginIp` is the client IP of the current authenticated request. It is
+available from `GET /api/admin/index` (and therefore from a gateway bridge that
+proxies this response, such as `/api/backend/rbac/bridge`) and from
+`POST /api/auth/login`. It is request-scoped and is not a persisted
+`lastloginip` value.
+
+When the API runs behind Docker and Traefik, configure the dedicated Traefik
+network as trusted. For example:
+
+```json
+{
+  "ForwardedHeaders": {
+    "ForwardLimit": 1,
+    "KnownProxies": [],
+    "KnownNetworks": [ "172.30.0.0/24" ]
+  }
+}
+```
+
+The equivalent container environment variable is
+`ForwardedHeaders__KnownNetworks__0=172.30.0.0/24`. Do not configure a broad
+network that also permits clients to connect directly to the API: forwarded
+headers are accepted only from the listed proxy addresses or networks.
 
 ## 管理员接口 `/api/admin`
 
@@ -689,6 +714,14 @@ DELETE /api/global/group/operator?targetProject=contest
 删除前仍会校验子组和成员关系；删除通过现有写服务产生 `GroupChanged`。
 
 ### `POST /api/global/group/{groupCode}/members`
+
+将用户加入目标业务 project 的角色组。用户必须已经存在于
+`rbac_administrator`，并且必须先拥有该 `targetProject` 的 project grant；
+否则返回逐 project 失败结果，不会创建角色组成员关系。Project 授权只表示
+“允许进入系统”，不会自动加入任何角色组。
+
+撤销 Project 授权前，用户也必须先退出该 Project 下的全部角色组；
+否则接口返回失败，避免保留“无 Project 准入但仍持有角色权限”的悬空关系。
 
 将用户加入指定业务 project 内的权限组。目标 project 从 body 读取。
 

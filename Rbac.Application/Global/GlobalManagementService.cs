@@ -219,6 +219,20 @@ public sealed class GlobalManagementService : IGlobalManagementService
                     continue;
                 }
 
+                var memberships = await _memberRepo.FindByUseridAndProjectAsync(userid, targetProject, ct);
+                if (memberships.Count > 0)
+                {
+                    var groupCodes = string.Join(
+                        ", ",
+                        memberships
+                            .Select(item => item.GroupCode.Value)
+                            .Distinct(StringComparer.OrdinalIgnoreCase));
+                    results.Add(Fail(
+                        targetProject,
+                        $"用户 {userid} 仍属于角色组 [{groupCodes}]，请先移出角色组再撤销 Project 授权"));
+                    continue;
+                }
+
                 var nextRemainingProjects = remainingProjects
                     .Where(p => !string.Equals(p, targetProject, StringComparison.OrdinalIgnoreCase))
                     .ToList();
@@ -272,6 +286,20 @@ public sealed class GlobalManagementService : IGlobalManagementService
                 return Report(new[] { Fail(targetProject, $"用户 {userid} 不存在于 rbac_administrator") });
 
             // 幂等检查：是否已是成员
+            // A project grant is the admission boundary. Group membership only
+            // narrows permissions inside an admitted project and must never
+            // create an implicit or dormant admission path.
+            var grant = await _grantRepo.FindAsync(admin.Userid, group.Project, ct);
+            if (grant is null)
+            {
+                return Report(new[]
+                {
+                    Fail(
+                        targetProject,
+                        $"用户 {userid} 尚未授权进入 project {targetProject}，请先在 Project 授权管理中添加用户")
+                });
+            }
+
             var members = await _memberRepo.FindByUseridAndProjectAsync(userid, targetProject, ct);
             if (members.Any(m => m.GroupCode.Value.Equals(groupCode, StringComparison.OrdinalIgnoreCase)))
                 return Report(new[] { Skip(targetProject) });

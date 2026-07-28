@@ -56,7 +56,8 @@ public sealed partial class AdminController : ControllerBase
     public async Task<ApiResponse<BackendIndexDto>> Index(CancellationToken ct)
     {
         var ctx = RequireContext();
-        var data = await _indexService.BuildAsync(ctx, ct);
+        var loginIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+        var data = await _indexService.BuildAsync(ctx, loginIp, ct);
         return ApiResponse<BackendIndexDto>.Ok(data);
     }
 

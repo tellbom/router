@@ -41,6 +41,10 @@ public interface IGroupRepository
 /// </summary>
 public interface IGroupMemberRepository
 {
+    /// <summary>Get all group memberships in one project.</summary>
+    Task<IReadOnlyList<RbacGroupMember>> FindByProjectAsync(
+        string project, CancellationToken ct = default);
+
     /// <summary>获取指定用户在指定 project 下的所有组成员记录。</summary>
     Task<IReadOnlyList<RbacGroupMember>> FindByUseridAndProjectAsync(
         string userid, string project, CancellationToken ct = default);

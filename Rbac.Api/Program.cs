@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Nest;
 using StackExchange.Redis;
@@ -53,6 +54,8 @@ builder.Services.Configure<RbacProjectAccessAllowlistOptions>(
     builder.Configuration.GetSection(RbacProjectAccessAllowlistOptions.SectionName));
 builder.Services.Configure<RbacOpsOptions>(
     builder.Configuration.GetSection(RbacOpsOptions.SectionName));
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    RbacForwardedHeadersConfiguration.Apply(options, builder.Configuration));
 // ── Authentication (JWT) ──────────────────────────────────────────
 var jwtSection = builder.Configuration.GetSection(RbacJwtOptions.SectionName);
 var jwtMode = jwtSection["Mode"] ?? "Oidc";
@@ -199,6 +202,11 @@ builder.Services.AddSingleton<RbacLoginResultFactory>();
 
 // ── Build & Pipeline ─────────────────────────────────────────────
 var app = builder.Build();
+
+// Resolve the original client IP before authentication, RBAC context creation,
+// authorization auditing, and controller execution. Only configured Traefik
+// proxy addresses/networks are trusted.
+app.UseForwardedHeaders();
 
 // ES alias bootstrap：首次部署时自动创建 5 个 alias + 初始物理索引。
 // 已存在的 alias 直接跳过；失败不阻塞启动，运维可再手动触发 reindex。

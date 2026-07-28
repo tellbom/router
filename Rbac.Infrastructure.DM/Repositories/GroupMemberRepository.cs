@@ -17,6 +17,16 @@ public sealed class GroupMemberRepository : IGroupMemberRepository
 
     public GroupMemberRepository(RbacDbContext db) => _db = db;
 
+    public async Task<IReadOnlyList<RbacGroupMember>> FindByProjectAsync(
+        string project, CancellationToken ct = default)
+    {
+        var projectCode = new ProjectCode(project);
+
+        return await _db.GroupMembers
+            .Where(m => m.Project == projectCode)
+            .ToListAsync(ct);
+    }
+
     public async Task<IReadOnlyList<RbacGroupMember>> FindByUseridAndProjectAsync(
         string userid, string project, CancellationToken ct = default)
     {

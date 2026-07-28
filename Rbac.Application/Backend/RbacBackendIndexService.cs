@@ -44,6 +44,7 @@ public sealed class RbacBackendIndexService
     /// </summary>
     public async Task<BackendIndexDto> BuildAsync(
         CurrentRbacContext context,
+        string loginIp,
         CancellationToken ct = default)
     {
         // 1. 读取管理员信息（MySQL → FusionCache 兜底）
@@ -57,7 +58,7 @@ public sealed class RbacBackendIndexService
                 context.Userid, context.Project, context.TraceId);
         }
 
-        var adminInfo = BuildAdminInfo(admin, context);
+        var adminInfo = BuildAdminInfo(admin, context, loginIp);
 
         // 2. 构建用户菜单树（已裁剪，不暴露 Casbin 结构）
         var menus = await _menuBuilder.BuildUserMenusAsync(
@@ -83,7 +84,7 @@ public sealed class RbacBackendIndexService
     // ── 私有辅助 ──────────────────────────────────────────────────
 
     private static AdminInfoDto BuildAdminInfo(
-        RbacAdministrator? admin, CurrentRbacContext ctx)
+        RbacAdministrator? admin, CurrentRbacContext ctx, string loginIp)
     {
         if (admin is null)
         {
@@ -93,6 +94,7 @@ public sealed class RbacBackendIndexService
                 Username = ctx.Userid,
                 Project = ctx.Project,
                 Super = ctx.IsProjectSuper,
+                LoginIp = loginIp,
             };
         }
 
@@ -102,6 +104,7 @@ public sealed class RbacBackendIndexService
             Username = admin.Username,
             Project = ctx.Project,
             Super = ctx.IsProjectSuper,
+            LoginIp = loginIp,
         };
     }
 

@@ -81,7 +81,8 @@ public sealed class AuthController : ControllerBase
                 ApiResponse<LoginResponseDto>.Fail(40300, "管理员账号已禁用"));
         }
 
-        var adminInfo = BuildAdminInfo(admin, rbacContext);
+        var loginIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+        var adminInfo = BuildAdminInfo(admin, rbacContext, loginIp);
         var menus = await _menuBuilder.BuildUserMenusAsync(
             rbacContext.Userid,
             rbacContext.Project,
@@ -125,7 +126,10 @@ public sealed class AuthController : ControllerBase
             : string.Empty;
     }
 
-    private static AdminInfoDto BuildAdminInfo(RbacAdministrator? admin, CurrentRbacContext context)
+    private static AdminInfoDto BuildAdminInfo(
+        RbacAdministrator? admin,
+        CurrentRbacContext context,
+        string loginIp)
     {
         if (admin is null)
         {
@@ -135,6 +139,7 @@ public sealed class AuthController : ControllerBase
                 Username = context.Userid,
                 Project = context.Project,
                 Super = context.IsProjectSuper,
+                LoginIp = loginIp,
             };
         }
 
@@ -144,6 +149,7 @@ public sealed class AuthController : ControllerBase
             Username = admin.Username,
             Project = context.Project,
             Super = context.IsProjectSuper,
+            LoginIp = loginIp,
         };
     }
 }
