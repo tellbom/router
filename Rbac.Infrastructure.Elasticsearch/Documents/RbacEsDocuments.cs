@@ -24,6 +24,9 @@ public sealed class UserDocument
     [Keyword(Name = "groupCodes")]
     public IList<string> GroupCodes { get; set; } = new List<string>();
 
+    [Keyword(Name = "projectGroupCodes")]
+    public IList<string> ProjectGroupCodes { get; set; } = new List<string>();
+
     [Text(Name = "groupNames")]
     public IList<string> GroupNames { get; set; } = new List<string>();
 
@@ -41,6 +44,12 @@ public sealed class UserDocument
 
     [Text(Name = "allText", Index = false)]
     public string AllText { get; set; } = string.Empty;
+}
+
+public static class UserDocumentProjectGroupKey
+{
+    public static string Compose(string project, string groupCode) =>
+        $"{project.Length}:{project}{groupCode}";
 }
 
 // 鈹€鈹€ rbac_group_index 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€

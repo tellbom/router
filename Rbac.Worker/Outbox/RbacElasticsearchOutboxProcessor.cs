@@ -112,6 +112,7 @@ public sealed class RbacElasticsearchOutboxProcessor
             .ToList();
 
         var groupCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var projectGroupCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var groupNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var project in projectCodes)
@@ -120,6 +121,9 @@ public sealed class RbacElasticsearchOutboxProcessor
             foreach (var membership in memberships)
             {
                 groupCodes.Add(membership.GroupCode.Value);
+                projectGroupCodes.Add(UserDocumentProjectGroupKey.Compose(
+                    membership.Project.Value,
+                    membership.GroupCode.Value));
 
                 var group = await _groupRepo.FindByGroupCodeAsync(
                     membership.GroupCode, membership.Project, ct);
@@ -135,6 +139,7 @@ public sealed class RbacElasticsearchOutboxProcessor
             Username = admin.Username,
             ProjectCodes = projectCodes,
             GroupCodes = groupCodes.ToList(),
+            ProjectGroupCodes = projectGroupCodes.ToList(),
             GroupNames = groupNames.ToList(),
             Status = admin.Status.ToString(),
             SuperProjects = superProjects,

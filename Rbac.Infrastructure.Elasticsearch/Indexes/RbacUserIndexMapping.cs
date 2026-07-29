@@ -48,6 +48,7 @@ public static class RbacUserIndexMapping
                         .CopyTo(c => c.Field(f => f.AllText)))
                     .Keyword(k => k.Name(n => n.GroupCodes)
                         .CopyTo(c => c.Field(f => f.AllText)))
+                    .Keyword(k => k.Name(n => n.ProjectGroupCodes))
                     .Text(t => t
                         .Name(n => n.GroupNames)
                         .Analyzer("ik_max_word_analyzer")

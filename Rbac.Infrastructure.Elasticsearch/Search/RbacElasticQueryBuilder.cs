@@ -60,9 +60,27 @@ public static class RbacElasticQueryBuilder
     // ── filter helpers ────────────────────────────────────────────
 
     private static Func<QueryContainerDescriptor<UserDocument>, QueryContainer> BuildUserFilters(UserSearchQuery q) =>
-        f => f.Bool(b => b.Filter(Terms(
-            ("projectCodes", q.Project), ("status", q.Status),
-            ("userid", q.Userid), ("groupCodes", q.GroupCode))));
+        f => f.Bool(b =>
+        {
+            var filters = Terms(
+                ("projectCodes", q.Project),
+                ("status", q.Status),
+                ("userid", q.Userid),
+                ("groupCodes", string.IsNullOrWhiteSpace(q.Project) ? q.GroupCode : null))
+                .ToList();
+
+            if (!string.IsNullOrWhiteSpace(q.Project) &&
+                !string.IsNullOrWhiteSpace(q.GroupCode))
+            {
+                filters.Add(new TermQuery
+                {
+                    Field = "projectGroupCodes",
+                    Value = UserDocumentProjectGroupKey.Compose(q.Project, q.GroupCode),
+                });
+            }
+
+            return b.Filter(filters.ToArray());
+        });
 
     private static Func<QueryContainerDescriptor<GroupDocument>, QueryContainer> BuildGroupFilters(GroupSearchQuery q) =>
         f => f.Bool(b => b.Filter(Terms(
