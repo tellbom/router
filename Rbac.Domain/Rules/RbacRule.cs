@@ -167,6 +167,7 @@ public sealed class RbacRule
     /// parentRuleCode 变更表示菜单层级调整，同样产生 MenuChanged。
     /// </summary>
     public void UpdateMenuMeta(
+        RuleType? type = null,
         string? title = null,
         string? name = null,
         string? path = null,
@@ -183,6 +184,24 @@ public sealed class RbacRule
         PermissionCode? permissionCode = null,
         bool parentRuleCodeSpecified = false)
     {
+        if (type is not null)
+        {
+            Type = type.Value;
+            if (Type == RuleType.Button)
+            {
+                Path = string.Empty;
+                MenuType = null;
+                Url = null;
+                Component = null;
+                Extend = null;
+                Keepalive = false;
+            }
+            else if (Type == RuleType.MenuDir)
+            {
+                MenuType = null;
+            }
+        }
+
         if (title is not null)
         {
             if (string.IsNullOrWhiteSpace(title))
@@ -194,7 +213,7 @@ public sealed class RbacRule
         if (path is not null)      Path          = path.Trim();
         if (icon is not null)      Icon          = icon.Trim();
         if (parentRuleCodeSpecified) ParentRuleCode = parentRuleCode;
-        if (menuType is not null)  MenuType      = menuType;
+        if (menuType is not null && Type == RuleType.Menu) MenuType = menuType;
         if (url is not null)       Url           = url;
         if (component is not null) Component     = component;
         if (extend is not null)    Extend        = extend;

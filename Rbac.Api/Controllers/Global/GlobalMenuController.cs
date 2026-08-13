@@ -95,6 +95,14 @@ public sealed class GlobalMenuController : ControllerBase
 
         var oldPermCode = rule.PermissionCode.Value;
 
+        RuleType? ruleType = null;
+        if (req.Type is not null)
+        {
+            if (!RbacCompatibilityMappers.TryParseRuleType(req.Type, out var parsedType))
+                return Fail(40001, $"无效的 type: {req.Type}");
+            ruleType = parsedType;
+        }
+
         MenuType? menuType = null;
         if (req.MenuType is not null &&
             RbacCompatibilityMappers.TryParseMenuType(req.MenuType, out var mt))
@@ -112,7 +120,21 @@ public sealed class GlobalMenuController : ControllerBase
             ? new PermissionCode(req.PermissionCode)
             : null;
 
+        var effectiveType = ruleType ?? rule.Type;
+        var effectiveParent = req.ParentRuleCode is not null ? parentRuleCode : rule.ParentRuleCode;
+        if (effectiveType == RuleType.Button && effectiveParent is null)
+            return Fail(40001, "Button 类型必须指定 parentRuleCode");
+
+        if (rule.Type != RuleType.Button && effectiveType == RuleType.Button)
+        {
+            var children = await _ruleRepo.FindChildrenByParentRuleCodeAsync(
+                rule.RuleCode, new ProjectCode(req.TargetProject), ct);
+            if (children.Count > 0)
+                return Fail(40009, "存在子规则的菜单或目录不能切换为按钮");
+        }
+
         rule.UpdateMenuMeta(
+            type: ruleType,
             title: req.Title,
             name: req.Name,
             path: req.Path,
@@ -248,6 +270,7 @@ public sealed record GlobalCreateRuleRequest(
 
 public sealed record GlobalUpdateRuleRequest(
     string TargetProject,
+    string? Type = null,
     string? Title = null,
     string? Name = null,
     string? Path = null,

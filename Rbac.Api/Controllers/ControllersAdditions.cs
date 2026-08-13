@@ -288,6 +288,14 @@ public sealed partial class RuleController
 
         var oldPermCode = rule.PermissionCode.Value;
 
+        RuleType? ruleType = null;
+        if (req.Type is not null)
+        {
+            if (!RbacCompatibilityMappers.TryParseRuleType(req.Type, out var parsedType))
+                return ApiResponse<object>.Fail(40001, $"无效的 type: {req.Type}");
+            ruleType = parsedType;
+        }
+
         MenuType? menuType = null;
         if (req.MenuType is not null &&
             RbacCompatibilityMappers.TryParseMenuType(req.MenuType, out var mt))
@@ -306,7 +314,21 @@ public sealed partial class RuleController
         PermissionCode? permCode = req.PermissionCode is not null
             ? new PermissionCode(req.PermissionCode) : null;
 
+        var effectiveType = ruleType ?? rule.Type;
+        var effectiveParent = req.ParentRuleCode is not null ? parentRuleCode : rule.ParentRuleCode;
+        if (effectiveType == RuleType.Button && effectiveParent is null)
+            return ApiResponse<object>.Fail(40001, "Button 类型必须指定 parentRuleCode");
+
+        if (rule.Type != RuleType.Button && effectiveType == RuleType.Button)
+        {
+            var children = await _ruleRepo.FindChildrenByParentRuleCodeAsync(
+                rule.RuleCode, new ProjectCode(ctx.Project), ct);
+            if (children.Count > 0)
+                return ApiResponse<object>.Fail(40009, "存在子规则的菜单或目录不能切换为按钮");
+        }
+
         rule.UpdateMenuMeta(
+            type: ruleType,
             title: req.Title,
             name: req.Name,
             path: req.Path,
@@ -358,6 +380,7 @@ public sealed record UpdateGroupRequest(
 
 /// <summary>规则完整编辑请求。null 字段表示不修改。</summary>
 public sealed record UpdateRuleRequest(
+    string? Type,
     string? Title,
     string? Name,
     string? Path,
