@@ -22,6 +22,10 @@ public static class RbacElasticQueryBuilder
 
     public static SearchDescriptor<GroupDocument> BuildGroupSearch(GroupSearchQuery q) =>
         new SearchDescriptor<GroupDocument>().Index(RbacGroupIndexMapping.IndexName).From(q.Offset).Size(q.PageSize)
+            .Sort(s => s
+                .Ascending(f => f.Project)
+                .Ascending(f => f.GroupCode)
+                .Ascending(f => f.Id))
             .Query(qc => qc.Bool(b =>
             {
                 if (!string.IsNullOrWhiteSpace(q.Keyword))
