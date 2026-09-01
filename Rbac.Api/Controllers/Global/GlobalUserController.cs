@@ -26,8 +26,7 @@ public sealed class GlobalUserController : ControllerBase
     private readonly RbacManagementWriteGuard _guard;
     private readonly IGlobalManagementService _globalService;
     private readonly IProjectGrantRepository _grantRepo;
-    private readonly IGroupMemberRepository _memberRepo;
-    private readonly IGroupRepository _groupRepo;
+    private readonly RbacUserSearchProjectScopeService _projectScope;
 
     public GlobalUserController(
         ICurrentRbacContextAccessor ctx,
@@ -36,8 +35,7 @@ public sealed class GlobalUserController : ControllerBase
         RbacManagementWriteGuard guard,
         IGlobalManagementService globalService,
         IProjectGrantRepository grantRepo,
-        IGroupMemberRepository memberRepo,
-        IGroupRepository groupRepo)
+        RbacUserSearchProjectScopeService projectScope)
     {
         _ctx           = ctx;
         _search        = search;
@@ -45,8 +43,7 @@ public sealed class GlobalUserController : ControllerBase
         _guard         = guard;
         _globalService = globalService;
         _grantRepo     = grantRepo;
-        _memberRepo    = memberRepo;
-        _groupRepo     = groupRepo;
+        _projectScope  = projectScope;
     }
 
     // ── 跨项目用户搜索 ──────────────────────────────────────────────
@@ -60,56 +57,19 @@ public sealed class GlobalUserController : ControllerBase
     public async Task<ApiResponse<PagedData<UserSearchResult>>> List(
         [FromQuery] UserSearchQuery query, CancellationToken ct)
     {
+        var ctx = RequireContext();
+        if (!RbacGlobalConstants.IsReservedProject(ctx.Project))
+            return ApiResponse<PagedData<UserSearchResult>>.Fail(
+                40303, "global 用户端点只允许 X-Project: __global__ 上下文访问");
+
         var data = await _search.SearchUsersAsync(query, ct);
 
-        // ES stores group fields aggregated across all projects. For a scoped
-        // project view, replace them with relational truth from that project so
-        // roles from another system are not displayed as implicit roles here.
         if (!string.IsNullOrWhiteSpace(query.Project) && data.List.Count > 0)
-        {
-            var project = query.Project;
-            var membersTask = _memberRepo.FindByProjectAsync(project, ct);
-            var groupsTask = _groupRepo.FindByProjectAsync(new ProjectCode(project), ct);
-            await Task.WhenAll(membersTask, groupsTask);
+            data = await _projectScope.ScopeAsync(
+                data, query.Project, preserveCrossProjectGrants: true, ct);
 
-            var groupNames = groupsTask.Result.ToDictionary(
-                g => g.GroupCode.Value,
-                g => g.GroupName,
-                StringComparer.OrdinalIgnoreCase);
-            var memberships = membersTask.Result
-                .GroupBy(m => m.Userid.Value, StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Select(m => m.GroupCode.Value)
-                        .Distinct(StringComparer.OrdinalIgnoreCase)
-                        .ToList(),
-                    StringComparer.OrdinalIgnoreCase);
-
-            data = new PagedData<UserSearchResult>
-            {
-                Total = data.Total,
-                List = data.List.Select(user =>
-                {
-                    var codes = memberships.TryGetValue(user.Userid, out var scopedCodes)
-                        ? scopedCodes
-                        : new List<string>();
-                    return new UserSearchResult
-                    {
-                        Userid = user.Userid,
-                        Username = user.Username,
-                        Status = user.Status,
-                        ProjectCodes = user.ProjectCodes,
-                        GroupCodes = codes,
-                        GroupNames = codes
-                            .Where(groupNames.ContainsKey)
-                            .Select(code => groupNames[code])
-                            .ToList(),
-                        SuperProjects = user.SuperProjects,
-                        IsSuper = user.IsSuper,
-                    };
-                }).ToList(),
-            };
-        }
+        data = RbacUserSearchProjectScopeService.SetIsSuperForProject(
+            data, RbacGlobalConstants.ReservedProjectCode);
 
         return ApiResponse<PagedData<UserSearchResult>>.Ok(data);
     }

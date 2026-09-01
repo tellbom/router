@@ -31,6 +31,7 @@ public sealed partial class AdminController : ControllerBase
     private readonly RbacManagementWriteGuard _guard;
     private readonly IProjectGrantRepository _grantRepo;
     private readonly IGroupMemberRepository _memberRepo;
+    private readonly RbacUserSearchProjectScopeService _projectScope;
     public AdminController(
         ICurrentRbacContextAccessor ctx,
         RbacBackendIndexService indexService,
@@ -38,7 +39,8 @@ public sealed partial class AdminController : ControllerBase
         IRbacManagementWriteService write,
         RbacManagementWriteGuard guard,
         IProjectGrantRepository grantRepo,
-        IGroupMemberRepository memberRepo)
+        IGroupMemberRepository memberRepo,
+        RbacUserSearchProjectScopeService projectScope)
     {
         _ctx = ctx;
         _indexService = indexService;
@@ -47,6 +49,7 @@ public sealed partial class AdminController : ControllerBase
         _guard = guard;
         _grantRepo = grantRepo;
         _memberRepo = memberRepo;
+        _projectScope = projectScope;
     }
 
     // ── 后台首页初始化 ─────────────────────────────────────────────
@@ -69,8 +72,11 @@ public sealed partial class AdminController : ControllerBase
         [FromQuery] UserSearchQuery query, CancellationToken ct)
     {
         // project 固定为当前上下文，忽略 query.Project 防止越权
-        query.Project = RequireContext().Project;
+        var project = RequireContext().Project;
+        query.Project = project;
         var data = await _search.SearchUsersAsync(query, ct);
+        data = await _projectScope.ScopeAsync(
+            data, project, preserveCrossProjectGrants: false, ct);
         return ApiResponse<PagedData<UserSearchResult>>.Ok(data);
     }
 
